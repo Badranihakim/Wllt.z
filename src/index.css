@@ -1,0 +1,257 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+@import "@fontsource-variable/geist";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+    --font-heading: var(--font-sans);
+    --font-sans: 'Geist Variable', sans-serif;
+    --color-sidebar-ring: var(--sidebar-ring);
+    --color-sidebar-border: var(--sidebar-border);
+    --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+    --color-sidebar-accent: var(--sidebar-accent);
+    --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+    --color-sidebar-primary: var(--sidebar-primary);
+    --color-sidebar-foreground: var(--sidebar-foreground);
+    --color-sidebar: var(--sidebar);
+    --color-chart-5: var(--chart-5);
+    --color-chart-4: var(--chart-4);
+    --color-chart-3: var(--chart-3);
+    --color-chart-2: var(--chart-2);
+    --color-chart-1: var(--chart-1);
+    --color-ring: var(--ring);
+    --color-input: var(--input);
+    --color-border: var(--border);
+    --color-destructive: var(--destructive);
+    --color-accent-foreground: var(--accent-foreground);
+    --color-accent: var(--accent);
+    --color-muted-foreground: var(--muted-foreground);
+    --color-muted: var(--muted);
+    --color-secondary-foreground: var(--secondary-foreground);
+    --color-secondary: var(--secondary);
+    --color-primary-foreground: var(--primary-foreground);
+    --color-primary: var(--primary);
+    --color-popover-foreground: var(--popover-foreground);
+    --color-popover: var(--popover);
+    --color-card-foreground: var(--card-foreground);
+    --color-card: var(--card);
+    --color-foreground: var(--foreground);
+    --color-background: var(--background);
+    --radius-sm: calc(var(--radius) * 0.6);
+    --radius-md: calc(var(--radius) * 0.8);
+    --radius-lg: var(--radius);
+    --radius-xl: calc(var(--radius) * 1.4);
+    --radius-2xl: calc(var(--radius) * 1.8);
+    --radius-3xl: calc(var(--radius) * 2.2);
+    --radius-4xl: calc(var(--radius) * 2.6);
+}
+
+:root {
+    --background: oklch(1 0 0);
+    --foreground: oklch(0.145 0 0);
+    --card: oklch(1 0 0);
+    --card-foreground: oklch(0.145 0 0);
+    --popover: oklch(1 0 0);
+    --popover-foreground: oklch(0.145 0 0);
+    --primary: oklch(0.205 0 0);
+    --primary-foreground: oklch(0.985 0 0);
+    --secondary: oklch(0.97 0 0);
+    --secondary-foreground: oklch(0.205 0 0);
+    --muted: oklch(0.97 0 0);
+    --muted-foreground: oklch(0.556 0 0);
+    --accent: oklch(0.97 0 0);
+    --accent-foreground: oklch(0.205 0 0);
+    --destructive: oklch(0.577 0.245 27.325);
+    --border: oklch(0.922 0 0);
+    --input: oklch(0.922 0 0);
+    --ring: oklch(0.708 0 0);
+    --chart-1: oklch(0.87 0 0);
+    --chart-2: oklch(0.556 0 0);
+    --chart-3: oklch(0.439 0 0);
+    --chart-4: oklch(0.371 0 0);
+    --chart-5: oklch(0.269 0 0);
+    --radius: 0.625rem;
+    --sidebar: oklch(0.985 0 0);
+    --sidebar-foreground: oklch(0.145 0 0);
+    --sidebar-primary: oklch(0.205 0 0);
+    --sidebar-primary-foreground: oklch(0.985 0 0);
+    --sidebar-accent: oklch(0.97 0 0);
+    --sidebar-accent-foreground: oklch(0.205 0 0);
+    --sidebar-border: oklch(0.922 0 0);
+    --sidebar-ring: oklch(0.708 0 0);
+}
+
+.dark {
+    --background: oklch(0.145 0 0);
+    --foreground: oklch(0.985 0 0);
+    --card: oklch(0.205 0 0);
+    --card-foreground: oklch(0.985 0 0);
+    --popover: oklch(0.205 0 0);
+    --popover-foreground: oklch(0.985 0 0);
+    --primary: oklch(0.922 0 0);
+    --primary-foreground: oklch(0.205 0 0);
+    --secondary: oklch(0.269 0 0);
+    --secondary-foreground: oklch(0.985 0 0);
+    --muted: oklch(0.269 0 0);
+    --muted-foreground: oklch(0.708 0 0);
+    --accent: oklch(0.269 0 0);
+    --accent-foreground: oklch(0.985 0 0);
+    --destructive: oklch(0.704 0.191 22.216);
+    --border: oklch(1 0 0 / 10%);
+    --input: oklch(1 0 0 / 15%);
+    --ring: oklch(0.556 0 0);
+    --chart-1: oklch(0.87 0 0);
+    --chart-2: oklch(0.556 0 0);
+    --chart-3: oklch(0.439 0 0);
+    --chart-4: oklch(0.371 0 0);
+    --chart-5: oklch(0.269 0 0);
+    --sidebar: oklch(0.205 0 0);
+    --sidebar-foreground: oklch(0.985 0 0);
+    --sidebar-primary: oklch(0.488 0.243 264.376);
+    --sidebar-primary-foreground: oklch(0.985 0 0);
+    --sidebar-accent: oklch(0.269 0 0);
+    --sidebar-accent-foreground: oklch(0.985 0 0);
+    --sidebar-border: oklch(1 0 0 / 10%);
+    --sidebar-ring: oklch(0.556 0 0);
+
+}
+
+/* ── wllt.z Light Glassmorphism Design System ─────────────────────────── */
+/* All custom tokens live in :root (light-first, no dark override needed)  */
+:root {
+    /* ── Primary accent: Electric Blue (WCAG AA on light bg) ─────────── */
+    --accent:           oklch(0.60 0.20 260);   /* #3B82F6 Electric Blue   */
+    --accent-dim:       oklch(0.60 0.20 260 / 12%); /* tinted bg for pills  */
+    --accent-glow:      oklch(0.60 0.20 260 / 25%); /* shadow glow          */
+    --accent-hover:     oklch(0.54 0.20 260);   /* darker on hover         */
+
+    /* ── Income accent: Sharp Emerald ────────────────────────────────── */
+    --income:           oklch(0.52 0.17 160);   /* #059669 Emerald-600     */
+    --income-dim:       oklch(0.52 0.17 160 / 10%);
+
+    /* ── Expense accent: Vivid Red ───────────────────────────────────── */
+    --expense:          oklch(0.58 0.22 22);    /* #DC2626 Red-600         */
+    --expense-dim:      oklch(0.58 0.22 22 / 10%);
+
+    /* ── Text hierarchy ──────────────────────────────────────────────── */
+    --text-primary:     oklch(0.13 0.01 250);   /* #0F172A Slate-900       */
+    --text-secondary:   oklch(0.35 0.02 250);   /* #334155 Slate-700       */
+    --text-muted:       oklch(0.50 0.02 250);   /* #64748B Slate-500       */
+    --text-faint:       oklch(0.65 0.02 250);   /* #94A3B8 Slate-400       */
+
+    /* ── App surfaces (light, clean) ─────────────────────────────────── */
+    --surface-0:        oklch(0.97 0.005 240);  /* #F4F6FA page background  */
+    --surface-1:        oklch(0.99 0.003 240);  /* #FAFBFC subtle card bg   */
+    --surface-2:        oklch(1 0 0);           /* #FFFFFF card surface     */
+    --surface-3:        oklch(0.94 0.005 240);  /* #EEF0F5 hover / divider  */
+
+    /* ── Frosted glass (iOS-style, light bg) ─────────────────────────── */
+    --glass-bg:         oklch(1 0 0 / 60%);     /* white 60% — frosted     */
+    --glass-bg-hover:   oklch(1 0 0 / 75%);
+    --glass-border:     oklch(0 0 0 / 6%);      /* ultra-thin dark border  */
+    --glass-border-active: oklch(0 0 0 / 12%);
+
+    /* Legacy alias — kept so old class names don't break ─────────────── */
+    --neon-lime:        var(--accent);
+    --neon-lime-dim:    var(--accent-dim);
+    --neon-lime-glow:   var(--accent-glow);
+    --neon-blue:        var(--accent);
+    --neon-blue-dim:    var(--accent-dim);
+    --neon-blue-glow:   var(--accent-glow);
+    --neon-red:         var(--expense);
+    --neon-red-dim:     var(--expense-dim);
+    --neon-red-glow:    oklch(0.58 0.22 22 / 25%);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+    }
+
+  html {
+    @apply font-sans;
+    /* Light mode is the default — auto follows system preference */
+    color-scheme: light;
+  }
+
+  body {
+    background-color: var(--surface-0);
+    color: var(--text-primary);
+    /* Prevent scroll bounce on iOS */
+    overscroll-behavior: none;
+  }
+
+  /* Smooth scrollbars */
+  ::-webkit-scrollbar { width: 0; height: 0; }
+}
+
+/* ── Glass morphism utilities ─────────────────────────────────────────── */
+@layer utilities {
+  /* Base glass panel — iOS-style frosted glass, light mode */
+  .glass {
+    background: var(--glass-bg);
+    backdrop-filter: blur(20px) saturate(190%);
+    -webkit-backdrop-filter: blur(20px) saturate(190%);
+    border: 1px solid var(--glass-border);
+    /* Soft inset light effect */
+    box-shadow: inset 0 1px 0 oklch(1 0 0 / 80%);
+  }
+
+  .glass-hover:hover {
+    background: var(--glass-bg-hover);
+    border-color: var(--glass-border-active);
+  }
+
+  /* Surface cards (opaque, for content areas) */
+  .surface-1 { background: var(--surface-1); }
+  .surface-2 { background: var(--surface-2); }
+
+  /* Accent glow shadows (softer on light bg) */
+  .glow-lime  { box-shadow: 0 0 20px var(--accent-glow), 0 4px 12px var(--accent-glow); }
+  .glow-blue  { box-shadow: 0 0 20px var(--accent-glow), 0 4px 12px var(--accent-glow); }
+  .glow-red   { box-shadow: 0 0 20px var(--neon-red-glow); }
+
+  /* Subtle shadow for active pill elements */
+  .glow-lime-sm { box-shadow: 0 2px 12px var(--accent-glow); }
+  .glow-blue-sm { box-shadow: 0 2px 12px var(--accent-glow); }
+
+  /* Semantic text utilities */
+  .text-neon-lime  { color: var(--accent); }
+  .text-neon-blue  { color: var(--accent); }
+  .text-neon-red   { color: var(--expense); }
+  .text-primary    { color: var(--text-primary); }
+  .text-muted      { color: var(--text-muted); }
+  .text-faint      { color: var(--text-faint); }
+
+  /* Semantic border utilities */
+  .border-neon-lime  { border-color: var(--accent); }
+  .border-neon-blue  { border-color: var(--accent); }
+  .border-neon-red   { border-color: var(--expense); }
+  .border-accent     { border-color: var(--accent); }
+
+  /* Semantic background tints */
+  .bg-neon-lime-dim  { background-color: var(--accent-dim); }
+  .bg-neon-blue-dim  { background-color: var(--accent-dim); }
+  .bg-neon-red-dim   { background-color: var(--expense-dim); }
+  .bg-accent-dim     { background-color: var(--accent-dim); }
+  .bg-income-dim     { background-color: var(--income-dim); }
+  .bg-expense-dim    { background-color: var(--expense-dim); }
+
+  /* Safe area inset helpers for notch/home indicator support */
+  .safe-top    { padding-top:    env(safe-area-inset-top,    0px); }
+  .safe-bottom { padding-bottom: env(safe-area-inset-bottom, 0px); }
+  .safe-left   { padding-left:   env(safe-area-inset-left,   0px); }
+  .safe-right  { padding-right:  env(safe-area-inset-right,  0px); }
+
+  /* Scrollbar-none utility */
+  .scrollbar-none {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .scrollbar-none::-webkit-scrollbar { display: none; }
+
+  /* Tap highlight removal for native feel */
+  .no-tap-highlight { -webkit-tap-highlight-color: transparent; }
+}

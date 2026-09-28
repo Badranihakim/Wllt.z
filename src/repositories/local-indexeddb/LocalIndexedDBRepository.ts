@@ -42,7 +42,11 @@ export interface BaseEntity {
 export abstract class LocalIndexedDBRepository<T extends BaseEntity>
   implements IRepository<T>
 {
-  constructor(protected readonly table: Table<T, string>) {}
+  protected readonly table: Table<T, any, any>
+
+  constructor(table: Table<T, any, any>) {
+    this.table = table
+  }
 
   // ─────────────────────────────────────────────
   // IRepository implementation
@@ -163,9 +167,9 @@ export abstract class LocalIndexedDBRepository<T extends BaseEntity>
    */
   async markAsSynced(ids: string[]): Promise<void> {
     const now = new Date().toISOString()
-    await this.table.where('id').anyOf(ids).modify({
-      sync_status: 'synced' as SyncStatus,
-      updated_at: now,
+    await this.table.where('id').anyOf(ids).modify((item: any) => {
+      item.sync_status = 'synced'
+      item.updated_at = now
     })
   }
 

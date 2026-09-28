@@ -1,10 +1,12 @@
 import { useState, useMemo } from 'react'
-import { Search, X, ChevronLeft, ChevronRight, SlidersHorizontal } from 'lucide-react'
+import { Search, X, ChevronLeft, ChevronRight, SlidersHorizontal, Sparkles, Loader2 } from 'lucide-react'
+import { useQueryClient } from '@tanstack/react-query'
 import { useTransactions } from '@/features/transactions/hooks'
 import { useDeleteTransaction } from '@/features/transactions/hooks'
 import { useWallets } from '@/features/wallet/hooks'
 import { useCategories } from '@/features/analytics/hooks'
 import { useUIStore } from '@/stores'
+import { seedDummyData } from '@/lib/seedDummyData'
 import { TransactionItem } from './TransactionItem'
 import { groupByDate, formatPeriod, formatRupiah } from '@/lib/formatters'
 import type { Transaction } from '@/types'
@@ -129,9 +131,11 @@ function DateSectionHeader({ label, count }: DateSectionHeaderProps) {
 
 interface EmptyStateProps {
   hasFilters: boolean
+  onPullDemo?: () => void
+  isPulling?: boolean
 }
 
-function EmptyState({ hasFilters }: EmptyStateProps) {
+function EmptyState({ hasFilters, onPullDemo, isPulling }: EmptyStateProps) {
   return (
     <div className="flex flex-col items-center justify-center gap-3 py-16 text-center">
       <span className="text-5xl">{hasFilters ? '🔍' : '📭'}</span>
@@ -142,9 +146,21 @@ function EmptyState({ hasFilters }: EmptyStateProps) {
         <p className="mt-1 text-xs" style={{ color: 'var(--text-faint)' }}>
           {hasFilters
             ? 'Coba ubah filter atau kata kunci pencarian'
-            : 'Ketuk tombol + untuk mencatat transaksi pertama'}
+            : 'Ketuk tombol + untuk mencatat transaksi atau tarik data demo'}
         </p>
       </div>
+      {!hasFilters && onPullDemo && (
+        <button
+          type="button"
+          onClick={onPullDemo}
+          disabled={isPulling}
+          className="mt-2 flex items-center gap-1.5 rounded-full px-4 py-2 text-xs font-bold text-white transition-all active:scale-95 disabled:opacity-50"
+          style={{ background: 'var(--accent)', boxShadow: '0 4px 12px var(--accent-glow)' }}
+        >
+          {isPulling ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Sparkles className="h-3.5 w-3.5" />}
+          <span>Tarik Data Demo</span>
+        </button>
+      )}
     </div>
   )
 }
@@ -190,16 +206,29 @@ function LoadingSkeleton() {
  *  - Inline delete confirmation per row
  */
 export function TransactionsView() {
+  const queryClient = useQueryClient()
   // ── Zustand ─────────────────────────────────────────────────────────
   const currentPeriod    = useUIStore(s => s.currentPeriod)
   const setCurrentPeriod = useUIStore(s => s.setCurrentPeriod)
-  const openAddTransaction = useUIStore(s => s.openAddTransaction)
 
   // ── Local filter state ───────────────────────────────────────────────
   const [search,       setSearch]       = useState('')
   const [typeFilter,   setTypeFilter]   = useState<TypeFilter>('all')
   const [walletFilter, setWalletFilter] = useState<string>('all')
   const [showFilters,  setShowFilters]  = useState(false)
+  const [isPullingDemo, setIsPullingDemo] = useState(false)
+
+  const handlePullDemo = async () => {
+    setIsPullingDemo(true)
+    try {
+      await seedDummyData(true)
+      await queryClient.invalidateQueries()
+    } catch (err) {
+      console.error('[TransactionsView] Failed to pull demo data:', err)
+    } finally {
+      setIsPullingDemo(false)
+    }
+  }
 
   // ── Data hooks ───────────────────────────────────────────────────────
   const { data: rawTransactions = [], isLoading } = useTransactions()
@@ -403,7 +432,11 @@ export function TransactionsView() {
         {isLoading ? (
           <LoadingSkeleton />
         ) : groups.length === 0 ? (
-          <EmptyState hasFilters={hasFilters} />
+          <EmptyState
+            hasFilters={hasFilters}
+            onPullDemo={handlePullDemo}
+            isPulling={isPullingDemo}
+          />
         ) : (
           <div className="pb-6">
             {groups.map(group => (

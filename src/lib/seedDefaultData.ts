@@ -126,6 +126,7 @@ export async function seedDefaultWallet(): Promise<void> {
     icon:     '💵',
     color:    '#3B82F6',
     currency: 'IDR',
+    exclude_from_total: false,
   })
 
   console.info('[wllt.z] ✅ Seeded default Cash wallet.')
@@ -134,6 +135,9 @@ export async function seedDefaultWallet(): Promise<void> {
 // ─────────────────────────────────────────────
 // Unified bootstrapper — call this once at app start
 // ─────────────────────────────────────────────
+
+import { seedDummyData } from './seedDummyData'
+export { seedDummyData }
 
 /**
  * bootstrapLocalDB — Runs all seeders sequentially.
@@ -147,4 +151,6 @@ export async function seedDefaultWallet(): Promise<void> {
 export async function bootstrapLocalDB(): Promise<void> {
   await seedDefaultCategories()
   await seedDefaultWallet()
+  await seedDummyData()
 }
+

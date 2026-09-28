@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react'
 import { useQuery } from '@tanstack/react-query'
-import { PieChart, Pie, Cell, ResponsiveContainer, LineChart, Line, AreaChart, Area, BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid } from 'recharts'
+import { PieChart, Pie, Cell, ResponsiveContainer, Line, AreaChart, Area, BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid } from 'recharts'
 import { ChevronLeft, ChevronRight, Search, ChevronDown, TrendingUp, ArrowRightLeft, Activity } from 'lucide-react'
 import { transactionRepo, categoryRepo, walletRepo } from '@/repositories'
 import { queryKeys } from '@/lib/queryKeys'
@@ -644,7 +644,7 @@ function ExpenseDetailModal({ block, categoryMap, txType, onClose }: { block: an
                                {cat?.icon || '📦'}
                             </div>
                             <div className="flex flex-col">
-                               <span className="text-[13px] font-bold text-slate-800 mb-1">{t.note || cat?.name || 'Transaksi'}</span>
+                               <span className="text-[13px] font-bold text-slate-800 mb-1">{t.notes || cat?.name || 'Transaksi'}</span>
                                <div className="flex items-center gap-1.5 text-slate-400">
                                   <span className="text-[10px]">💼</span>
                                   <span className="text-[11px] font-semibold">{w?.name || 'Dompet Utama'}</span>
@@ -746,7 +746,7 @@ function TransactionLog({ transactions, categoryMap }: { transactions: Transacti
               >
                 {cat?.icon || '🍔'}
               </div>
-              <span className="text-[12px] font-semibold text-slate-700 flex-1 truncate pr-2">{t.note || cat?.name || 'Transaksi'}</span>
+              <span className="text-[12px] font-semibold text-slate-700 flex-1 truncate pr-2">{t.notes || cat?.name || 'Transaksi'}</span>
               <span className={`text-[12px] font-bold shrink-0 ${isIncome ? 'text-emerald-500' : 'text-slate-800'}`}>
                 {isIncome ? '+' : '-'}{formatRupiah(t.amount, true)}
               </span>

@@ -1,3 +1,8 @@
+import { useState } from 'react'
+import { Sparkles, Loader2, Check } from 'lucide-react'
+import { useQueryClient } from '@tanstack/react-query'
+import { useUIStore } from '@/stores'
+import { seedDummyData } from '@/lib/seedDummyData'
 import { NetWorthCard }       from './NetWorthCard'
 import { WalletSlider }       from './WalletSlider'
 import { RecentTransactions } from './RecentTransactions'
@@ -14,6 +19,25 @@ import { RecentTransactions } from './RecentTransactions'
  * This component is a pure layout assembler — no business logic here.
  */
 export function DashboardView() {
+  const queryClient = useQueryClient()
+  const navigateTo = useUIStore(s => s.navigateTo)
+  const [isLoadingDemo, setIsLoadingDemo] = useState(false)
+  const [demoSuccess, setDemoSuccess] = useState(false)
+
+  const handlePullDemo = async () => {
+    setIsLoadingDemo(true)
+    try {
+      await seedDummyData(true)
+      await queryClient.invalidateQueries()
+      setDemoSuccess(true)
+      setTimeout(() => setDemoSuccess(false), 3000)
+    } catch (err) {
+      console.error('[DashboardView] Failed to pull demo data:', err)
+    } finally {
+      setIsLoadingDemo(false)
+    }
+  }
+
   return (
     <div className="min-h-full">
       {/* ── Page header ── */}
@@ -25,14 +49,40 @@ export function DashboardView() {
           <p className="text-xs" style={{ color: 'var(--text-faint)' }}>Keuanganmu, kendalimu</p>
         </div>
 
-        {/* Avatar placeholder */}
-        <button
-          aria-label="Profil pengguna"
-          className="glass no-tap-highlight flex h-9 w-9 items-center justify-center rounded-full text-sm font-bold transition-all active:scale-90"
-          style={{ color: 'var(--accent)', border: '1.5px solid var(--accent-dim)' }}
-        >
-          U
-        </button>
+        <div className="flex items-center gap-2">
+          {/* Quick Tarik Data Demo button */}
+          <button
+            type="button"
+            onClick={handlePullDemo}
+            disabled={isLoadingDemo}
+            title="Tarik semua data demo ke dalam aplikasi"
+            className="glass no-tap-highlight flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-bold transition-all active:scale-95 disabled:opacity-50"
+            style={{
+              background: demoSuccess ? 'oklch(0.52 0.17 160 / 15%)' : 'var(--accent-dim)',
+              color: demoSuccess ? 'var(--income)' : 'var(--accent)',
+              border: `1px solid ${demoSuccess ? 'var(--income)' : 'var(--accent)'}`,
+            }}
+          >
+            {isLoadingDemo ? (
+              <Loader2 className="h-3.5 w-3.5 animate-spin" />
+            ) : demoSuccess ? (
+              <Check className="h-3.5 w-3.5" />
+            ) : (
+              <Sparkles className="h-3.5 w-3.5" />
+            )}
+            <span>{demoSuccess ? 'Tersedia!' : 'Tarik Data Demo'}</span>
+          </button>
+
+          {/* Avatar placeholder / profile link */}
+          <button
+            onClick={() => navigateTo('settings')}
+            aria-label="Profil & Pengaturan"
+            className="glass no-tap-highlight flex h-9 w-9 items-center justify-center rounded-full text-sm font-bold transition-all active:scale-90"
+            style={{ color: 'var(--accent)', border: '1.5px solid var(--accent-dim)' }}
+          >
+            U
+          </button>
+        </div>
       </div>
 
       {/* ── Section 1: Net Worth + Period ── */}
@@ -46,3 +96,4 @@ export function DashboardView() {
     </div>
   )
 }
+

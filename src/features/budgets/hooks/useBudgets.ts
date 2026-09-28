@@ -1,6 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
 import { budgetRepo } from '@/repositories'
-import { useUIStore } from '@/stores'
 import { queryKeys } from '@/lib/queryKeys'
 import type { BudgetPeriod } from '@/types'
 
@@ -29,12 +28,6 @@ import type { BudgetPeriod } from '@/types'
  * const { data: weeklyBudgets = [] } = useBudgets('weekly')
  */
 export function useBudgets(period: BudgetPeriod = 'monthly') {
-  // currentPeriod is read here for future use in computed fields
-  // (e.g. showing progress within the current month).
-  // It is NOT included in the query key because the underlying query
-  // fetches all budgets of the given period type, not month-specific ones.
-  const _currentPeriod = useUIStore(s => s.currentPeriod) // eslint-disable-line @typescript-eslint/no-unused-vars
-
   return useQuery({
     queryKey: queryKeys.budgets.active(period),
     queryFn: () => budgetRepo.findActiveBudgets(period),

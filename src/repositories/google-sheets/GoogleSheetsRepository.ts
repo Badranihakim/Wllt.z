@@ -5,7 +5,11 @@ export class GoogleSheetsRepository {
   private static readonly DB_NAME = 'wllt.z_database'
   private static readonly SPREADSHEET_RANGE = 'Transactions!A1'
 
-  constructor(private accessToken: string) {}
+  private accessToken: string
+
+  constructor(accessToken: string) {
+    this.accessToken = accessToken
+  }
 
   private handleApiError(errorData: any): never {
     const status = errorData.code

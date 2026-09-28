@@ -5,7 +5,6 @@ import {
   TextInput,
   SelectInput,
   SubmitButton,
-  TypeToggle,
 } from '@/components/ui/FormFields'
 import { useUIStore } from '@/stores'
 import { useCreateWallet } from '@/features/wallet/hooks'
@@ -16,12 +15,10 @@ import type { WalletType } from '@/types'
 // ─────────────────────────────────────────────
 
 const WALLET_TYPE_OPTIONS: Array<{ value: WalletType; label: string; icon: string }> = [
-  { value: 'cash',       label: 'Tunai',       icon: '💵' },
-  { value: 'bank',       label: 'Bank',        icon: '🏦' },
-  { value: 'e-wallet',   label: 'E-Wallet',    icon: '📱' },
-  { value: 'credit',     label: 'Kredit',      icon: '💳' },
-  { value: 'investment', label: 'Investasi',   icon: '📈' },
-  { value: 'other',      label: 'Lainnya',     icon: '🗂️' },
+  { value: 'cash',        label: 'Tunai',        icon: '💵' },
+  { value: 'bank',        label: 'Bank',         icon: '🏦' },
+  { value: 'e-wallet',    label: 'E-Wallet',     icon: '📱' },
+  { value: 'credit-card', label: 'Kartu Kredit', icon: '💳' },
 ]
 
 const ICON_PRESETS = [
@@ -143,6 +140,7 @@ export function AddWalletModal() {
         icon: form.icon,
         color: form.color,
         currency: 'IDR',
+        exclude_from_total: false,
       },
       {
         onSuccess: () => {

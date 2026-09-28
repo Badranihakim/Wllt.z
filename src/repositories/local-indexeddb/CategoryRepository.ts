@@ -46,8 +46,8 @@ export class CategoryRepository extends LocalIndexedDBRepository<Category> {
   async create(dto: CreateCategoryDTO): Promise<Category> {
     const now = new Date().toISOString()
     const category: Category = {
-      parent_id: null,  // default — may be overridden by dto spread below
       ...dto,
+      parent_id: dto.parent_id ?? null,
       id: crypto.randomUUID(),
       is_default: false,
       is_deleted: false,

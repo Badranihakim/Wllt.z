@@ -6,7 +6,8 @@ import { WalletsView }        from '@/features/wallet/components/WalletsView'
 import { StatisticsView }     from '@/features/analytics/components/StatisticsView'
 import { BudgetsView }        from '@/features/budgets/components'
 import { SettingsView }       from '@/features/profile/components'
-import { useUIStore }         from '@/stores'
+import { AuthView }           from '@/features/auth/components'
+import { useUIStore, useAuthStore } from '@/stores'
 import type { ActiveTab }     from '@/stores'
 
 // ─────────────────────────────────────────────
@@ -55,6 +56,11 @@ function PlaceholderView({ tab }: { tab: ActiveTab }) {
  */
 function App() {
   const activeTab = useUIStore(s => s.activeTab)
+  const currentUser = useAuthStore(s => s.currentUser)
+
+  if (!currentUser) {
+    return <AuthView />
+  }
 
   const currentView = (() => {
     switch (activeTab) {

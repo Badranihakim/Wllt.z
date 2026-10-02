@@ -1,4 +1,3 @@
-import { db } from '@/db'
 import type {
   Transaction,
   TransactionType,
@@ -22,7 +21,7 @@ import { LocalIndexedDBRepository } from './LocalIndexedDBRepository'
  */
 export class TransactionRepository extends LocalIndexedDBRepository<Transaction> {
   constructor() {
-    super(db.transactions)
+    super('transactions')
   }
 
   // ─────────────────────────────────────────────

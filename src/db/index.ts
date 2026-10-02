@@ -23,8 +23,8 @@ export class WlltDatabase extends Dexie {
   budgets!: EntityTable<Budget, 'id'>
   settings!: EntityTable<Settings, 'id'>
 
-  constructor() {
-    super('wllt_db')
+  constructor(dbName: string = 'wllt_db') {
+    super(dbName)
 
     this.version(1).stores({
       /**
@@ -108,6 +108,37 @@ export class WlltDatabase extends Dexie {
   }
 }
 
-/** Singleton database instance — import and use this everywhere. */
-export const db = new WlltDatabase()
+let activeUserId = 'demo_user'
+let activeDbInstance = new WlltDatabase('wllt_db_demo_user')
+
+/** Switch active IndexedDB to the given user's database. */
+export function setDatabaseUser(userId?: string | null): WlltDatabase {
+  const targetId = userId || 'default'
+  if (activeUserId === targetId && activeDbInstance.isOpen()) {
+    return activeDbInstance
+  }
+  activeUserId = targetId
+  activeDbInstance = new WlltDatabase(`wllt_db_${targetId}`)
+  return activeDbInstance
+}
+
+/** Get the currently active user's database instance. */
+export function getDatabase(): WlltDatabase {
+  return activeDbInstance
+}
+
+/**
+ * Proxy database instance — delegates dynamically to the currently active user's database.
+ * Import and use this everywhere as before.
+ */
+export const db: WlltDatabase = new Proxy({} as WlltDatabase, {
+  get(_target, prop) {
+    const instance = activeDbInstance as any
+    const val = instance[prop]
+    if (typeof val === 'function') {
+      return val.bind(instance)
+    }
+    return val
+  },
+})
 

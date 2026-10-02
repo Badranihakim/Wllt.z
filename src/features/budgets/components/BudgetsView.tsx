@@ -103,7 +103,7 @@ export function BudgetsView() {
     
     budgetsWithCategory = mainExpenseCategories.map(category => {
       // Find real budget for the current period
-      const existingBudget = budgets.find(b => b.category_id === category.id && b.period === currentPeriod)
+      const existingBudget = budgets.find(b => b.category_id === category.id && (b.period === currentPeriod || b.period === 'monthly'))
       
       if (existingBudget) {
         return { budget: existingBudget, category }

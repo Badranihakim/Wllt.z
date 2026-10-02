@@ -65,7 +65,7 @@ export function BottomSheet({
         aria-modal="true"
         aria-label={title}
         className={[
-          'fixed inset-x-0 bottom-0 z-[101] mx-auto max-w-[430px]',
+          'fixed inset-x-0 bottom-0 z-[101] mx-auto w-full max-w-[520px]',
           'rounded-t-[2rem] transition-transform duration-300 ease-out',
           className,
         ].join(' ')}

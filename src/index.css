@@ -61,8 +61,8 @@
     --secondary-foreground: oklch(0.205 0 0);
     --muted: oklch(0.97 0 0);
     --muted-foreground: oklch(0.556 0 0);
-    --accent: oklch(0.97 0 0);
-    --accent-foreground: oklch(0.205 0 0);
+    --accent: oklch(0.60 0.20 260);
+    --accent-foreground: #FFFFFF;
     --destructive: oklch(0.577 0.245 27.325);
     --border: oklch(0.922 0 0);
     --input: oklch(0.922 0 0);
@@ -123,6 +123,7 @@
 :root {
     /* ── Primary accent: Electric Blue (WCAG AA on light bg) ─────────── */
     --accent:           oklch(0.60 0.20 260);   /* #3B82F6 Electric Blue   */
+    --accent-foreground: #FFFFFF;               /* White text on accent */
     --accent-dim:       oklch(0.60 0.20 260 / 12%); /* tinted bg for pills  */
     --accent-glow:      oklch(0.60 0.20 260 / 25%); /* shadow glow          */
     --accent-hover:     oklch(0.54 0.20 260);   /* darker on hover         */

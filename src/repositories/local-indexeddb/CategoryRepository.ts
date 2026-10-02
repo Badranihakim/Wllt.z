@@ -1,4 +1,3 @@
-import { db } from '@/db'
 import type { Category, CreateCategoryDTO, SyncStatus } from '@/types'
 import { LocalIndexedDBRepository } from './LocalIndexedDBRepository'
 
@@ -13,7 +12,7 @@ import { LocalIndexedDBRepository } from './LocalIndexedDBRepository'
  */
 export class CategoryRepository extends LocalIndexedDBRepository<Category> {
   constructor() {
-    super(db.categories)
+    super('categories')
   }
 
   // ─────────────────────────────────────────────

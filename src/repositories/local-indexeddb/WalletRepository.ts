@@ -1,4 +1,3 @@
-import { db } from '@/db'
 import type { Wallet, WalletType, CreateWalletDTO, SyncStatus } from '@/types'
 import { LocalIndexedDBRepository } from './LocalIndexedDBRepository'
 
@@ -17,7 +16,7 @@ import { LocalIndexedDBRepository } from './LocalIndexedDBRepository'
  */
 export class WalletRepository extends LocalIndexedDBRepository<Wallet> {
   constructor() {
-    super(db.wallets)
+    super('wallets')
   }
 
   // ─────────────────────────────────────────────

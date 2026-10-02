@@ -3,24 +3,25 @@ import { Sparkles, Loader2, Check } from 'lucide-react'
 import { useQueryClient } from '@tanstack/react-query'
 import { useUIStore } from '@/stores'
 import { seedDummyData } from '@/lib/seedDummyData'
-import { NetWorthCard }       from './NetWorthCard'
-import { WalletSlider }       from './WalletSlider'
-import { RecentTransactions } from './RecentTransactions'
+import { useDebugMode } from '@/lib/debug'
+import { NetWorthCard }            from './NetWorthCard'
+import { WalletSlider }            from './WalletSlider'
+import { RecentTransactions }      from './RecentTransactions'
+import { DashboardCashFlowChart }  from './DashboardCashFlowChart'
+import { DashboardBudgetProgress } from './DashboardBudgetProgress'
 
 /**
  * DashboardView — Main dashboard screen.
  *
- * Assembles 3 sections vertically:
- *   1. NetWorthCard   — hero balance + period summary
- *   2. WalletSlider   — horizontal wallet selector
- *   3. RecentTransactions — last 5 transactions
- *
- * All data is fetched directly by child components via TanStack Query hooks.
- * This component is a pure layout assembler — no business logic here.
+ * Responsive layout:
+ *   - Desktop: 2-column balanced grid with Financial Overview, Wallets,
+ *     Weekly Cashflow Chart, Recent Transactions, and Budget Progress.
+ *   - Mobile: Natural vertical stack.
  */
 export function DashboardView() {
   const queryClient = useQueryClient()
   const navigateTo = useUIStore(s => s.navigateTo)
+  const isDebug = useDebugMode()
   const [isLoadingDemo, setIsLoadingDemo] = useState(false)
   const [demoSuccess, setDemoSuccess] = useState(false)
 
@@ -41,7 +42,7 @@ export function DashboardView() {
   return (
     <div className="min-h-full">
       {/* ── Page header ── */}
-      <div className="flex items-center justify-between px-4 pt-6 pb-2">
+      <div className="flex items-center justify-between pb-3">
         <div>
           <h1 className="text-2xl font-bold tracking-tight" style={{ color: 'var(--text-primary)' }}>
             wllt<span style={{ color: 'var(--accent)' }}>.z</span>
@@ -50,28 +51,30 @@ export function DashboardView() {
         </div>
 
         <div className="flex items-center gap-2">
-          {/* Quick Tarik Data Demo button */}
-          <button
-            type="button"
-            onClick={handlePullDemo}
-            disabled={isLoadingDemo}
-            title="Tarik semua data demo ke dalam aplikasi"
-            className="glass no-tap-highlight flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-bold transition-all active:scale-95 disabled:opacity-50"
-            style={{
-              background: demoSuccess ? 'oklch(0.52 0.17 160 / 15%)' : 'var(--accent-dim)',
-              color: demoSuccess ? 'var(--income)' : 'var(--accent)',
-              border: `1px solid ${demoSuccess ? 'var(--income)' : 'var(--accent)'}`,
-            }}
-          >
-            {isLoadingDemo ? (
-              <Loader2 className="h-3.5 w-3.5 animate-spin" />
-            ) : demoSuccess ? (
-              <Check className="h-3.5 w-3.5" />
-            ) : (
-              <Sparkles className="h-3.5 w-3.5" />
-            )}
-            <span>{demoSuccess ? 'Tersedia!' : 'Tarik Data Demo'}</span>
-          </button>
+          {/* Quick Tarik Data Demo button (Only visible in debug mode ?debug=1) */}
+          {isDebug && (
+            <button
+              type="button"
+              onClick={handlePullDemo}
+              disabled={isLoadingDemo}
+              title="Tarik semua data demo ke dalam aplikasi"
+              className="glass no-tap-highlight flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-bold transition-all active:scale-95 disabled:opacity-50 cursor-pointer"
+              style={{
+                background: demoSuccess ? 'oklch(0.52 0.17 160 / 15%)' : 'var(--accent-dim)',
+                color: demoSuccess ? 'var(--income)' : 'var(--accent)',
+                border: `1px solid ${demoSuccess ? 'var(--income)' : 'var(--accent)'}`,
+              }}
+            >
+              {isLoadingDemo ? (
+                <Loader2 className="h-3.5 w-3.5 animate-spin" />
+              ) : demoSuccess ? (
+                <Check className="h-3.5 w-3.5" />
+              ) : (
+                <Sparkles className="h-3.5 w-3.5" />
+              )}
+              <span>{demoSuccess ? 'Tersedia!' : 'Tarik Data Demo'}</span>
+            </button>
+          )}
 
           {/* Avatar placeholder / profile link */}
           <button
@@ -80,19 +83,34 @@ export function DashboardView() {
             className="glass no-tap-highlight flex h-9 w-9 items-center justify-center rounded-full text-sm font-bold transition-all active:scale-90"
             style={{ color: 'var(--accent)', border: '1.5px solid var(--accent-dim)' }}
           >
-            U
+            👤
           </button>
         </div>
       </div>
 
-      {/* ── Section 1: Net Worth + Period ── */}
-      <NetWorthCard />
+      {/* ── Responsive Dashboard Layout ── */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 mt-2">
+        {/* Top Left: Net Worth Card & Wallet Slider */}
+        <div className="lg:col-span-7 flex flex-col gap-4">
+          <NetWorthCard />
+          <WalletSlider />
+        </div>
 
-      {/* ── Section 2: Wallet Selector ── */}
-      <WalletSlider />
+        {/* Top Right: Recent Transactions */}
+        <div className="lg:col-span-5 flex flex-col">
+          <RecentTransactions />
+        </div>
 
-      {/* ── Section 3: Recent Transactions ── */}
-      <RecentTransactions />
+        {/* Bottom Left: Cash Flow Trend Chart */}
+        <div className="lg:col-span-7 flex flex-col">
+          <DashboardCashFlowChart />
+        </div>
+
+        {/* Bottom Right: Category Budget Progress */}
+        <div className="lg:col-span-5 flex flex-col">
+          <DashboardBudgetProgress />
+        </div>
+      </div>
     </div>
   )
 }

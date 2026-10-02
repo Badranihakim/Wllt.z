@@ -1,4 +1,3 @@
-import { db } from '@/db'
 import type { Budget, BudgetPeriod, CreateBudgetDTO, SyncStatus } from '@/types'
 import { LocalIndexedDBRepository } from './LocalIndexedDBRepository'
 
@@ -17,7 +16,7 @@ import { LocalIndexedDBRepository } from './LocalIndexedDBRepository'
  */
 export class BudgetRepository extends LocalIndexedDBRepository<Budget> {
   constructor() {
-    super(db.budgets)
+    super('budgets')
   }
 
   // ─────────────────────────────────────────────
@@ -75,11 +74,15 @@ export class BudgetRepository extends LocalIndexedDBRepository<Budget> {
    * // All monthly budgets for the budget overview screen
    * await budgetRepo.findActiveBudgets('monthly')
    */
-  async findActiveBudgets(period: BudgetPeriod): Promise<Budget[]> {
+  async findActiveBudgets(period: BudgetPeriod = 'monthly'): Promise<Budget[]> {
     return this.table
-      .where('period')
-      .equals(period)
-      .filter(b => !b.is_deleted)
+      .filter(b => {
+        if (b.is_deleted) return false
+        if (period === 'monthly') {
+          return b.period === 'monthly' || /^\d{4}-\d{2}$/.test(b.period)
+        }
+        return b.period === period || b.period === 'monthly'
+      })
       .toArray()
       .then(rows => rows.sort((a, b) => b.amount - a.amount))
   }

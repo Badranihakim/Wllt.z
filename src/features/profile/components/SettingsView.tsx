@@ -5,10 +5,12 @@ import { useAuthStore } from '@/stores'
 import { GoogleSheetsRepository } from '@/repositories/google-sheets/GoogleSheetsRepository'
 import { transactionRepo } from '@/repositories'
 import { seedDummyData, clearAllData, exportAllData } from '@/lib/seedDummyData'
+import { useDebugMode } from '@/lib/debug'
 
 export function SettingsView() {
   const queryClient = useQueryClient()
-  const { accessToken, setAccessToken, setSpreadsheetId } = useAuthStore()
+  const isDebug = useDebugMode()
+  const { accessToken, setAccessToken, setSpreadsheetId, currentUser, logout } = useAuthStore()
   const [isSyncing, setIsSyncing] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [syncStatus, setSyncStatus] = useState<'idle' | 'syncing' | 'synced' | 'error' | 'session_expired'>('idle')
@@ -132,105 +134,125 @@ export function SettingsView() {
 
       <div className="flex-1 overflow-y-auto px-4 pb-8 space-y-6">
         
-        {/* Account Info placeholder */}
+        {/* Account Info card */}
         <div 
           className="flex flex-col items-center justify-center p-6 rounded-3xl"
           style={{ background: 'var(--surface-2)', border: '1px solid var(--glass-border)' }}
         >
           <div className="h-20 w-20 rounded-full mb-3 flex items-center justify-center text-3xl shadow-sm" style={{ background: 'var(--surface-3)' }}>
-            👤
+            {currentUser?.avatar || '👤'}
           </div>
-          <h2 className="font-bold text-lg" style={{ color: 'var(--text-primary)' }}>Pengguna Lokal</h2>
-          <p className="text-xs" style={{ color: 'var(--text-faint)' }}>Data tersimpan aman di peramban Anda</p>
-        </div>
-
-        {/* Demo Data Section */}
-        <div className="space-y-3">
-          <h3 className="text-sm font-bold uppercase tracking-wider" style={{ color: 'var(--text-muted)' }}>
-            Data Simulasi & Demo
-          </h3>
-          
-          <div 
-            className="p-4 rounded-3xl space-y-3"
-            style={{ background: 'var(--surface-2)', border: '1px solid var(--glass-border)' }}
+          <h2 className="font-bold text-lg" style={{ color: 'var(--text-primary)' }}>
+            {currentUser?.name || 'Pengguna Lokal'}
+          </h2>
+          <p className="text-xs" style={{ color: 'var(--text-faint)' }}>
+            {currentUser?.email || 'Data tersimpan aman di database terisolasi'}
+          </p>
+          <button
+            type="button"
+            onClick={logout}
+            className="mt-4 px-4 py-2 rounded-xl text-xs font-bold transition-all border border-red-200 dark:border-red-900/60 text-red-500 hover:bg-red-50 dark:hover:bg-red-950/30"
           >
-            <div className="flex items-start gap-3">
-              <div className="p-2 rounded-xl" style={{ background: 'var(--accent-dim)', color: 'var(--accent)' }}>
-                <Sparkles className="w-5 h-5" />
-              </div>
-              <div className="flex-1">
-                <p className="font-semibold text-sm" style={{ color: 'var(--text-primary)' }}>Kelola Data Demo</p>
-                <p className="text-xs mt-0.5 leading-relaxed" style={{ color: 'var(--text-faint)' }}>
-                  Tarik semua paket data demo (6 dompet, puluhan transaksi, anggaran bulanan, dan statistik pengeluaran), ekspor, atau reset data.
-                </p>
-              </div>
+            Keluar / Ganti Akun
+          </button>
+        </div>
+
+        {/* Demo Data Section (Hanya tampil jika mode debug aktif via URL ?debug=1) */}
+        {isDebug && (
+          <div className="space-y-3">
+            <div className="flex items-center justify-between">
+              <h3 className="text-sm font-bold uppercase tracking-wider text-amber-600 dark:text-amber-400 flex items-center gap-1.5">
+                <span>🛠️</span>
+                <span>Mode Pengembang (debug=1)</span>
+              </h3>
+              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-600 border border-amber-500/20">
+                Data Simulasi
+              </span>
             </div>
-
-            {dummySuccess && (
-              <div className="flex items-center gap-2 p-3 rounded-xl text-xs font-semibold text-emerald-600 bg-emerald-50 border border-emerald-200">
-                <CheckCircle2 className="w-4 h-4 flex-shrink-0" />
-                <p>{dummySuccess}</p>
-              </div>
-            )}
-
-            {/* Primary Action: Tarik Semua Data Demo */}
-            <button
-              onClick={handleSeedDummy}
-              disabled={isSeeding || isClearing}
-              className="w-full py-3.5 rounded-2xl font-bold text-sm flex items-center justify-center gap-2 transition-all active:scale-[0.98] disabled:opacity-50 text-white shadow-md"
-              style={{
-                background: 'var(--accent)',
-                boxShadow: '0 4px 16px var(--accent-glow)',
-              }}
+            
+            <div 
+              className="p-4 rounded-3xl space-y-3 border border-amber-500/20"
+              style={{ background: 'var(--surface-2)' }}
             >
-              {isSeeding ? (
-                <>
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                  <span>Sedang Menarik Data Demo...</span>
-                </>
-              ) : (
-                <>
-                  <RefreshCw className="w-4 h-4" />
-                  <span>Tarik Semua Data Demo</span>
-                </>
+              <div className="flex items-start gap-3">
+                <div className="p-2 rounded-xl" style={{ background: 'var(--accent-dim)', color: 'var(--accent)' }}>
+                  <Sparkles className="w-5 h-5" />
+                </div>
+                <div className="flex-1">
+                  <p className="font-semibold text-sm" style={{ color: 'var(--text-primary)' }}>Kelola Data Demo</p>
+                  <p className="text-xs mt-0.5 leading-relaxed" style={{ color: 'var(--text-faint)' }}>
+                    Tarik semua paket data demo (6 dompet, puluhan transaksi, anggaran bulanan, dan statistik pengeluaran), ekspor, atau reset data.
+                  </p>
+                </div>
+              </div>
+
+              {dummySuccess && (
+                <div className="flex items-center gap-2 p-3 rounded-xl text-xs font-semibold text-emerald-600 bg-emerald-50 border border-emerald-200">
+                  <CheckCircle2 className="w-4 h-4 flex-shrink-0" />
+                  <p>{dummySuccess}</p>
+                </div>
               )}
-            </button>
 
-            {/* Secondary Actions Row: Ekspor & Bersihkan */}
-            <div className="grid grid-cols-2 gap-2 pt-1">
+              {/* Primary Action: Tarik Semua Data Demo */}
               <button
-                onClick={handleExportData}
+                onClick={handleSeedDummy}
                 disabled={isSeeding || isClearing}
-                className="py-2.5 px-3 rounded-xl font-semibold text-xs flex items-center justify-center gap-1.5 transition-all active:scale-95 disabled:opacity-50"
+                className="w-full py-3.5 rounded-2xl font-bold text-sm flex items-center justify-center gap-2 transition-all active:scale-[0.98] disabled:opacity-50 text-white shadow-md cursor-pointer"
                 style={{
-                  background: 'var(--surface-3)',
-                  color: 'var(--text-primary)',
-                  border: '1px solid var(--glass-border)',
+                  background: 'var(--accent)',
+                  boxShadow: '0 4px 16px var(--accent-glow)',
+                  color: '#ffffff',
                 }}
               >
-                <Download className="w-3.5 h-3.5" />
-                <span>Unduh JSON</span>
-              </button>
-
-              <button
-                onClick={handleClearData}
-                disabled={isSeeding || isClearing}
-                className="py-2.5 px-3 rounded-xl font-semibold text-xs flex items-center justify-center gap-1.5 transition-all active:scale-95 disabled:opacity-50 text-red-500"
-                style={{
-                  background: 'var(--surface-3)',
-                  border: '1px solid var(--glass-border)',
-                }}
-              >
-                {isClearing ? (
-                  <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                {isSeeding ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    <span>Sedang Menarik Data Demo...</span>
+                  </>
                 ) : (
-                  <Trash2 className="w-3.5 h-3.5" />
+                  <>
+                    <RefreshCw className="w-4 h-4" />
+                    <span>Tarik Semua Data Demo</span>
+                  </>
                 )}
-                <span>Hapus Data</span>
               </button>
+
+              {/* Secondary Actions Row: Ekspor & Bersihkan */}
+              <div className="grid grid-cols-2 gap-2 pt-1">
+                <button
+                  onClick={handleExportData}
+                  disabled={isSeeding || isClearing}
+                  className="py-2.5 px-3 rounded-xl font-semibold text-xs flex items-center justify-center gap-1.5 transition-all active:scale-95 disabled:opacity-50 cursor-pointer"
+                  style={{
+                    background: 'var(--surface-3)',
+                    color: 'var(--text-primary)',
+                    border: '1px solid var(--glass-border)',
+                  }}
+                >
+                  <Download className="w-3.5 h-3.5" />
+                  <span>Unduh JSON</span>
+                </button>
+
+                <button
+                  onClick={handleClearData}
+                  disabled={isSeeding || isClearing}
+                  className="py-2.5 px-3 rounded-xl font-semibold text-xs flex items-center justify-center gap-1.5 transition-all active:scale-95 disabled:opacity-50 text-red-500 cursor-pointer"
+                  style={{
+                    background: 'var(--surface-3)',
+                    border: '1px solid var(--glass-border)',
+                  }}
+                >
+                  {isClearing ? (
+                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                  ) : (
+                    <Trash2 className="w-3.5 h-3.5" />
+                  )}
+                  <span>Hapus Data</span>
+                </button>
+              </div>
             </div>
           </div>
-        </div>
+        )}
 
         {/* Cloud Sync Section */}
         <div className="space-y-3">

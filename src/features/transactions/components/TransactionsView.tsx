@@ -7,6 +7,7 @@ import { useWallets } from '@/features/wallet/hooks'
 import { useCategories } from '@/features/analytics/hooks'
 import { useUIStore } from '@/stores'
 import { seedDummyData } from '@/lib/seedDummyData'
+import { useDebugMode } from '@/lib/debug'
 import { TransactionItem } from './TransactionItem'
 import { groupByDate, formatPeriod, formatRupiah } from '@/lib/formatters'
 import type { Transaction } from '@/types'
@@ -207,6 +208,7 @@ function LoadingSkeleton() {
  */
 export function TransactionsView() {
   const queryClient = useQueryClient()
+  const isDebug = useDebugMode()
   // ── Zustand ─────────────────────────────────────────────────────────
   const currentPeriod    = useUIStore(s => s.currentPeriod)
   const setCurrentPeriod = useUIStore(s => s.setCurrentPeriod)
@@ -434,7 +436,7 @@ export function TransactionsView() {
         ) : groups.length === 0 ? (
           <EmptyState
             hasFilters={hasFilters}
-            onPullDemo={handlePullDemo}
+            onPullDemo={isDebug ? handlePullDemo : undefined}
             isPulling={isPullingDemo}
           />
         ) : (

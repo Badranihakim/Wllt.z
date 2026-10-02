@@ -18,9 +18,9 @@ export function WalletSlider() {
   const totalBalance = wallets.reduce((sum, w) => sum + w.balance, 0)
 
   return (
-    <div className="mt-5">
+    <div className="mt-2">
       {/* Section label */}
-      <div className="mb-3 flex items-center justify-between px-4">
+      <div className="mb-3 flex items-center justify-between">
         <span
           className="text-xs font-semibold uppercase tracking-widest"
           style={{ color: 'var(--text-muted)' }}
@@ -33,7 +33,7 @@ export function WalletSlider() {
       </div>
 
       {/* Horizontal scroll row */}
-      <div className="flex gap-3 overflow-x-auto px-4 pb-2 scrollbar-none">
+      <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-none">
         {/* ── "All Wallets" aggregate pill ── */}
         <button
           onClick={() => setActiveWallet(null)}

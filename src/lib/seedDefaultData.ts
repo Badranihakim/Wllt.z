@@ -148,9 +148,11 @@ export { seedDummyData }
  *
  * All individual seeders are idempotent — safe to call on every boot.
  */
-export async function bootstrapLocalDB(): Promise<void> {
+export async function bootstrapLocalDB(forceSeedDemo = false): Promise<void> {
   await seedDefaultCategories()
   await seedDefaultWallet()
-  await seedDummyData()
+  if (forceSeedDemo) {
+    await seedDummyData()
+  }
 }
 

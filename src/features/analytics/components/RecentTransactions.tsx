@@ -21,7 +21,7 @@ export function RecentTransactions() {
     .slice(0, MAX_RECENT)
 
   return (
-    <div className="mt-6 px-4 pb-4">
+    <div className="flex flex-col h-full">
       {/* ── Section header ── */}
       <div className="mb-3 flex items-center justify-between">
         <span

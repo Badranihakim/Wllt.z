@@ -1,35 +1,9 @@
 import type { Table } from 'dexie'
+import { getDatabase } from '@/db'
 import type { IRepository } from '../interfaces/IRepository'
 import type { SyncStatus } from '@/types'
 
-/**
- * LocalIndexedDBRepository — Generic abstract base repository for Dexie.js.
- *
- * Implements the IRepository<T> contract with additional helpers for
- * bulk operations, soft deletes, and sync-status queries.
- *
- * Usage — extend this class for each entity:
- *
- * ```ts
- * export class TransactionRepository
- *   extends LocalIndexedDBRepository<Transaction>
- * {
- *   constructor() { super(db.transactions) }
- *
- *   // Add domain-specific query methods here
- *   async findByWallet(walletId: string) {
- *     return this.table.where('wallet_id').equals(walletId)
- *       .filter(r => !r.is_deleted).toArray()
- *   }
- * }
- * ```
- *
- * All entities stored through this repository MUST satisfy:
- *   - `id: string`   — UUID primary key
- *   - `is_deleted: boolean` — soft-delete flag
- *   - `updated_at: string`  — ISO 8601 last-modified timestamp
- *   - `sync_status: SyncStatus` — offline sync tracking
- */
+export type TableName = 'transactions' | 'categories' | 'wallets' | 'budgets' | 'settings'
 
 /** Minimum shape every persisted entity must have. */
 export interface BaseEntity {
@@ -42,10 +16,18 @@ export interface BaseEntity {
 export abstract class LocalIndexedDBRepository<T extends BaseEntity>
   implements IRepository<T>
 {
-  protected readonly table: Table<T, any, any>
+  private _tableName: TableName
 
-  constructor(table: Table<T, any, any>) {
-    this.table = table
+  constructor(tableNameOrTable: TableName | Table<T, any, any>) {
+    if (typeof tableNameOrTable === 'string') {
+      this._tableName = tableNameOrTable
+    } else {
+      this._tableName = ((tableNameOrTable as any)?.name || 'transactions') as TableName
+    }
+  }
+
+  protected get table(): Table<T, any, any> {
+    return (getDatabase() as any)[this._tableName]
   }
 
   // ─────────────────────────────────────────────

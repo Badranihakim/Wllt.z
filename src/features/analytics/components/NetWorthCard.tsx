@@ -28,7 +28,7 @@ export function NetWorthCard() {
 
   return (
     <div
-      className="glass mx-4 mt-4 rounded-3xl p-5"
+      className="glass rounded-3xl p-5"
       style={{ boxShadow: '0 4px 24px oklch(0 0 0 / 8%), 0 1px 4px oklch(0 0 0 / 4%)' }}
     >
       {/* ── Header row ── */}

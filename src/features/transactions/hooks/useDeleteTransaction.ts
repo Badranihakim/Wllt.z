@@ -2,8 +2,6 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { transactionRepo, walletRepo, budgetRepo, categoryRepo } from '@/repositories'
 import { queryKeys } from '@/lib/queryKeys'
 import { GoogleSheetsRepository } from '@/repositories/google-sheets/GoogleSheetsRepository'
-import { useAuthStore } from '@/stores'
-import { supabaseSync } from '@/services/supabaseSync'
 import type { Transaction } from '@/types'
 
 // ─────────────────────────────────────────────
@@ -119,7 +117,7 @@ export function useDeleteTransaction() {
       return txn
     },
 
-    onSuccess: async (deletedTxn) => {
+    onSuccess: async () => {
       // ── Step 5: Invalidate affected query caches ──────────────────────
       await Promise.all([
         queryClient.invalidateQueries({ queryKey: queryKeys.wallets.all() }),
@@ -129,10 +127,6 @@ export function useDeleteTransaction() {
 
       // ── Step 6: Background Sync ─────────────────────────────────────────
       GoogleSheetsRepository.sync()
-      const user = useAuthStore.getState().currentUser
-      if (user?.id && deletedTxn) {
-        supabaseSync.syncTransaction(user.id, { ...deletedTxn, is_deleted: true })
-      }
     },
   })
 }

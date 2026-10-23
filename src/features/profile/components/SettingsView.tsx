@@ -3,7 +3,6 @@ import { Cloud, CheckCircle2, Loader2, Database, AlertCircle, Sparkles, Download
 import { useQueryClient } from '@tanstack/react-query'
 import { useAuthStore } from '@/stores'
 import { GoogleSheetsRepository } from '@/repositories/google-sheets/GoogleSheetsRepository'
-import { transactionRepo } from '@/repositories'
 import { seedDummyData, clearAllData, exportAllData } from '@/lib/seedDummyData'
 import { useDebugMode } from '@/lib/debug'
 
@@ -54,17 +53,8 @@ export function SettingsView() {
 
     try {
       const cloudRepo = new GoogleSheetsRepository(token)
-      const spreadsheetId = await cloudRepo.getOrCreateSpreadsheet()
+      const spreadsheetId = await cloudRepo.syncFullFinancialReport()
       setSpreadsheetId(spreadsheetId)
-
-      // Fetch local_only transactions
-      const localTxs = await transactionRepo.findBySyncStatus('local_only')
-      
-      if (localTxs.length > 0) {
-        await cloudRepo.appendTransactions(spreadsheetId, localTxs)
-        await transactionRepo.markAsSynced(localTxs.map(t => t.id))
-      }
-      
       setSyncStatus('synced')
     } catch (err: any) {
       console.error(err)
@@ -271,7 +261,7 @@ export function SettingsView() {
               <div className="flex-1">
                 <p className="font-semibold text-sm" style={{ color: 'var(--text-primary)' }}>Sinkronisasi Data</p>
                 <p className="text-xs mt-0.5 leading-relaxed" style={{ color: 'var(--text-faint)' }}>
-                  Hubungkan ke Google Drive untuk mem-backup dan menyinkronkan data transaksi Anda ke Google Sheets.
+                  Hubungkan ke Google Drive untuk mencadangkan dan menyinkronkan data pencatatan transaksi, dompet, dan anggaran Anda ke Google Sheets secara rapi.
                 </p>
               </div>
             </div>
@@ -333,7 +323,7 @@ export function SettingsView() {
                   >
                     <div className="flex items-center gap-2">
                       <FileSpreadsheet className="w-4 h-4 flex-shrink-0" />
-                      <span className="truncate">Buka Google Spreadsheet (wllt.z_database)</span>
+                      <span className="truncate">Buka Catatan Keuangan Saya (Google Sheets)</span>
                     </div>
                     <ExternalLink className="w-3.5 h-3.5 flex-shrink-0 ml-1" />
                   </a>

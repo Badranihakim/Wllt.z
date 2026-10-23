@@ -139,10 +139,19 @@ export function AppLayout({ children }: AppLayoutProps) {
         <div className="pt-4 border-t border-slate-200/60 dark:border-slate-800/60 flex items-center justify-between gap-3">
           <div className="flex items-center gap-3 overflow-hidden">
             <div
-              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-sm font-bold shadow-sm"
+              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-sm font-bold shadow-sm overflow-hidden"
               style={{ background: 'var(--surface-3)', color: 'var(--accent)' }}
             >
-              {currentUser?.avatar || '👤'}
+              {currentUser?.avatar?.startsWith('http') ? (
+                <img
+                  src={currentUser.avatar}
+                  alt={currentUser.name || 'Avatar'}
+                  className="h-full w-full object-cover"
+                  referrerPolicy="no-referrer"
+                />
+              ) : (
+                currentUser?.avatar || '👤'
+              )}
             </div>
             <div className="flex flex-col truncate">
               <span className="text-xs font-bold truncate" style={{ color: 'var(--text-primary)' }}>

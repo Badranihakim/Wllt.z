@@ -17,7 +17,7 @@ export class GoogleSheetsRepository {
     const message = errorData.message?.toLowerCase() || ''
 
     if (status === 401 || message.includes('invalid authentication credentials')) {
-      useAuthStore.getState().logout()
+      useAuthStore.getState().setAccessToken(null)
       throw new Error('Session Expired')
     }
     throw new Error(errorData.message || 'Unknown API Error')

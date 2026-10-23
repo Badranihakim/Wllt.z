@@ -68,6 +68,9 @@ export interface Transaction {
    */
   is_deleted: boolean
 
+  /** ISO 8601 timestamp of creation */
+  created_at?: string
+
   /** ISO 8601 timestamp of last local modification */
   updated_at: string
 

@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Cloud, CheckCircle2, Loader2, Database, AlertCircle, Sparkles, Download, Trash2, RefreshCw } from 'lucide-react'
+import { Cloud, CheckCircle2, Loader2, Database, AlertCircle, Sparkles, Download, Trash2, RefreshCw, FileSpreadsheet, ExternalLink } from 'lucide-react'
 import { useQueryClient } from '@tanstack/react-query'
 import { useAuthStore } from '@/stores'
 import { GoogleSheetsRepository } from '@/repositories/google-sheets/GoogleSheetsRepository'
@@ -10,7 +10,7 @@ import { useDebugMode } from '@/lib/debug'
 export function SettingsView() {
   const queryClient = useQueryClient()
   const isDebug = useDebugMode()
-  const { accessToken, setAccessToken, setSpreadsheetId, currentUser, logout } = useAuthStore()
+  const { accessToken, setAccessToken, spreadsheetId, setSpreadsheetId, currentUser, logout } = useAuthStore()
   const [isSyncing, setIsSyncing] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [syncStatus, setSyncStatus] = useState<'idle' | 'syncing' | 'synced' | 'error' | 'session_expired'>('idle')
@@ -323,14 +323,72 @@ export function SettingsView() {
                   </span>
                 </div>
 
-                <button
-                  onClick={() => handleSync()}
-                  disabled={isSyncing}
-                  className="w-full py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2 transition-transform active:scale-[0.98] disabled:opacity-50"
-                  style={{ background: 'var(--accent)', color: '#fff' }}
-                >
-                  {isSyncing ? 'Menyinkronkan...' : 'Sinkronkan Sekarang'}
-                </button>
+                {/* Direct Google Sheets & Drive Links */}
+                <div className="space-y-2 pt-1">
+                  <a
+                    href={spreadsheetId ? `https://docs.google.com/spreadsheets/d/${spreadsheetId}/edit` : 'https://docs.google.com/spreadsheets/'}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-full py-2.5 px-3 rounded-xl font-semibold text-xs flex items-center justify-between transition-colors border border-emerald-500/30 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/20"
+                  >
+                    <div className="flex items-center gap-2">
+                      <FileSpreadsheet className="w-4 h-4 flex-shrink-0" />
+                      <span className="truncate">Buka Google Spreadsheet (wllt.z_database)</span>
+                    </div>
+                    <ExternalLink className="w-3.5 h-3.5 flex-shrink-0 ml-1" />
+                  </a>
+
+                  <a
+                    href="https://drive.google.com/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-full py-2.5 px-3 rounded-xl font-semibold text-xs flex items-center justify-between transition-colors"
+                    style={{
+                      background: 'var(--surface-3)',
+                      color: 'var(--text-primary)',
+                      border: '1px solid var(--glass-border)',
+                    }}
+                  >
+                    <div className="flex items-center gap-2">
+                      <Cloud className="w-4 h-4 text-blue-500 flex-shrink-0" />
+                      <span>Buka Google Drive Saya</span>
+                    </div>
+                    <ExternalLink className="w-3.5 h-3.5 flex-shrink-0 text-zinc-400 ml-1" />
+                  </a>
+                </div>
+
+                <div className="grid grid-cols-2 gap-2 pt-1">
+                  <button
+                    onClick={() => handleSync()}
+                    disabled={isSyncing}
+                    className="py-2.5 px-3 rounded-xl font-bold text-xs flex items-center justify-center gap-1.5 transition-transform active:scale-[0.98] disabled:opacity-50 text-white cursor-pointer"
+                    style={{ background: 'var(--accent)' }}
+                  >
+                    {isSyncing ? (
+                      <>
+                        <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                        <span>Menyinkronkan...</span>
+                      </>
+                    ) : (
+                      <>
+                        <RefreshCw className="w-3.5 h-3.5" />
+                        <span>Sinkronkan Data</span>
+                      </>
+                    )}
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setAccessToken(null)
+                      setSpreadsheetId(null)
+                      setSyncStatus('idle')
+                    }}
+                    className="py-2.5 px-3 rounded-xl font-semibold text-xs flex items-center justify-center gap-1.5 transition-colors border border-red-200 dark:border-red-900/50 text-red-500 hover:bg-red-50 dark:hover:bg-red-950/20 cursor-pointer"
+                  >
+                    <span>Putuskan Akun</span>
+                  </button>
+                </div>
               </div>
             )}
           </div>

@@ -64,15 +64,15 @@ function KeyButton({ onPress, children, variant = 'default' }: KeyButtonProps) {
   return (
     <button
       type="button"
-      onMouseDown={e => { e.preventDefault(); onPress() }}
-      onTouchStart={e => { e.preventDefault(); onPress() }}
-      className="no-tap-highlight flex select-none items-center justify-center rounded-2xl text-base font-semibold transition-all duration-100 active:scale-90 active:opacity-60"
+      onClick={onPress}
+      className="no-tap-highlight touch-manipulation flex select-none items-center justify-center rounded-2xl text-base font-semibold transition-all duration-100 active:scale-90 active:opacity-60 cursor-pointer"
       style={{
         background: s.bg,
         color: s.color,
         boxShadow: s.shadow,
         userSelect: 'none',
         WebkitUserSelect: 'none',
+        touchAction: 'manipulation',
       }}
     >
       {children}
@@ -107,10 +107,9 @@ function OperatorPanel({ onOp, onDone }: OperatorPanelProps) {
           <button
             key={op.symbol}
             type="button"
-            onMouseDown={e => { e.preventDefault(); onOp(op.symbol) }}
-            onTouchStart={e => { e.preventDefault(); onOp(op.symbol) }}
-            className="no-tap-highlight flex items-center justify-center rounded-2xl text-xl font-bold transition-all active:scale-90"
-            style={{ background: 'var(--accent-dim)', color: 'var(--accent)', height: '52px' }}
+            onClick={() => onOp(op.symbol)}
+            className="no-tap-highlight touch-manipulation flex items-center justify-center rounded-2xl text-xl font-bold transition-all active:scale-90 cursor-pointer"
+            style={{ background: 'var(--accent-dim)', color: 'var(--accent)', height: '52px', touchAction: 'manipulation' }}
           >
             {op.display}
           </button>

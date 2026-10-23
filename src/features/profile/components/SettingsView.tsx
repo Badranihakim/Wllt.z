@@ -13,6 +13,7 @@ export function SettingsView() {
   const [isSyncing, setIsSyncing] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [syncStatus, setSyncStatus] = useState<'idle' | 'syncing' | 'synced' | 'error' | 'session_expired'>('idle')
+  const [syncMessage, setSyncMessage] = useState<string | null>(null)
   const [isSeeding, setIsSeeding] = useState(false)
   const [isClearing, setIsClearing] = useState(false)
   const [dummySuccess, setDummySuccess] = useState<string | null>(null)
@@ -35,8 +36,8 @@ export function SettingsView() {
             return
           }
           setAccessToken(response.access_token)
-          // Initiate sync immediately after connect
-          handleSync(response.access_token)
+          // Initiate two-way sync immediately after connect
+          handleTwoWaySync(response.access_token)
         },
       })
       client.requestAccessToken()
@@ -45,23 +46,59 @@ export function SettingsView() {
     }
   }
 
-  const handleSync = async (token: string = accessToken!) => {
+  const handleTwoWaySync = async (token: string = accessToken!) => {
     if (!token) return
     setIsSyncing(true)
     setSyncStatus('syncing')
     setError(null)
+    setSyncMessage(null)
 
     try {
       const cloudRepo = new GoogleSheetsRepository(token)
-      const spreadsheetId = await cloudRepo.syncFullFinancialReport()
-      setSpreadsheetId(spreadsheetId)
+      const res = await cloudRepo.syncTwoWay()
+      setSpreadsheetId(res.spreadsheetId)
+      await queryClient.invalidateQueries()
       setSyncStatus('synced')
+      setSyncMessage(res.message)
+      setTimeout(() => setSyncMessage(null), 4000)
     } catch (err: any) {
       console.error(err)
       if (err.message === 'Session Expired') {
         setSyncStatus('session_expired')
       } else {
         setError(err.message || 'Gagal sinkronisasi data')
+        setSyncStatus('error')
+      }
+    } finally {
+      setIsSyncing(false)
+    }
+  }
+
+  const handlePullFromDrive = async () => {
+    if (!accessToken) return
+    setIsSyncing(true)
+    setSyncStatus('syncing')
+    setError(null)
+    setSyncMessage(null)
+
+    try {
+      const cloudRepo = new GoogleSheetsRepository(accessToken)
+      const res = await cloudRepo.pullFromDrive()
+      if (res.success) {
+        await queryClient.invalidateQueries()
+        setSyncStatus('synced')
+        setSyncMessage(res.message)
+        setTimeout(() => setSyncMessage(null), 4000)
+      } else {
+        setError(res.message)
+        setSyncStatus('error')
+      }
+    } catch (err: any) {
+      console.error(err)
+      if (err.message === 'Session Expired') {
+        setSyncStatus('session_expired')
+      } else {
+        setError(err.message || 'Gagal menarik data dari Google Drive')
         setSyncStatus('error')
       }
     } finally {
@@ -347,37 +384,61 @@ export function SettingsView() {
                   </a>
                 </div>
 
-                <div className="grid grid-cols-2 gap-2 pt-1">
+                {syncMessage && (
+                  <div className="flex items-center gap-2 p-3 rounded-xl text-xs font-semibold text-emerald-600 bg-emerald-50 border border-emerald-200">
+                    <CheckCircle2 className="w-4 h-4 flex-shrink-0" />
+                    <p>{syncMessage}</p>
+                  </div>
+                )}
+
+                {/* Sync Action Buttons */}
+                <div className="space-y-2 pt-1">
                   <button
-                    onClick={() => handleSync()}
+                    onClick={() => handleTwoWaySync()}
                     disabled={isSyncing}
-                    className="py-2.5 px-3 rounded-xl font-bold text-xs flex items-center justify-center gap-1.5 transition-transform active:scale-[0.98] disabled:opacity-50 text-white cursor-pointer"
+                    className="w-full py-3 px-3 rounded-xl font-bold text-xs flex items-center justify-center gap-2 transition-transform active:scale-[0.98] disabled:opacity-50 text-white cursor-pointer shadow-sm"
                     style={{ background: 'var(--accent)' }}
                   >
                     {isSyncing ? (
                       <>
-                        <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                        <span>Menyinkronkan...</span>
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                        <span>Sedang Memproses Sinkronisasi...</span>
                       </>
                     ) : (
                       <>
-                        <RefreshCw className="w-3.5 h-3.5" />
-                        <span>Sinkronkan Data</span>
+                        <RefreshCw className="w-4 h-4" />
+                        <span>Sinkronkan Sekarang (Dua Arah HP ↔ PC)</span>
                       </>
                     )}
                   </button>
 
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setAccessToken(null)
-                      setSpreadsheetId(null)
-                      setSyncStatus('idle')
-                    }}
-                    className="py-2.5 px-3 rounded-xl font-semibold text-xs flex items-center justify-center gap-1.5 transition-colors border border-red-200 dark:border-red-900/50 text-red-500 hover:bg-red-50 dark:hover:bg-red-950/20 cursor-pointer"
-                  >
-                    <span>Putuskan Akun</span>
-                  </button>
+                  <div className="grid grid-cols-2 gap-2">
+                    <button
+                      onClick={() => handlePullFromDrive()}
+                      disabled={isSyncing}
+                      className="py-2.5 px-3 rounded-xl font-semibold text-xs flex items-center justify-center gap-1.5 transition-colors border cursor-pointer disabled:opacity-50"
+                      style={{
+                        background: 'var(--surface-3)',
+                        color: 'var(--text-primary)',
+                        borderColor: 'var(--glass-border)',
+                      }}
+                    >
+                      <Download className="w-3.5 h-3.5 text-blue-500" />
+                      <span>Tarik Data Drive</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setAccessToken(null)
+                        setSpreadsheetId(null)
+                        setSyncStatus('idle')
+                      }}
+                      className="py-2.5 px-3 rounded-xl font-semibold text-xs flex items-center justify-center gap-1.5 transition-colors border border-red-200 dark:border-red-900/50 text-red-500 hover:bg-red-50 dark:hover:bg-red-950/20 cursor-pointer"
+                    >
+                      <span>Putuskan Akun</span>
+                    </button>
+                  </div>
                 </div>
               </div>
             )}

@@ -23,3 +23,7 @@ dist-ssr
 *.sln
 *.sw?
 *.pdf
+
+# Agent and skill local configurations
+.agent/
+.agents/

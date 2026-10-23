@@ -166,8 +166,17 @@ export function SettingsView() {
           className="flex flex-col items-center justify-center p-6 rounded-3xl"
           style={{ background: 'var(--surface-2)', border: '1px solid var(--glass-border)' }}
         >
-          <div className="h-20 w-20 rounded-full mb-3 flex items-center justify-center text-3xl shadow-sm" style={{ background: 'var(--surface-3)' }}>
-            {currentUser?.avatar || '👤'}
+          <div className="h-20 w-20 rounded-full mb-3 flex items-center justify-center text-3xl shadow-sm overflow-hidden" style={{ background: 'var(--surface-3)' }}>
+            {currentUser?.avatar?.startsWith('http') ? (
+              <img
+                src={currentUser.avatar}
+                alt={currentUser.name || 'Avatar'}
+                className="h-full w-full object-cover"
+                referrerPolicy="no-referrer"
+              />
+            ) : (
+              currentUser?.avatar || '👤'
+            )}
           </div>
           <h2 className="font-bold text-lg" style={{ color: 'var(--text-primary)' }}>
             {currentUser?.name || 'Pengguna Lokal'}

@@ -1,9 +1,11 @@
 import { transactionRepo, categoryRepo, walletRepo, budgetRepo } from '@/repositories'
+import { db } from '@/db'
 import { useAuthStore } from '@/stores'
 import type { Category, Wallet } from '@/types'
 
 export class GoogleSheetsRepository {
   public static readonly SPREADSHEET_TITLE = 'Catatan Keuangan Saya - Wllt.z'
+  public static readonly SYNC_SHEET_TITLE = '_wlltz_sync_data'
   private static readonly OLD_DB_NAME = 'wllt.z_database'
 
   private accessToken: string
@@ -73,6 +75,7 @@ export class GoogleSheetsRepository {
         sheets: [
           { properties: { title: 'Catatan Keuangan' } },
           { properties: { title: 'Ringkasan & Saldo Dompet' } },
+          { properties: { title: GoogleSheetsRepository.SYNC_SHEET_TITLE, hidden: true } },
         ],
       }),
     })
@@ -268,7 +271,18 @@ export class GoogleSheetsRepository {
       ),
     ])
 
-    // 6. Write formatted values
+    // Structured snapshot payload for multi-device sync
+    const syncSnapshot = {
+      version: 1,
+      lastUpdated: new Date().toISOString(),
+      transactions,
+      categories,
+      wallets,
+      budgets,
+    }
+    const syncJsonString = JSON.stringify(syncSnapshot)
+
+    // 6. Write formatted values + structured snapshot
     const writeRes = await fetch(
       `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values:batchUpdate`,
       {
@@ -287,6 +301,10 @@ export class GoogleSheetsRepository {
             {
               range: "'Ringkasan & Saldo Dompet'!A1",
               values: sheet2Values,
+            },
+            {
+              range: `'${GoogleSheetsRepository.SYNC_SHEET_TITLE}'!A1`,
+              values: [[syncJsonString]],
             },
           ],
         }),
@@ -327,6 +345,7 @@ export class GoogleSheetsRepository {
 
     const hasTxSheet = existingSheets.some(s => s.title === 'Catatan Keuangan')
     const hasSummarySheet = existingSheets.some(s => s.title === 'Ringkasan & Saldo Dompet')
+    const hasSyncSheet = existingSheets.some(s => s.title === GoogleSheetsRepository.SYNC_SHEET_TITLE)
 
     const requests: any[] = []
 
@@ -367,6 +386,17 @@ export class GoogleSheetsRepository {
           addSheet: { properties: { title: 'Ringkasan & Saldo Dompet' } },
         })
       }
+    }
+
+    if (!hasSyncSheet) {
+      requests.push({
+        addSheet: {
+          properties: {
+            title: GoogleSheetsRepository.SYNC_SHEET_TITLE,
+            hidden: true,
+          },
+        },
+      })
     }
 
     if (requests.length > 0) {
@@ -717,6 +747,91 @@ export class GoogleSheetsRepository {
     } catch (stylingErr) {
       console.warn('[GoogleSheetsRepository] Styling batchUpdate warning:', stylingErr)
     }
+  }
+
+  /**
+   * Pull structured snapshot data from Google Sheets and load it into local Dexie database.
+   * Useful when user logs in on a new device (PC / mobile) or forces a restore.
+   */
+  async pullFromDrive(targetSpreadsheetId?: string): Promise<{ success: boolean; message: string; recordCount?: number }> {
+    const spreadsheetId = targetSpreadsheetId || (await this.getOrCreateSpreadsheet())
+
+    try {
+      const readRes = await fetch(
+        `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/'${GoogleSheetsRepository.SYNC_SHEET_TITLE}'!A1`,
+        {
+          headers: { Authorization: `Bearer ${this.accessToken}` },
+        }
+      )
+      const readData = await readRes.json()
+      if (readData.error) {
+        // Tab might not exist yet if created prior to this feature
+        return { success: false, message: 'Lembar sinkronisasi belum tersedia di spreadsheet ini.' }
+      }
+
+      const rawJson = readData.values?.[0]?.[0]
+      if (!rawJson) {
+        return { success: false, message: 'Tidak ada data snapshot di Google Drive.' }
+      }
+
+      const snapshot = JSON.parse(rawJson)
+      const { transactions = [], categories = [], wallets = [], budgets = [] } = snapshot
+
+      // Insert/merge into local Dexie IndexedDB
+      await db.transaction('rw', [db.transactions, db.categories, db.wallets, db.budgets], async () => {
+        if (categories.length > 0) {
+          await db.categories.bulkPut(categories)
+        }
+        if (wallets.length > 0) {
+          await db.wallets.bulkPut(wallets)
+        }
+        if (budgets.length > 0) {
+          await db.budgets.bulkPut(budgets)
+        }
+        if (transactions.length > 0) {
+          await db.transactions.bulkPut(transactions)
+        }
+      })
+
+      const totalCount = transactions.length + categories.length + wallets.length + budgets.length
+      return {
+        success: true,
+        message: `Berhasil menarik ${transactions.length} transaksi & ${wallets.length} dompet dari Google Drive!`,
+        recordCount: totalCount,
+      }
+    } catch (err: any) {
+      console.error('[GoogleSheetsRepository.pullFromDrive] Error:', err)
+      return { success: false, message: err?.message || 'Gagal menarik data dari Google Drive.' }
+    }
+  }
+
+  /**
+   * Alias for syncFullFinancialReport: writes human-readable sheets + JSON sync snapshot.
+   */
+  async pushToDrive(targetSpreadsheetId?: string): Promise<string> {
+    return this.syncFullFinancialReport(targetSpreadsheetId)
+  }
+
+  /**
+   * Smart bidirectional sync:
+   * - If local database has no transactions, checks Drive to pull snapshot.
+   * - Otherwise, pushes local state to Drive.
+   */
+  async syncTwoWay(targetSpreadsheetId?: string): Promise<{ action: 'pulled' | 'pushed'; message: string; spreadsheetId: string }> {
+    const spreadsheetId = targetSpreadsheetId || (await this.getOrCreateSpreadsheet())
+    const localTxCount = await db.transactions.count()
+
+    if (localTxCount === 0) {
+      // Local is empty (e.g. freshly opened device) -> attempt pull
+      const pullResult = await this.pullFromDrive(spreadsheetId)
+      if (pullResult.success && pullResult.recordCount && pullResult.recordCount > 0) {
+        return { action: 'pulled', message: pullResult.message, spreadsheetId }
+      }
+    }
+
+    // Otherwise push local database state to Drive
+    await this.pushToDrive(spreadsheetId)
+    return { action: 'pushed', message: 'Data lokal berhasil diunggah ke Google Drive!', spreadsheetId }
   }
 
   /**

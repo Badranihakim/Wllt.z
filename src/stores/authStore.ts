@@ -26,6 +26,7 @@ export interface AuthState {
   registeredUsers: UserAccount[]
 
   login: (email: string, password: string) => { success: boolean; error?: string }
+  loginWithGoogle: (profile: { email: string; name: string; avatar?: string; sub?: string }) => Promise<{ success: boolean; error?: string }>
   register: (name: string, email: string, password: string) => { success: boolean; error?: string }
   logout: () => void
 }
@@ -56,6 +57,47 @@ export const useAuthStore = create<AuthState>()(
         }
 
         // Set database for this user
+        setDatabaseUser(user.id)
+
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { password: _, ...profile } = user
+        set({ currentUser: profile })
+        return { success: true }
+      },
+
+      loginWithGoogle: async (googleProfile) => {
+        const normalizedEmail = googleProfile.email.trim().toLowerCase()
+        const cleanName = googleProfile.name.trim() || 'Google User'
+
+        // Check if user already registered with this email
+        let user = get().registeredUsers.find(
+          (u) => u.email.toLowerCase() === normalizedEmail
+        )
+
+        if (!user) {
+          // Auto create account for this Google user
+          const newId = 'g_' + (googleProfile.sub || crypto.randomUUID().slice(0, 10))
+          user = {
+            id: newId,
+            name: cleanName,
+            email: normalizedEmail,
+            password: '', // OAuth account doesn't use local password
+            avatar: googleProfile.avatar || '👤',
+            createdAt: new Date().toISOString(),
+          }
+
+          set((state) => ({
+            registeredUsers: [...state.registeredUsers, user!],
+          }))
+        } else if (googleProfile.avatar && user.avatar !== googleProfile.avatar) {
+          // Update avatar if provided
+          user = { ...user, avatar: googleProfile.avatar, name: cleanName }
+          set((state) => ({
+            registeredUsers: state.registeredUsers.map((u) => (u.id === user!.id ? user! : u)),
+          }))
+        }
+
+        // Bind Dexie IndexedDB to this Google User
         setDatabaseUser(user.id)
 
         // eslint-disable-next-line @typescript-eslint/no-unused-vars

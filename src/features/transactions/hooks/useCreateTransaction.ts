@@ -2,8 +2,6 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { transactionRepo, walletRepo, budgetRepo, categoryRepo } from '@/repositories'
 import { queryKeys } from '@/lib/queryKeys'
 import { GoogleSheetsRepository } from '@/repositories/google-sheets/GoogleSheetsRepository'
-import { useAuthStore } from '@/stores'
-import { supabaseSync } from '@/services/supabaseSync'
 import type { CreateTransactionDTO, Transaction } from '@/types'
 
 // ─────────────────────────────────────────────
@@ -134,15 +132,6 @@ export function useCreateTransaction() {
 
       // ── Step 4: Background Sync ─────────────────────────────────────────
       GoogleSheetsRepository.sync()
-      const user = useAuthStore.getState().currentUser
-      if (user?.id) {
-        supabaseSync.syncTransaction(user.id, newTransaction)
-        deltas.forEach(({ walletId }) => {
-          walletRepo.findById(walletId).then(w => {
-            if (w && user.id) supabaseSync.syncWallet(user.id, w)
-          })
-        })
-      }
     },
   })
 }

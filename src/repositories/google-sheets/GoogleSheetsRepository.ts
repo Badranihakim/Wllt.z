@@ -295,8 +295,8 @@ export class GoogleSheetsRepository {
     const writeData = await writeRes.json()
     if (writeData.error) this.handleApiError(writeData.error)
 
-    // 7. Format styling (Frozen rows, bold headers, background colors)
-    await this.applySheetStyling(spreadsheetId)
+    // 7. Format styling (Frozen rows, bold headers, column widths, Rupiah format)
+    await this.applySheetStyling(spreadsheetId, totalTxCount, wallets.length, budgets.length)
 
     // 8. Mark local transactions as synced
     if (transactions.length > 0) {
@@ -382,9 +382,14 @@ export class GoogleSheetsRepository {
   }
 
   /**
-   * Apply professional header styling, colors, and frozen header rows.
+   * Apply professional header styling, colors, generous column widths, and Rupiah currency format.
    */
-  private async applySheetStyling(spreadsheetId: string): Promise<void> {
+  private async applySheetStyling(
+    spreadsheetId: string,
+    totalTxCount: number,
+    walletCount: number,
+    budgetCount: number
+  ): Promise<void> {
     try {
       const metaRes = await fetch(
         `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}?fields=sheets.properties`,
@@ -400,8 +405,16 @@ export class GoogleSheetsRepository {
 
       const requests: any[] = []
 
+      // Currency pattern: e.g. Rp 200,000 / -Rp 200,000 / Rp 0
+      const rupiahFormat = {
+        type: 'CURRENCY',
+        pattern: '"Rp "#,##0;("-Rp "#,##0);"Rp "0',
+      }
+
       if (txSheet) {
         const sheetId = txSheet.properties.sheetId
+
+        // 1. Freeze first 4 rows
         requests.push({
           updateSheetProperties: {
             properties: {
@@ -412,6 +425,48 @@ export class GoogleSheetsRepository {
           },
         })
 
+        // 2. Set generous column widths so no header or text is clipped
+        const txColWidths = [
+          55,  // A: No
+          125, // B: Tanggal
+          120, // C: Jenis
+          180, // D: Kategori
+          190, // E: Dompet / Rekening
+          240, // F: Judul / Keterangan
+          180, // G: Pemasukan (Rp)
+          180, // H: Pengeluaran (Rp)
+          250, // I: Catatan Tambahan
+        ]
+        txColWidths.forEach((pixelSize, idx) => {
+          requests.push({
+            updateDimensionProperties: {
+              range: {
+                sheetId,
+                dimension: 'COLUMNS',
+                startIndex: idx,
+                endIndex: idx + 1,
+              },
+              properties: { pixelSize },
+              fields: 'pixelSize',
+            },
+          })
+        })
+
+        // 3. Header Row (Row 4) height: 38px
+        requests.push({
+          updateDimensionProperties: {
+            range: {
+              sheetId,
+              dimension: 'ROWS',
+              startIndex: 3,
+              endIndex: 4,
+            },
+            properties: { pixelSize: 38 },
+            fields: 'pixelSize',
+          },
+        })
+
+        // 4. Header Row styling: Royal Blue background, white bold text
         requests.push({
           repeatCell: {
             range: {
@@ -431,12 +486,14 @@ export class GoogleSheetsRepository {
                 },
                 horizontalAlignment: 'CENTER',
                 verticalAlignment: 'MIDDLE',
+                wrapStrategy: 'WRAP',
               },
             },
-            fields: 'userEnteredFormat(backgroundColor,textFormat,horizontalAlignment,verticalAlignment)',
+            fields: 'userEnteredFormat(backgroundColor,textFormat,horizontalAlignment,verticalAlignment,wrapStrategy)',
           },
         })
 
+        // 5. Title row styling (Row 1)
         requests.push({
           repeatCell: {
             range: {
@@ -458,10 +515,77 @@ export class GoogleSheetsRepository {
             fields: 'userEnteredFormat(textFormat)',
           },
         })
+
+        // 6. Currency format for Pemasukan (Col G / 6) & Pengeluaran (Col H / 7)
+        const maxTxRow = Math.max(6, 4 + totalTxCount + 4)
+        requests.push({
+          repeatCell: {
+            range: {
+              sheetId,
+              startRowIndex: 4,
+              endRowIndex: maxTxRow,
+              startColumnIndex: 6,
+              endColumnIndex: 8,
+            },
+            cell: {
+              userEnteredFormat: {
+                numberFormat: rupiahFormat,
+                horizontalAlignment: 'RIGHT',
+              },
+            },
+            fields: 'userEnteredFormat(numberFormat,horizontalAlignment)',
+          },
+        })
+
+        // 7. Styling for TOTAL and SALDO BERSIH rows
+        if (totalTxCount > 0) {
+          const totalRowIdx = 4 + totalTxCount + 1
+          // TOTAL row (light gray, bold)
+          requests.push({
+            repeatCell: {
+              range: {
+                sheetId,
+                startRowIndex: totalRowIdx,
+                endRowIndex: totalRowIdx + 1,
+                startColumnIndex: 0,
+                endColumnIndex: 9,
+              },
+              cell: {
+                userEnteredFormat: {
+                  backgroundColor: { red: 0.94, green: 0.96, blue: 0.98 },
+                  textFormat: { bold: true },
+                },
+              },
+              fields: 'userEnteredFormat(backgroundColor,textFormat)',
+            },
+          })
+
+          // SALDO BERSIH row (soft blue, bold)
+          requests.push({
+            repeatCell: {
+              range: {
+                sheetId,
+                startRowIndex: totalRowIdx + 1,
+                endRowIndex: totalRowIdx + 2,
+                startColumnIndex: 0,
+                endColumnIndex: 9,
+              },
+              cell: {
+                userEnteredFormat: {
+                  backgroundColor: { red: 0.91, green: 0.95, blue: 1.0 },
+                  textFormat: { bold: true },
+                },
+              },
+              fields: 'userEnteredFormat(backgroundColor,textFormat)',
+            },
+          })
+        }
       }
 
       if (summarySheet) {
         const sheetId = summarySheet.properties.sheetId
+
+        // 1. Freeze first 4 rows
         requests.push({
           updateSheetProperties: {
             properties: {
@@ -472,6 +596,44 @@ export class GoogleSheetsRepository {
           },
         })
 
+        // 2. Set column widths for summary
+        const summaryColWidths = [
+          220, // A: Nama Dompet / Rekening
+          130, // B: Tipe
+          190, // C: Saldo Saat Ini (Rp)
+          110, // D: Mata Uang
+          190, // E: Status
+        ]
+        summaryColWidths.forEach((pixelSize, idx) => {
+          requests.push({
+            updateDimensionProperties: {
+              range: {
+                sheetId,
+                dimension: 'COLUMNS',
+                startIndex: idx,
+                endIndex: idx + 1,
+              },
+              properties: { pixelSize },
+              fields: 'pixelSize',
+            },
+          })
+        })
+
+        // 3. Header row height: 38px
+        requests.push({
+          updateDimensionProperties: {
+            range: {
+              sheetId,
+              dimension: 'ROWS',
+              startIndex: 3,
+              endIndex: 4,
+            },
+            properties: { pixelSize: 38 },
+            fields: 'pixelSize',
+          },
+        })
+
+        // 4. Header Row styling: Emerald Green background
         requests.push({
           repeatCell: {
             range: {
@@ -491,11 +653,55 @@ export class GoogleSheetsRepository {
                 },
                 horizontalAlignment: 'CENTER',
                 verticalAlignment: 'MIDDLE',
+                wrapStrategy: 'WRAP',
               },
             },
-            fields: 'userEnteredFormat(backgroundColor,textFormat,horizontalAlignment,verticalAlignment)',
+            fields: 'userEnteredFormat(backgroundColor,textFormat,horizontalAlignment,verticalAlignment,wrapStrategy)',
           },
         })
+
+        // 5. Format wallet balances as Rupiah (Col C / 2)
+        requests.push({
+          repeatCell: {
+            range: {
+              sheetId,
+              startRowIndex: 4,
+              endRowIndex: Math.max(5, 4 + walletCount + 2),
+              startColumnIndex: 2,
+              endColumnIndex: 3,
+            },
+            cell: {
+              userEnteredFormat: {
+                numberFormat: rupiahFormat,
+                horizontalAlignment: 'RIGHT',
+              },
+            },
+            fields: 'userEnteredFormat(numberFormat,horizontalAlignment)',
+          },
+        })
+
+        // 6. Format budgets as Rupiah if budgets exist
+        if (budgetCount > 0) {
+          const budgetStartRow = 4 + walletCount + 4
+          requests.push({
+            repeatCell: {
+              range: {
+                sheetId,
+                startRowIndex: budgetStartRow,
+                endRowIndex: budgetStartRow + budgetCount + 1,
+                startColumnIndex: 1,
+                endColumnIndex: 4,
+              },
+              cell: {
+                userEnteredFormat: {
+                  numberFormat: rupiahFormat,
+                  horizontalAlignment: 'RIGHT',
+                },
+              },
+              fields: 'userEnteredFormat(numberFormat,horizontalAlignment)',
+            },
+          })
+        }
       }
 
       if (requests.length > 0) {

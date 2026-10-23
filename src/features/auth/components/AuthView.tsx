@@ -26,13 +26,13 @@ export function AuthView({ onSuccess }: AuthViewProps) {
 
     try {
       if (mode === 'login') {
-        const res = login(email, password)
+        const res = await login(email, password)
         if (!res.success) {
           setError(res.error || 'Gagal masuk. Periksa email dan password Anda.')
           return
         }
       } else {
-        const res = register(name, email, password)
+        const res = await register(name, email, password)
         if (!res.success) {
           setError(res.error || 'Gagal mendaftar. Silakan coba lagi.')
           return

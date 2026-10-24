@@ -322,10 +322,11 @@ export function AppLayout({ children }: AppLayoutProps) {
 
       {/* ── Mobile Bottom Navigation Bar (md:hidden) ── */}
       <nav
-        className="md:hidden glass safe-bottom fixed inset-x-0 bottom-0 z-50"
+        className="md:hidden safe-bottom fixed inset-x-0 bottom-0 z-50 border-t"
         style={{
-          borderTop: '1px solid var(--glass-border)',
-          boxShadow: '0 -4px 24px oklch(0 0 0 / 8%)',
+          background: 'var(--surface-1)',
+          borderColor: 'var(--glass-border)',
+          boxShadow: '0 -4px 20px rgba(0, 0, 0, 0.06)',
         }}
       >
         <div className="flex h-[72px] items-center justify-around px-2 max-w-md mx-auto">

@@ -416,7 +416,7 @@ export function SettingsView() {
                     ) : (
                       <>
                         <RefreshCw className="w-4 h-4" />
-                        <span>Sinkronkan Sekarang (Dua Arah HP ↔ PC)</span>
+                        <span>Sinkronkan Sekarang</span>
                       </>
                     )}
                   </button>

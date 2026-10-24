@@ -159,7 +159,7 @@ export function SettingsView() {
         </h1>
       </div>
 
-      <div className="flex-1 overflow-y-auto px-4 pb-8 space-y-6">
+      <div className="flex-1 overflow-y-auto px-4 pb-28 sm:pb-16 space-y-6">
         
         {/* Account Info card */}
         <div 

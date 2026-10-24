@@ -365,10 +365,13 @@ export function SettingsView() {
                     href={spreadsheetId ? `https://docs.google.com/spreadsheets/d/${spreadsheetId}/edit` : 'https://docs.google.com/spreadsheets/'}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="w-full py-2.5 px-3 rounded-xl font-semibold text-xs flex items-center gap-2 transition-colors border border-emerald-500/30 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/20"
+                    className="w-full py-2.5 px-3 rounded-xl font-semibold text-xs flex items-center justify-between transition-colors border border-emerald-500/30 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/20"
                   >
-                    <FileSpreadsheet className="w-4 h-4 flex-shrink-0" />
-                    <span className="truncate">Buka Catatan Saya</span>
+                    <div className="flex items-center gap-2">
+                      <FileSpreadsheet className="w-4 h-4 flex-shrink-0" />
+                      <span className="truncate">Buka Catatan Saya</span>
+                    </div>
+                    <ExternalLink className="w-3.5 h-3.5 flex-shrink-0 ml-1" />
                   </a>
 
                   <a

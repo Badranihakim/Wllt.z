@@ -1,4 +1,4 @@
-import { type ReactNode } from 'react'
+import { useState, type ReactNode } from 'react'
 import {
   Home,
   BarChart2,
@@ -8,8 +8,14 @@ import {
   ArrowRightLeft,
   Target,
   LogOut,
+  RefreshCw,
+  Download,
+  Loader2,
+  CheckCircle2,
 } from 'lucide-react'
+import { useQueryClient } from '@tanstack/react-query'
 import { useUIStore, type ActiveTab, useAuthStore } from '@/stores'
+import { GoogleSheetsRepository } from '@/repositories/google-sheets/GoogleSheetsRepository'
 import { AddTransactionModal } from '@/features/transactions/components/AddTransactionModal'
 import { AddWalletModal }     from '@/features/wallet/components/AddWalletModal'
 
@@ -56,11 +62,67 @@ interface AppLayoutProps {
  * - Mobile (<md): Familiar mobile-native shell with bottom navigation and center FAB.
  */
 export function AppLayout({ children }: AppLayoutProps) {
+  const queryClient       = useQueryClient()
   const activeTab         = useUIStore(s => s.activeTab)
   const navigateTo        = useUIStore(s => s.navigateTo)
   const openAddTransaction = useUIStore(s => s.openAddTransaction)
   const currentUser       = useAuthStore(s => s.currentUser)
+  const accessToken       = useAuthStore(s => s.accessToken)
+  const setSpreadsheetId  = useAuthStore(s => s.setSpreadsheetId)
   const logout            = useAuthStore(s => s.logout)
+
+  const [isSyncing, setIsSyncing] = useState(false)
+  const [syncFeedback, setSyncFeedback] = useState<string | null>(null)
+
+  const handleQuickSync = async () => {
+    if (!accessToken) {
+      navigateTo('settings')
+      return
+    }
+    setIsSyncing(true)
+    setSyncFeedback(null)
+    try {
+      const repo = new GoogleSheetsRepository(accessToken)
+      const res = await repo.syncTwoWay()
+      setSpreadsheetId(res.spreadsheetId)
+      await queryClient.invalidateQueries()
+      setSyncFeedback('Tersinkron')
+      setTimeout(() => setSyncFeedback(null), 3000)
+    } catch (err: any) {
+      console.error('[QuickSync] Error:', err)
+      setSyncFeedback('Gagal')
+      setTimeout(() => setSyncFeedback(null), 3000)
+    } finally {
+      setIsSyncing(false)
+    }
+  }
+
+  const handleQuickPull = async () => {
+    if (!accessToken) {
+      navigateTo('settings')
+      return
+    }
+    setIsSyncing(true)
+    setSyncFeedback(null)
+    try {
+      const repo = new GoogleSheetsRepository(accessToken)
+      const res = await repo.pullFromDrive()
+      if (res.success) {
+        await queryClient.invalidateQueries()
+        setSyncFeedback('Data Ditarik')
+        setTimeout(() => setSyncFeedback(null), 3000)
+      } else {
+        setSyncFeedback('Gagal')
+        setTimeout(() => setSyncFeedback(null), 3000)
+      }
+    } catch (err: any) {
+      console.error('[QuickPull] Error:', err)
+      setSyncFeedback('Gagal')
+      setTimeout(() => setSyncFeedback(null), 3000)
+    } finally {
+      setIsSyncing(false)
+    }
+  }
 
   return (
     <div className="flex min-h-screen w-full"
@@ -71,7 +133,7 @@ export function AppLayout({ children }: AppLayoutProps) {
         className="hidden md:flex md:w-64 lg:w-72 flex-col justify-between shrink-0 h-screen sticky top-0 border-r border-slate-200/80 dark:border-slate-800/80 p-5 z-40"
         style={{ background: 'var(--surface-1)' }}
       >
-        <div className="flex flex-col gap-6">
+        <div className="flex flex-col gap-5">
           {/* Brand header */}
           <div className="flex items-center gap-3 px-2 pt-2">
             <div
@@ -93,19 +155,69 @@ export function AppLayout({ children }: AppLayoutProps) {
             </div>
           </div>
 
-          {/* Quick Add Transaction Button */}
-          <button
-            type="button"
-            onClick={openAddTransaction}
-            className="flex items-center justify-center gap-2 w-full py-3 px-4 rounded-2xl text-sm font-bold text-white transition-all shadow-md active:scale-95 hover:opacity-90 cursor-pointer"
-            style={{
-              background: 'var(--accent)',
-              color: 'var(--accent-foreground, #fff)',
-            }}
-          >
-            <Plus className="w-4 h-4 stroke-[3]" />
-            <span>Catat Transaksi</span>
-          </button>
+          {/* Action Buttons Section */}
+          <div className="flex flex-col gap-2">
+            {/* Quick Add Transaction Button */}
+            <button
+              type="button"
+              onClick={openAddTransaction}
+              className="flex items-center justify-center gap-2 w-full py-3 px-4 rounded-2xl text-sm font-bold text-white transition-all shadow-md active:scale-95 hover:opacity-90 cursor-pointer"
+              style={{
+                background: 'var(--accent)',
+                color: 'var(--accent-foreground, #fff)',
+              }}
+            >
+              <Plus className="w-4 h-4 stroke-[3]" />
+              <span>Catat Transaksi</span>
+            </button>
+
+            {/* Quick Sync & Tarik Data Buttons */}
+            <div className="grid grid-cols-2 gap-1.5">
+              <button
+                type="button"
+                onClick={handleQuickSync}
+                disabled={isSyncing}
+                title={accessToken ? 'Sinkronkan data dengan Google Drive' : 'Hubungkan Google Drive di Pengaturan'}
+                className="flex items-center justify-center gap-1.5 py-2 px-2.5 rounded-xl text-[11px] font-semibold transition-all border shadow-xs active:scale-95 cursor-pointer disabled:opacity-50"
+                style={{
+                  background: 'var(--surface-2)',
+                  borderColor: 'var(--glass-border)',
+                  color: 'var(--text-primary)',
+                }}
+              >
+                {isSyncing ? (
+                  <Loader2 className="w-3.5 h-3.5 animate-spin text-blue-500" />
+                ) : syncFeedback === 'Tersinkron' ? (
+                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />
+                ) : (
+                  <RefreshCw className="w-3.5 h-3.5 text-blue-500" />
+                )}
+                <span className="truncate">{syncFeedback || 'Sinkronkan'}</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={handleQuickPull}
+                disabled={isSyncing}
+                title={accessToken ? 'Tarik data terbaru dari Google Drive' : 'Hubungkan Google Drive di Pengaturan'}
+                className="flex items-center justify-center gap-1.5 py-2 px-2.5 rounded-xl text-[11px] font-semibold transition-all border shadow-xs active:scale-95 cursor-pointer disabled:opacity-50"
+                style={{
+                  background: 'var(--surface-2)',
+                  borderColor: 'var(--glass-border)',
+                  color: 'var(--text-primary)',
+                }}
+              >
+                {isSyncing ? (
+                  <Loader2 className="w-3.5 h-3.5 animate-spin text-blue-500" />
+                ) : syncFeedback === 'Data Ditarik' ? (
+                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />
+                ) : (
+                  <Download className="w-3.5 h-3.5 text-emerald-500" />
+                )}
+                <span className="truncate">Tarik Data</span>
+              </button>
+            </div>
+          </div>
 
           {/* Navigation Links */}
           <nav className="flex flex-col gap-1.5">

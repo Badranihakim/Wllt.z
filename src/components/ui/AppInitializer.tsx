@@ -22,14 +22,14 @@ function SplashScreen({ error }: SplashScreenProps) {
     >
       {/* Logo mark */}
       <div
-        className="flex h-20 w-20 items-center justify-center rounded-3xl text-4xl shadow-xl"
+        className="flex h-20 w-20 items-center justify-center rounded-3xl shadow-xl p-4"
         style={{
           background: 'oklch(0.975 0.004 240)',
           border: '1px solid var(--glass-border)',
           boxShadow: '0 8px 32px oklch(0 0 0 / 10%), 0 0 0 1px oklch(1 0 0 / 70%)',
         }}
       >
-        💎
+        <img src="/favicon.svg" alt="wllt.z logo" className="h-full w-full object-contain" />
       </div>
 
       {/* App name */}

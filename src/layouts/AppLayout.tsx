@@ -75,13 +75,13 @@ export function AppLayout({ children }: AppLayoutProps) {
           {/* Brand header */}
           <div className="flex items-center gap-3 px-2 pt-2">
             <div
-              className="flex h-10 w-10 items-center justify-center rounded-2xl text-xl shadow-md"
+              className="flex h-10 w-10 items-center justify-center rounded-2xl shadow-md p-2"
               style={{
                 background: 'oklch(0.975 0.004 240)',
                 border: '1px solid var(--glass-border)',
               }}
             >
-              💎
+              <img src="/favicon.svg" alt="wllt.z logo" className="h-full w-full object-contain" />
             </div>
             <div>
               <h1 className="text-xl font-bold tracking-tight" style={{ color: 'var(--text-primary)' }}>
@@ -180,7 +180,9 @@ export function AppLayout({ children }: AppLayoutProps) {
         <div className="md:hidden flex items-center justify-between px-4 py-3 border-b border-slate-200/60 dark:border-slate-800/60"
              style={{ background: 'var(--surface-1)' }}>
           <div className="flex items-center gap-2">
-            <span className="text-lg">💎</span>
+            <div className="h-6 w-6 flex items-center justify-center">
+              <img src="/favicon.svg" alt="wllt.z logo" className="h-full w-full object-contain" />
+            </div>
             <span className="text-sm font-bold tracking-tight" style={{ color: 'var(--text-primary)' }}>
               wllt<span style={{ color: 'var(--accent)' }}>.z</span>
             </span>

@@ -103,9 +103,9 @@ export function AuthView({ onSuccess }: AuthViewProps) {
         
         {/* Header / Brand */}
         <div className="flex flex-col items-center text-center mb-8">
-          <div className="flex h-16 w-16 items-center justify-center rounded-2xl text-3xl shadow-lg mb-3"
+          <div className="flex h-16 w-16 items-center justify-center rounded-2xl shadow-lg mb-3 p-3"
                style={{ background: 'oklch(0.975 0.004 240)', border: '1px solid var(--glass-border)' }}>
-            💎
+            <img src="/favicon.svg" alt="wllt.z logo" className="h-full w-full object-contain" />
           </div>
           <h1 className="text-2xl font-bold tracking-tight" style={{ color: 'var(--text-primary)' }}>
             wllt<span style={{ color: 'var(--accent)' }}>.z</span>

@@ -5,6 +5,7 @@ import { useAuthStore } from '@/stores'
 import { GoogleSheetsRepository } from '@/repositories/google-sheets/GoogleSheetsRepository'
 import { seedDummyData, clearAllData, exportAllData } from '@/lib/seedDummyData'
 import { useDebugMode } from '@/lib/debug'
+import { formatSyncError } from '@/lib/errorUtils'
 
 export function SettingsView() {
   const queryClient = useQueryClient()
@@ -48,6 +49,11 @@ export function SettingsView() {
 
   const handleTwoWaySync = async (token: string = accessToken!) => {
     if (!token) return
+    if (typeof navigator !== 'undefined' && !navigator.onLine) {
+      setError('Perangkat sedang offline. Sambungkan ke koneksi internet untuk melakukan sinkronisasi dengan Google Drive.')
+      setSyncStatus('error')
+      return
+    }
     setIsSyncing(true)
     setSyncStatus('syncing')
     setError(null)
@@ -66,7 +72,7 @@ export function SettingsView() {
       if (err.message === 'Session Expired') {
         setSyncStatus('session_expired')
       } else {
-        setError(err.message || 'Gagal sinkronisasi data')
+        setError(formatSyncError(err, 'sync'))
         setSyncStatus('error')
       }
     } finally {
@@ -76,6 +82,11 @@ export function SettingsView() {
 
   const handlePullFromDrive = async () => {
     if (!accessToken) return
+    if (typeof navigator !== 'undefined' && !navigator.onLine) {
+      setError('Perangkat sedang offline. Sambungkan ke koneksi internet untuk menarik data dari Google Drive.')
+      setSyncStatus('error')
+      return
+    }
     setIsSyncing(true)
     setSyncStatus('syncing')
     setError(null)
@@ -90,7 +101,7 @@ export function SettingsView() {
         setSyncMessage(res.message)
         setTimeout(() => setSyncMessage(null), 4000)
       } else {
-        setError(res.message)
+        setError(formatSyncError(res.message, 'pull'))
         setSyncStatus('error')
       }
     } catch (err: any) {
@@ -98,7 +109,7 @@ export function SettingsView() {
       if (err.message === 'Session Expired') {
         setSyncStatus('session_expired')
       } else {
-        setError(err.message || 'Gagal menarik data dari Google Drive')
+        setError(formatSyncError(err, 'pull'))
         setSyncStatus('error')
       }
     } finally {

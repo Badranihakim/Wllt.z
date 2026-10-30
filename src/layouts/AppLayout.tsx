@@ -16,6 +16,7 @@ import {
 import { useQueryClient } from '@tanstack/react-query'
 import { useUIStore, type ActiveTab, useAuthStore } from '@/stores'
 import { GoogleSheetsRepository } from '@/repositories/google-sheets/GoogleSheetsRepository'
+import { isNetworkError } from '@/lib/errorUtils'
 import { AddTransactionModal } from '@/features/transactions/components/AddTransactionModal'
 import { AddWalletModal }     from '@/features/wallet/components/AddWalletModal'
 
@@ -79,6 +80,11 @@ export function AppLayout({ children }: AppLayoutProps) {
       navigateTo('settings')
       return
     }
+    if (typeof navigator !== 'undefined' && !navigator.onLine) {
+      setSyncFeedback('Offline')
+      setTimeout(() => setSyncFeedback(null), 3000)
+      return
+    }
     setIsSyncing(true)
     setSyncFeedback(null)
     try {
@@ -90,7 +96,7 @@ export function AppLayout({ children }: AppLayoutProps) {
       setTimeout(() => setSyncFeedback(null), 3000)
     } catch (err: any) {
       console.error('[QuickSync] Error:', err)
-      setSyncFeedback('Gagal')
+      setSyncFeedback(isNetworkError(err) ? 'Offline' : 'Gagal')
       setTimeout(() => setSyncFeedback(null), 3000)
     } finally {
       setIsSyncing(false)
@@ -100,6 +106,11 @@ export function AppLayout({ children }: AppLayoutProps) {
   const handleQuickPull = async () => {
     if (!accessToken) {
       navigateTo('settings')
+      return
+    }
+    if (typeof navigator !== 'undefined' && !navigator.onLine) {
+      setSyncFeedback('Offline')
+      setTimeout(() => setSyncFeedback(null), 3000)
       return
     }
     setIsSyncing(true)
@@ -117,7 +128,7 @@ export function AppLayout({ children }: AppLayoutProps) {
       }
     } catch (err: any) {
       console.error('[QuickPull] Error:', err)
-      setSyncFeedback('Gagal')
+      setSyncFeedback(isNetworkError(err) ? 'Offline' : 'Gagal')
       setTimeout(() => setSyncFeedback(null), 3000)
     } finally {
       setIsSyncing(false)

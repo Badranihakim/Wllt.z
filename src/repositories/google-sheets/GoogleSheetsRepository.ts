@@ -2,6 +2,7 @@ import { transactionRepo, categoryRepo, walletRepo, budgetRepo } from '@/reposit
 import { db } from '@/db'
 import { useAuthStore } from '@/stores'
 import type { Category, Wallet } from '@/types'
+import { formatSyncError, isNetworkError } from '@/lib/errorUtils'
 
 export class GoogleSheetsRepository {
   public static readonly SPREADSHEET_TITLE = 'Catatan Keuangan Saya - Wllt.z'
@@ -30,16 +31,28 @@ export class GoogleSheetsRepository {
    * If old 'wllt.z_database' exists, it renames it to 'Catatan Keuangan Saya - Wllt.z'.
    */
   async getOrCreateSpreadsheet(): Promise<string> {
+    if (typeof navigator !== 'undefined' && !navigator.onLine) {
+      throw new Error('Perangkat sedang offline. Sambungkan ke internet untuk menghubungkan ke Google Drive.')
+    }
+
     // 1. Search for spreadsheet with new or old name
     const query = encodeURIComponent(
       `(name='${GoogleSheetsRepository.SPREADSHEET_TITLE}' or name='${GoogleSheetsRepository.OLD_DB_NAME}') and mimeType='application/vnd.google-apps.spreadsheet' and trashed=false`
     )
-    const searchRes = await fetch(
-      `https://www.googleapis.com/drive/v3/files?q=${query}&spaces=drive&fields=files(id,name)`,
-      {
-        headers: { Authorization: `Bearer ${this.accessToken}` },
+    let searchRes: Response
+    try {
+      searchRes = await fetch(
+        `https://www.googleapis.com/drive/v3/files?q=${query}&spaces=drive&fields=files(id,name)`,
+        {
+          headers: { Authorization: `Bearer ${this.accessToken}` },
+        }
+      )
+    } catch (err: any) {
+      if (isNetworkError(err)) {
+        throw new Error('Perangkat sedang offline. Sambungkan ke internet untuk menghubungkan ke Google Drive.')
       }
-    )
+      throw err
+    }
     const searchData = await searchRes.json()
     if (searchData.error) this.handleApiError(searchData.error)
 
@@ -754,9 +767,16 @@ export class GoogleSheetsRepository {
    * Useful when user logs in on a new device (PC / mobile) or forces a restore.
    */
   async pullFromDrive(targetSpreadsheetId?: string): Promise<{ success: boolean; message: string; recordCount?: number }> {
-    const spreadsheetId = targetSpreadsheetId || (await this.getOrCreateSpreadsheet())
+    if (typeof navigator !== 'undefined' && !navigator.onLine) {
+      return {
+        success: false,
+        message: 'Perangkat sedang offline. Sambungkan ke koneksi internet untuk menarik data dari Google Drive.',
+      }
+    }
 
     try {
+      const spreadsheetId = targetSpreadsheetId || (await this.getOrCreateSpreadsheet())
+
       const readRes = await fetch(
         `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/'${GoogleSheetsRepository.SYNC_SHEET_TITLE}'!A1`,
         {
@@ -801,7 +821,7 @@ export class GoogleSheetsRepository {
       }
     } catch (err: any) {
       console.error('[GoogleSheetsRepository.pullFromDrive] Error:', err)
-      return { success: false, message: err?.message || 'Gagal menarik data dari Google Drive.' }
+      return { success: false, message: formatSyncError(err, 'pull') }
     }
   }
 
@@ -818,20 +838,32 @@ export class GoogleSheetsRepository {
    * - Otherwise, pushes local state to Drive.
    */
   async syncTwoWay(targetSpreadsheetId?: string): Promise<{ action: 'pulled' | 'pushed'; message: string; spreadsheetId: string }> {
-    const spreadsheetId = targetSpreadsheetId || (await this.getOrCreateSpreadsheet())
-    const localTxCount = await db.transactions.count()
-
-    if (localTxCount === 0) {
-      // Local is empty (e.g. freshly opened device) -> attempt pull
-      const pullResult = await this.pullFromDrive(spreadsheetId)
-      if (pullResult.success && pullResult.recordCount && pullResult.recordCount > 0) {
-        return { action: 'pulled', message: pullResult.message, spreadsheetId }
-      }
+    if (typeof navigator !== 'undefined' && !navigator.onLine) {
+      throw new Error('Perangkat sedang offline. Sambungkan ke koneksi internet untuk melakukan sinkronisasi dengan Google Drive.')
     }
 
-    // Otherwise push local database state to Drive
-    await this.pushToDrive(spreadsheetId)
-    return { action: 'pushed', message: 'Data lokal berhasil diunggah ke Google Drive!', spreadsheetId }
+    try {
+      const spreadsheetId = targetSpreadsheetId || (await this.getOrCreateSpreadsheet())
+      const localTxCount = await db.transactions.count()
+
+      if (localTxCount === 0) {
+        // Local is empty (e.g. freshly opened device) -> attempt pull
+        const pullResult = await this.pullFromDrive(spreadsheetId)
+        if (pullResult.success && pullResult.recordCount && pullResult.recordCount > 0) {
+          return { action: 'pulled', message: pullResult.message, spreadsheetId }
+        }
+        if (!pullResult.success && isNetworkError(pullResult.message)) {
+          throw new Error(pullResult.message)
+        }
+      }
+
+      // Otherwise push local database state to Drive
+      await this.pushToDrive(spreadsheetId)
+      return { action: 'pushed', message: 'Data lokal berhasil diunggah ke Google Drive!', spreadsheetId }
+    } catch (err: any) {
+      if (err?.message === 'Session Expired') throw err
+      throw new Error(formatSyncError(err, 'sync'))
+    }
   }
 
   /**

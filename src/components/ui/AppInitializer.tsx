@@ -1,6 +1,7 @@
 import { useState, useEffect, type ReactNode } from 'react'
 import { useQueryClient } from '@tanstack/react-query'
 import { bootstrapLocalDB } from '@/lib/seedDefaultData'
+import { GoogleSheetsRepository } from '@/repositories/google-sheets/GoogleSheetsRepository'
 
 // ─────────────────────────────────────────────
 // SplashScreen — shown while DB initializes
@@ -158,6 +159,17 @@ export function AppInitializer({ children }: AppInitializerProps) {
 
     return () => { cancelled = true }
   }, [queryClient])
+
+  // Auto-sync ke Google Sheets saat perangkat kembali online
+  useEffect(() => {
+    function handleOnline() {
+      console.log('[wllt.z] Sinyal internet pulih — memicu sinkronisasi Google Sheets...')
+      GoogleSheetsRepository.sync()
+    }
+
+    window.addEventListener('online', handleOnline)
+    return () => window.removeEventListener('online', handleOnline)
+  }, [])
 
   // Show splash while booting, render children once ready
   if (!isReady) {

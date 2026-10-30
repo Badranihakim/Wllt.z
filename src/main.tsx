@@ -4,6 +4,18 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import './index.css'
 import App from './App.tsx'
 import { AppInitializer } from '@/components/ui/AppInitializer'
+import { registerSW } from 'virtual:pwa-register'
+
+// Register PWA Service Worker for offline capability
+registerSW({
+  immediate: true,
+  onRegistered(r) {
+    console.log('[wllt.z PWA] Service Worker registered:', r?.scope)
+  },
+  onRegisterError(error) {
+    console.error('[wllt.z PWA] Service Worker registration failed:', error)
+  },
+})
 
 /**
  * QueryClient configuration for wllt.z — optimized for local-first offline app.

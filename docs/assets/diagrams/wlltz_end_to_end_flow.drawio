@@ -1,156 +1,162 @@
-<?xml version='1.0' encoding='utf-8'?>
-<mxfile host="app.diagrams.net" modified="2026-10-24T14:25:00.000Z" agent="Wlltz-Architect" version="21.6.8" type="device">
+<mxfile host="app.diagrams.net" agent="Wlltz-Architect" pages="4">
   <diagram id="p1" name="1. Arsitektur &amp; Alur End-to-End">
-    <mxGraphModel dx="1422" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1780" pageHeight="1200" math="0" shadow="0">
+    <mxGraphModel dx="1945" dy="884" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1780" pageHeight="1200" math="0" shadow="0">
       <root>
         <mxCell id="p1_0" />
         <mxCell id="p1_1" parent="p1_0" />
-        <mxCell id="p1_title" value="&lt;b style=&quot;font-size:18px;&quot;&gt;WLLT.Z — ARSITEKTUR SISTEM &amp;amp; ALUR END-TO-END&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:12px;color:#475569;&quot;&gt;Arsitektur Local-First (IndexedDB), Client-Side Presentation, dan Sinkronisasi Multi-Cloud (Google Drive &amp;amp; Sheets)&lt;/span&gt;" style="html=1;rounded=1;whiteSpace=wrap;fillColor=#F8FAFC;strokeColor=#CBD5E1;align=left;spacingLeft=25;fontColor=#0F172A;" vertex="1" parent="p1_1">
-          <mxGeometry x="40" y="20" width="1700" height="60" as="geometry" />
+        <mxCell id="p1_title" parent="p1_1" style="html=1;rounded=1;whiteSpace=wrap;fillColor=#F8FAFC;strokeColor=#CBD5E1;align=left;spacingLeft=25;fontColor=#0F172A;" value="&lt;b style=&quot;font-size:18px;&quot;&gt;WLLT.Z — ARSITEKTUR SISTEM &amp;amp; ALUR END-TO-END&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:12px;color:#475569;&quot;&gt;Arsitektur Local-First (IndexedDB), Client-Side Presentation, dan Sinkronisasi Multi-Cloud (Google Drive &amp;amp; Sheets)&lt;/span&gt;" vertex="1">
+          <mxGeometry height="60" width="1700" x="40" y="20" as="geometry" />
         </mxCell>
-        <mxCell id="p1_lane1" value="1. PENGGUNA &amp;amp; CLIENT PWA (Browser / Mobile)" style="swimlane;html=1;startSize=45;fontColor=#FFFFFF;fillColor=#F8FAFC;strokeColor=#334155;swimlaneFillColor=#F8FAFC;swimlaneHeadColor=#0F172A;rounded=1;arcSize=4;fontStyle=1;fontSize=12;align=center;" vertex="1" parent="p1_1">
-          <mxGeometry x="40" y="100" width="390" height="1060" as="geometry" />
+        <mxCell id="p1_lane1" parent="p1_1" style="swimlane;html=1;startSize=44;fontColor=#FFFFFF;fillColor=#1E293B;strokeColor=#0F172A;swimlaneFillColor=#F8FAFC;rounded=1;arcSize=4;fontStyle=1;fontSize=13;align=center;" value="1. PENGGUNA &amp;amp; CLIENT PWA (Browser / Mobile)" vertex="1">
+          <mxGeometry height="1060" width="390" x="40" y="100" as="geometry" />
         </mxCell>
-        <mxCell id="p1_lane2" value="2. PRESENTASI &amp;amp; STATE (React 18 + Zustand + TanStack)" style="swimlane;html=1;startSize=45;fontColor=#FFFFFF;fillColor=#EFF6FF;strokeColor=#60A5FA;swimlaneFillColor=#EFF6FF;swimlaneHeadColor=#1E40AF;rounded=1;arcSize=4;fontStyle=1;fontSize=12;align=center;" vertex="1" parent="p1_1">
-          <mxGeometry x="470" y="100" width="420" height="1060" as="geometry" />
+        <mxCell id="p1_lane2" parent="p1_1" style="swimlane;html=1;startSize=44;fontColor=#FFFFFF;fillColor=#1D4ED8;strokeColor=#1E40AF;swimlaneFillColor=#EFF6FF;rounded=1;arcSize=4;fontStyle=1;fontSize=13;align=center;" value="2. PRESENTASI &amp;amp; STATE (React 18 + Zustand + TanStack)" vertex="1">
+          <mxGeometry height="1060" width="420" x="470" y="100" as="geometry" />
         </mxCell>
-        <mxCell id="p1_lane3" value="3. REPOSITORI &amp;amp; LOCAL DB (Dexie IndexedDB - Local-First)" style="swimlane;html=1;startSize=45;fontColor=#FFFFFF;fillColor=#ECFDF5;strokeColor=#34D399;swimlaneFillColor=#ECFDF5;swimlaneHeadColor=#065F46;rounded=1;arcSize=4;fontStyle=1;fontSize=12;align=center;" vertex="1" parent="p1_1">
-          <mxGeometry x="930" y="100" width="390" height="1060" as="geometry" />
+        <mxCell id="p1_lane3" parent="p1_1" style="swimlane;html=1;startSize=44;fontColor=#FFFFFF;fillColor=#047857;strokeColor=#065F46;swimlaneFillColor=#ECFDF5;rounded=1;arcSize=4;fontStyle=1;fontSize=13;align=center;" value="3. REPOSITORI &amp;amp; LOCAL DB (Dexie IndexedDB - Local-First)" vertex="1">
+          <mxGeometry height="1060" width="390" x="930" y="100" as="geometry" />
         </mxCell>
-        <mxCell id="p1_lane4" value="4. SINKRONISASI &amp;amp; CLOUD (Google Workspace APIs)" style="swimlane;html=1;startSize=45;fontColor=#FFFFFF;fillColor=#EEF2FF;strokeColor=#818CF8;swimlaneFillColor=#EEF2FF;swimlaneHeadColor=#4338CA;rounded=1;arcSize=4;fontStyle=1;fontSize=12;align=center;" vertex="1" parent="p1_1">
-          <mxGeometry x="1360" y="100" width="380" height="1060" as="geometry" />
+        <mxCell id="p1_lane4" parent="p1_1" style="swimlane;html=1;startSize=44;fontColor=#FFFFFF;fillColor=#4338CA;strokeColor=#3730A3;swimlaneFillColor=#EEF2FF;rounded=1;arcSize=4;fontStyle=1;fontSize=13;align=center;" value="4. SINKRONISASI &amp;amp; CLOUD (Google Workspace APIs)" vertex="1">
+          <mxGeometry height="1060" width="380" x="1360" y="100" as="geometry" />
         </mxCell>
-        <mxCell id="p1_u_actor" value="&lt;b&gt;Pengguna (User)&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:10px;color:#475569;&quot;&gt;Buka PWA Standalone / Browser Mobile&lt;/span&gt;" style="html=1;rounded=1;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#0F172A;strokeWidth=2;fontColor=#0F172A;" vertex="1" parent="p1_1">
-          <mxGeometry x="65" y="160" width="340" height="55" as="geometry" />
+        <mxCell id="p1_u_actor" parent="p1_1" style="html=1;rounded=1;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#0F172A;strokeWidth=2;fontColor=#0F172A;" value="&lt;b&gt;Pengguna (User)&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:10px;color:#475569;&quot;&gt;Buka PWA Standalone / Browser Mobile&lt;/span&gt;" vertex="1">
+          <mxGeometry height="55" width="340" x="65" y="160" as="geometry" />
         </mxCell>
-        <mxCell id="p1_u_auth_action" value="&lt;b&gt;Login / Registrasi Akun&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:10px;color:#475569;&quot;&gt;Login Google One-Tap atau Akun Lokal&lt;/span&gt;" style="html=1;rounded=1;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#94A3B8;fontColor=#0F172A;" vertex="1" parent="p1_1">
-          <mxGeometry x="65" y="230" width="340" height="50" as="geometry" />
+        <mxCell id="p1_u_auth_action" parent="p1_1" style="html=1;rounded=1;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#94A3B8;fontColor=#0F172A;" value="&lt;b&gt;Login / Registrasi Akun&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:10px;color:#475569;&quot;&gt;Login Google One-Tap atau Akun Lokal&lt;/span&gt;" vertex="1">
+          <mxGeometry height="50" width="340" x="65" y="245" as="geometry" />
         </mxCell>
-        <mxCell id="p1_ui_init" value="&lt;b&gt;AppInitializer (Sequential Boot Gate)&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:10px;color:#1E3A8A;&quot;&gt;1. Splash Screen &amp;rarr; 2. Bootstrap DB &amp;rarr; 3. Bust Cache&lt;/span&gt;" style="html=1;rounded=1;whiteSpace=wrap;fillColor=#DBEAFE;strokeColor=#3B82F6;fontColor=#1E3A8A;" vertex="1" parent="p1_1">
-          <mxGeometry x="500" y="160" width="360" height="55" as="geometry" />
+        <mxCell id="p1_ui_init" parent="p1_1" style="html=1;rounded=1;whiteSpace=wrap;fillColor=#DBEAFE;strokeColor=#3B82F6;fontColor=#1E3A8A;" value="&lt;b&gt;AppInitializer (Sequential Boot Gate)&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:10px;color:#1E3A8A;&quot;&gt;1. Splash Screen &amp;rarr; 2. Bootstrap DB &amp;rarr; 3. Bust Cache&lt;/span&gt;" vertex="1">
+          <mxGeometry height="55" width="360" x="500" y="160" as="geometry" />
         </mxCell>
-        <mxCell id="p1_ui_auth_store" value="&lt;b&gt;authStore (Zustand Sesi &amp;amp; Token)&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:10px;color:#334155;&quot;&gt;Simpan currentUser, accessToken Google, spreadsheetId&lt;/span&gt;" style="html=1;rounded=1;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#60A5FA;fontColor=#0F172A;" vertex="1" parent="p1_1">
-          <mxGeometry x="500" y="230" width="360" height="50" as="geometry" />
+        <mxCell id="p1_ui_auth_store" parent="p1_1" style="html=1;rounded=1;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#60A5FA;fontColor=#0F172A;" value="&lt;b&gt;authStore (Zustand Sesi &amp;amp; Token)&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:10px;color:#334155;&quot;&gt;Simpan currentUser, accessToken Google, spreadsheetId&lt;/span&gt;" vertex="1">
+          <mxGeometry height="50" width="360" x="500" y="245" as="geometry" />
         </mxCell>
-        <mxCell id="p1_db_router" value="&lt;b&gt;Multi-Tenancy Dynamic DB Router&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:10px;color:#065F46;&quot;&gt;setDatabaseUser(userId) &amp;rarr; Isolasi database wllt_db_${userId}&lt;/span&gt;" style="html=1;rounded=1;whiteSpace=wrap;fillColor=#D1FAE5;strokeColor=#059669;fontColor=#065F46;" vertex="1" parent="p1_1">
-          <mxGeometry x="960" y="230" width="330" height="50" as="geometry" />
+        <mxCell id="p1_db_router" parent="p1_1" style="html=1;rounded=1;whiteSpace=wrap;fillColor=#D1FAE5;strokeColor=#059669;fontColor=#065F46;" value="&lt;b&gt;Multi-Tenancy Dynamic DB Router&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:10px;color:#065F46;&quot;&gt;setDatabaseUser(userId) &amp;rarr; Isolasi database wllt_db_${userId}&lt;/span&gt;" vertex="1">
+          <mxGeometry height="50" width="330" x="960" y="245" as="geometry" />
         </mxCell>
-        <mxCell id="p1_cloud_gis" value="&lt;b&gt;Google Identity Services (GIS)&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:10px;color:#3730A3;&quot;&gt;OAuth 2.0 Token Client (Scope: drive.file)&lt;/span&gt;" style="html=1;rounded=1;whiteSpace=wrap;fillColor=#EEF2FF;strokeColor=#6366F1;fontColor=#3730A3;" vertex="1" parent="p1_1">
-          <mxGeometry x="1390" y="230" width="320" height="50" as="geometry" />
+        <mxCell id="p1_cloud_gis" parent="p1_1" style="html=1;rounded=1;whiteSpace=wrap;fillColor=#EEF2FF;strokeColor=#6366F1;fontColor=#3730A3;" value="&lt;b&gt;Google Identity Services (GIS)&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:10px;color:#3730A3;&quot;&gt;OAuth 2.0 Token Client (Scope: drive.file)&lt;/span&gt;" vertex="1">
+          <mxGeometry height="50" width="320" x="1390" y="245" as="geometry" />
         </mxCell>
-        <mxCell id="p1_u_trans" value="&lt;b&gt;Input Transaksi Baru&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:10px;color:#475569;&quot;&gt;Nominal, Kategori, Dompet, Jenis Mutasi&lt;/span&gt;" style="html=1;rounded=1;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#3B82F6;fontColor=#0F172A;" vertex="1" parent="p1_1">
-          <mxGeometry x="65" y="330" width="340" height="55" as="geometry" />
+        <mxCell id="p1_u_trans" parent="p1_1" style="html=1;rounded=1;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#3B82F6;fontColor=#0F172A;" value="&lt;b&gt;Input Transaksi Baru&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:10px;color:#475569;&quot;&gt;Nominal, Kategori, Dompet, Jenis Mutasi&lt;/span&gt;" vertex="1">
+          <mxGeometry height="55" width="340" x="65" y="335" as="geometry" />
         </mxCell>
-        <mxCell id="p1_u_manage" value="&lt;b&gt;Kelola Dompet &amp;amp; Anggaran&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:10px;color:#475569;&quot;&gt;Atur saldo awal, limit kategori induk&lt;/span&gt;" style="html=1;rounded=1;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#94A3B8;fontColor=#0F172A;" vertex="1" parent="p1_1">
-          <mxGeometry x="65" y="400" width="340" height="50" as="geometry" />
+        <mxCell id="p1_u_manage" parent="p1_1" style="html=1;rounded=1;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#94A3B8;fontColor=#0F172A;" value="&lt;b&gt;Kelola Dompet &amp;amp; Anggaran&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:10px;color:#475569;&quot;&gt;Atur saldo awal, limit kategori induk&lt;/span&gt;" vertex="1">
+          <mxGeometry height="50" width="340" x="65" y="410" as="geometry" />
         </mxCell>
-        <mxCell id="p1_ui_views" value="&lt;b&gt;React Views &amp;amp; Layout Router&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:10px;color:#334155;&quot;&gt;DashboardView, TransactionsView, WalletsView, BudgetsView&lt;/span&gt;" style="html=1;rounded=1;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#60A5FA;fontColor=#0F172A;" vertex="1" parent="p1_1">
-          <mxGeometry x="500" y="330" width="360" height="55" as="geometry" />
+        <mxCell id="p1_ui_views" parent="p1_1" style="html=1;rounded=1;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#60A5FA;fontColor=#0F172A;" value="&lt;b&gt;React Views &amp;amp; Layout Router&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:10px;color:#334155;&quot;&gt;DashboardView, TransactionsView, WalletsView, BudgetsView&lt;/span&gt;" vertex="1">
+          <mxGeometry height="55" width="360" x="500" y="335" as="geometry" />
         </mxCell>
-        <mxCell id="p1_ui_hooks" value="&lt;b&gt;TanStack Query Hooks &amp;amp; Mutations&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:10px;color:#1E3A8A;&quot;&gt;useCreateTransaction(), useDeleteTransaction(), useWallets()&lt;/span&gt;" style="html=1;rounded=1;whiteSpace=wrap;fillColor=#EFF6FF;strokeColor=#2563EB;fontColor=#1E40AF;" vertex="1" parent="p1_1">
-          <mxGeometry x="500" y="400" width="360" height="50" as="geometry" />
+        <mxCell id="p1_ui_hooks" parent="p1_1" style="html=1;rounded=1;whiteSpace=wrap;fillColor=#EFF6FF;strokeColor=#2563EB;fontColor=#1E40AF;" value="&lt;b&gt;TanStack Query Hooks &amp;amp; Mutations&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:10px;color:#1E3A8A;&quot;&gt;useCreateTransaction(), useDeleteTransaction(), useWallets()&lt;/span&gt;" vertex="1">
+          <mxGeometry height="50" width="360" x="500" y="410" as="geometry" />
         </mxCell>
-        <mxCell id="p1_db_repos" value="&lt;b&gt;Local IndexedDB Repositories&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:10px;color:#065F46;&quot;&gt;TransactionRepository, WalletRepository, BudgetRepository&lt;/span&gt;" style="html=1;rounded=1;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#059669;fontColor=#0F172A;" vertex="1" parent="p1_1">
-          <mxGeometry x="960" y="400" width="330" height="50" as="geometry" />
+        <mxCell id="p1_db_repos" parent="p1_1" style="html=1;rounded=1;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#059669;fontColor=#0F172A;" value="&lt;b&gt;Local IndexedDB Repositories&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:10px;color:#065F46;&quot;&gt;TransactionRepository, WalletRepository, BudgetRepository&lt;/span&gt;" vertex="1">
+          <mxGeometry height="50" width="330" x="960" y="410" as="geometry" />
         </mxCell>
-        <mxCell id="p1_u_analytics" value="&lt;b&gt;Pantau Laporan &amp;amp; Net Worth&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:10px;color:#475569;&quot;&gt;Grafik Arus Kas, Budget Progress, Tren Saldo&lt;/span&gt;" style="html=1;rounded=1;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#94A3B8;fontColor=#0F172A;" vertex="1" parent="p1_1">
-          <mxGeometry x="65" y="500" width="340" height="55" as="geometry" />
+        <mxCell id="p1_u_analytics" parent="p1_1" style="html=1;rounded=1;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#94A3B8;fontColor=#0F172A;" value="&lt;b&gt;Pantau Laporan &amp;amp; Net Worth&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:10px;color:#475569;&quot;&gt;Grafik Arus Kas, Budget Progress, Tren Saldo&lt;/span&gt;" vertex="1">
+          <mxGeometry height="55" width="340" x="65" y="500" as="geometry" />
         </mxCell>
-        <mxCell id="p1_u_offline_note" value="&lt;b&gt;OFFLINE-CAPABLE UX&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:10px;color:#065F46;&quot;&gt;Aplikasi beroperasi 100% tanpa internet. Pencatatan lokal instan &amp;lt;16ms ke IndexedDB.&lt;/span&gt;" style="html=1;rounded=1;whiteSpace=wrap;fillColor=#D1FAE5;strokeColor=#10B981;fontColor=#065F46;align=left;spacing=8;" vertex="1" parent="p1_1">
-          <mxGeometry x="65" y="570" width="340" height="65" as="geometry" />
+        <mxCell id="p1_u_offline_note" parent="p1_1" style="html=1;rounded=1;whiteSpace=wrap;fillColor=#D1FAE5;strokeColor=#10B981;fontColor=#065F46;align=left;spacing=8;" value="&lt;b&gt;OFFLINE-CAPABLE UX&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:10px;color:#065F46;&quot;&gt;Aplikasi beroperasi 100% tanpa internet. Pencatatan lokal instan &amp;lt;16ms ke IndexedDB.&lt;/span&gt;" vertex="1">
+          <mxGeometry height="65" width="340" x="65" y="575" as="geometry" />
         </mxCell>
-        <mxCell id="p1_ui_caches" value="&lt;b&gt;Query Cache Keys Invalidation&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:10px;color:#1E3A8A;&quot;&gt;Invalidasi queryKeys: [wallets], [transactions], [budgets]&lt;/span&gt;" style="html=1;rounded=1;whiteSpace=wrap;fillColor=#DBEAFE;strokeColor=#3B82F6;fontColor=#1E3A8A;" vertex="1" parent="p1_1">
-          <mxGeometry x="500" y="500" width="360" height="55" as="geometry" />
+        <mxCell id="p1_ui_caches" parent="p1_1" style="html=1;rounded=1;whiteSpace=wrap;fillColor=#DBEAFE;strokeColor=#3B82F6;fontColor=#1E3A8A;" value="&lt;b&gt;Query Cache Keys Invalidation&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:10px;color:#1E3A8A;&quot;&gt;Invalidasi queryKeys: [wallets], [transactions], [budgets]&lt;/span&gt;" vertex="1">
+          <mxGeometry height="55" width="360" x="500" y="500" as="geometry" />
         </mxCell>
-        <mxCell id="p1_ui_reactive" value="&lt;b&gt;Re-render Antarmuka Reaktif&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:10px;color:#065F46;&quot;&gt;Saldo dompet &amp;amp; riwayat transaksi terbarui otomatis&lt;/span&gt;" style="html=1;rounded=1;whiteSpace=wrap;fillColor=#D1FAE5;strokeColor=#10B981;fontColor=#065F46;" vertex="1" parent="p1_1">
-          <mxGeometry x="500" y="570" width="360" height="50" as="geometry" />
+        <mxCell id="p1_ui_reactive" parent="p1_1" style="html=1;rounded=1;whiteSpace=wrap;fillColor=#D1FAE5;strokeColor=#10B981;fontColor=#065F46;" value="&lt;b&gt;Re-render Antarmuka Reaktif&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:10px;color:#065F46;&quot;&gt;Saldo dompet &amp;amp; riwayat transaksi terbarui otomatis&lt;/span&gt;" vertex="1">
+          <mxGeometry height="50" width="360" x="500" y="575" as="geometry" />
         </mxCell>
-        <mxCell id="p1_db_tables" value="&lt;b&gt;Dexie v4 Tables (Single Source of Truth)&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:10px;color:#334155;&quot;&gt;db.transactions, db.wallets, db.budgets, db.categories&lt;/span&gt;" style="html=1;rounded=1;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#34D399;fontColor=#0F172A;" vertex="1" parent="p1_1">
-          <mxGeometry x="960" y="500" width="330" height="55" as="geometry" />
+        <mxCell id="p1_db_tables" parent="p1_1" style="html=1;rounded=1;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#34D399;fontColor=#0F172A;" value="&lt;b&gt;Dexie v4 Tables (Single Source of Truth)&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:10px;color:#334155;&quot;&gt;db.transactions, db.wallets, db.budgets, db.categories&lt;/span&gt;" vertex="1">
+          <mxGeometry height="55" width="330" x="960" y="500" as="geometry" />
         </mxCell>
-        <mxCell id="p1_db_integrity" value="&lt;b&gt;Financial Integrity Engine&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:10px;color:#991B1B;&quot;&gt;Delta saldo dompet seimbang &amp;amp; akumulasi budget induk&lt;/span&gt;" style="html=1;rounded=1;whiteSpace=wrap;fillColor=#FEE2E2;strokeColor=#EF4444;fontColor=#991B1B;" vertex="1" parent="p1_1">
-          <mxGeometry x="960" y="570" width="330" height="50" as="geometry" />
+        <mxCell id="p1_db_integrity" parent="p1_1" style="html=1;rounded=1;whiteSpace=wrap;fillColor=#FEE2E2;strokeColor=#EF4444;fontColor=#991B1B;" value="&lt;b&gt;Financial Integrity Engine&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:10px;color:#991B1B;&quot;&gt;Delta saldo dompet seimbang &amp;amp; akumulasi budget induk&lt;/span&gt;" vertex="1">
+          <mxGeometry height="50" width="330" x="960" y="575" as="geometry" />
         </mxCell>
-        <mxCell id="p1_u_sync_btn" value="&lt;b&gt;Trigger Sinkronisasi Cloud&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:10px;color:#475569;&quot;&gt;Otomatis di latar belakang / Manual via Profil&lt;/span&gt;" style="html=1;rounded=1;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#94A3B8;fontColor=#0F172A;" vertex="1" parent="p1_1">
-          <mxGeometry x="65" y="700" width="340" height="55" as="geometry" />
+        <mxCell id="p1_u_sync_btn" parent="p1_1" style="html=1;rounded=1;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#94A3B8;fontColor=#0F172A;" value="&lt;b&gt;Trigger Sinkronisasi Cloud&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:10px;color:#475569;&quot;&gt;Otomatis di latar belakang / Manual via Profil&lt;/span&gt;" vertex="1">
+          <mxGeometry height="55" width="340" x="65" y="700" as="geometry" />
         </mxCell>
-        <mxCell id="p1_u_privacy_note" value="&lt;b&gt;KEDAULATAN DATA (ZERO BACKEND)&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:10px;color:#92400E;&quot;&gt;Data 100% milik pengguna di Google Drive pribadi. Tanpa server developer atau database terpusat.&lt;/span&gt;" style="html=1;rounded=1;whiteSpace=wrap;fillColor=#FEF3C7;strokeColor=#F59E0B;fontColor=#92400E;align=left;spacing=8;" vertex="1" parent="p1_1">
-          <mxGeometry x="65" y="780" width="340" height="80" as="geometry" />
+        <mxCell id="p1_u_privacy_note" parent="p1_1" style="html=1;rounded=1;whiteSpace=wrap;fillColor=#FEF3C7;strokeColor=#F59E0B;fontColor=#92400E;align=left;spacing=8;" value="&lt;b&gt;KEDAULATAN DATA (ZERO BACKEND)&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:10px;color:#92400E;&quot;&gt;Data 100% milik pengguna di Google Drive pribadi. Tanpa server developer atau database terpusat.&lt;/span&gt;" vertex="1">
+          <mxGeometry height="80" width="340" x="65" y="780" as="geometry" />
         </mxCell>
-        <mxCell id="p1_ui_bg_sync" value="&lt;b&gt;Asynchronous Cloud Trigger&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:10px;color:#3730A3;&quot;&gt;GoogleSheetsRepository.sync() terpanggil non-blocking&lt;/span&gt;" style="html=1;rounded=1;whiteSpace=wrap;fillColor=#EEF2FF;strokeColor=#818CF8;fontColor=#3730A3;dashed=1;" vertex="1" parent="p1_1">
-          <mxGeometry x="500" y="700" width="360" height="55" as="geometry" />
+        <mxCell id="p1_ui_bg_sync" parent="p1_1" style="html=1;rounded=1;whiteSpace=wrap;fillColor=#EEF2FF;strokeColor=#818CF8;fontColor=#3730A3;dashed=1;" value="&lt;b&gt;Asynchronous Cloud Trigger&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:10px;color:#3730A3;&quot;&gt;GoogleSheetsRepository.sync() terpanggil non-blocking&lt;/span&gt;" vertex="1">
+          <mxGeometry height="55" width="360" x="500" y="700" as="geometry" />
         </mxCell>
-        <mxCell id="p1_db_twoway" value="&lt;b&gt;Two-Way Sync Reconciler&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:10px;color:#065F46;&quot;&gt;Cek localTxCount: Jika 0 &amp;rarr; pullFromDrive(), jika ada &amp;rarr; pushToDrive()&lt;/span&gt;" style="html=1;rounded=1;whiteSpace=wrap;fillColor=#ECFDF5;strokeColor=#10B981;fontColor=#065F46;" vertex="1" parent="p1_1">
-          <mxGeometry x="960" y="700" width="330" height="55" as="geometry" />
+        <mxCell id="p1_db_twoway" parent="p1_1" style="html=1;rounded=1;whiteSpace=wrap;fillColor=#ECFDF5;strokeColor=#10B981;fontColor=#065F46;" value="&lt;b&gt;Two-Way Sync Reconciler&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:10px;color:#065F46;&quot;&gt;Cek localTxCount: Jika 0 &amp;rarr; pullFromDrive(), jika ada &amp;rarr; pushToDrive()&lt;/span&gt;" vertex="1">
+          <mxGeometry height="55" width="330" x="960" y="700" as="geometry" />
         </mxCell>
-        <mxCell id="p1_cloud_drive" value="&lt;b&gt;Google Drive API v3&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:10px;color:#334155;&quot;&gt;Cari / Buat Spreadsheet &amp;quot;Catatan Keuangan Saya - Wllt.z&amp;quot;&lt;/span&gt;" style="html=1;rounded=1;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#818CF8;fontColor=#0F172A;" vertex="1" parent="p1_1">
-          <mxGeometry x="1390" y="700" width="320" height="55" as="geometry" />
+        <mxCell id="p1_cloud_drive" parent="p1_1" style="html=1;rounded=1;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#818CF8;fontColor=#0F172A;" value="&lt;b&gt;Google Drive API v3&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:10px;color:#334155;&quot;&gt;Cari / Buat Spreadsheet &amp;quot;Catatan Keuangan Saya - Wllt.z&amp;quot;&lt;/span&gt;" vertex="1">
+          <mxGeometry height="55" width="320" x="1390" y="700" as="geometry" />
         </mxCell>
-        <mxCell id="p1_cloud_sheets" value="&lt;b&gt;Google Sheets API v4&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:10px;color:#334155;&quot;&gt;Tulis tabel terformat, formula SUM, header Emerald Green&lt;/span&gt;" style="html=1;rounded=1;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#818CF8;fontColor=#0F172A;" vertex="1" parent="p1_1">
-          <mxGeometry x="1390" y="780" width="320" height="55" as="geometry" />
+        <mxCell id="p1_cloud_sheets" parent="p1_1" style="html=1;rounded=1;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#818CF8;fontColor=#0F172A;" value="&lt;b&gt;Google Sheets API v4&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:10px;color:#334155;&quot;&gt;Tulis tabel terformat, formula SUM, header Emerald Green&lt;/span&gt;" vertex="1">
+          <mxGeometry height="55" width="320" x="1390" y="780" as="geometry" />
         </mxCell>
-        <mxCell id="p1_cloud_file" value="&lt;b&gt;Spreadsheet Google Drive Pengguna&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:10px;color:#4C1D95;&quot;&gt;&amp;bull; &lt;b&gt;Sheet 1:&lt;/b&gt; Catatan Keuangan (Tabel &amp;amp; SUM)&lt;br&gt;&amp;bull; &lt;b&gt;Sheet 2:&lt;/b&gt; Ringkasan &amp;amp; Saldo Dompet&lt;br&gt;&amp;bull; &lt;b&gt;Sheet 3:&lt;/b&gt; _wlltz_sync_data (Hidden JSON Backup)&lt;/span&gt;" style="html=1;rounded=1;whiteSpace=wrap;fillColor=#EDE9FE;strokeColor=#8B5CF6;fontColor=#4C1D95;align=left;spacing=8;" vertex="1" parent="p1_1">
-          <mxGeometry x="1390" y="860" width="320" height="95" as="geometry" />
+        <mxCell id="p1_cloud_file" parent="p1_1" style="html=1;rounded=1;whiteSpace=wrap;fillColor=#EDE9FE;strokeColor=#8B5CF6;fontColor=#4C1D95;align=left;spacing=8;" value="&lt;b&gt;Spreadsheet Google Drive Pengguna&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:10px;color:#4C1D95;&quot;&gt;&amp;bull; &lt;b&gt;Sheet 1:&lt;/b&gt; Catatan Keuangan (Tabel &amp;amp; SUM)&lt;br&gt;&amp;bull; &lt;b&gt;Sheet 2:&lt;/b&gt; Ringkasan &amp;amp; Saldo Dompet&lt;br&gt;&amp;bull; &lt;b&gt;Sheet 3:&lt;/b&gt; _wlltz_sync_data (Hidden JSON Backup)&lt;/span&gt;" vertex="1">
+          <mxGeometry height="95" width="320" x="1390" y="860" as="geometry" />
         </mxCell>
-        <mxCell id="p1_e1_1" value="Inisialisasi" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#3B82F6;strokeWidth=2;exitX=1.0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="p1_1" source="p1_u_actor" target="p1_ui_init">
+        <mxCell id="p1_e1_1" edge="1" parent="p1_1" source="p1_u_actor" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#3B82F6;strokeWidth=2;exitX=1.0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.0;entryY=0.5;entryDx=0;entryDy=0;" target="p1_ui_init" value="Inisialisasi">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="p1_e1_2" value="Input Login" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#3B82F6;strokeWidth=2;exitX=1.0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="p1_1" source="p1_u_auth_action" target="p1_ui_auth_store">
+        <mxCell id="p1_e1_2" edge="1" parent="p1_1" source="p1_u_auth_action" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#3B82F6;strokeWidth=2;exitX=1.0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.0;entryY=0.5;entryDx=0;entryDy=0;" target="p1_ui_auth_store" value="Input Login">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="p1_e1_3" value="OAuth Token" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#6366F1;strokeWidth=2;dashed=1;exitX=0.5;exitY=0.0;exitDx=0;exitDy=0;entryX=0.5;entryY=0.0;entryDx=0;entryDy=0;" edge="1" parent="p1_1" source="p1_cloud_gis" target="p1_ui_auth_store">
+        <mxCell id="p1_e1_3" edge="1" parent="p1_1" source="p1_cloud_gis" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#6366F1;strokeWidth=2;dashed=1;exitX=0.5;exitY=0.0;exitDx=0;exitDy=0;entryX=0.5;entryY=0.0;entryDx=0;entryDy=0;" target="p1_ui_auth_store" value="OAuth Token">
           <mxGeometry relative="1" as="geometry">
             <Array as="points">
-              <mxPoint x="1550" y="135" />
-              <mxPoint x="680" y="135" />
+              <mxPoint x="1550" y="200" />
+              <mxPoint x="895" y="200" />
+              <mxPoint x="895" y="230" />
+              <mxPoint x="680" y="230" />
             </Array>
           </mxGeometry>
         </mxCell>
-        <mxCell id="p1_e1_4" value="Set DB User" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#059669;strokeWidth=2;exitX=1.0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="p1_1" source="p1_ui_auth_store" target="p1_db_router">
+        <mxCell id="p1_e1_4" edge="1" parent="p1_1" source="p1_ui_auth_store" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#059669;strokeWidth=2;exitX=1.0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.0;entryY=0.5;entryDx=0;entryDy=0;" target="p1_db_router" value="Set DB User">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="p1_e1_5" value="Isi Form Modal" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#3B82F6;strokeWidth=2;exitX=1.0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="p1_1" source="p1_u_trans" target="p1_ui_views">
+        <mxCell id="p1_e1_5" edge="1" parent="p1_1" source="p1_u_trans" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#3B82F6;strokeWidth=2;exitX=1.0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.0;entryY=0.5;entryDx=0;entryDy=0;" target="p1_ui_views" value="Isi Form Modal">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="p1_e1_6" value="Panggil Mutation" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#2563EB;strokeWidth=2;exitX=0.5;exitY=1.0;exitDx=0;exitDy=0;entryX=0.5;entryY=0.0;entryDx=0;entryDy=0;" edge="1" parent="p1_1" source="p1_ui_views" target="p1_ui_hooks">
+        <mxCell id="p1_e1_6" edge="1" parent="p1_1" source="p1_ui_views" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#2563EB;strokeWidth=2;exitX=0.5;exitY=1.0;exitDx=0;exitDy=0;entryX=0.5;entryY=0.0;entryDx=0;entryDy=0;" target="p1_ui_hooks" value="Panggil Mutation">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="p1_e1_7" value="Operasi CRUD" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#059669;strokeWidth=2;exitX=1.0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="p1_1" source="p1_ui_hooks" target="p1_db_repos">
+        <mxCell id="p1_e1_7" edge="1" parent="p1_1" source="p1_ui_hooks" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#059669;strokeWidth=2;exitX=1.0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.0;entryY=0.5;entryDx=0;entryDy=0;" target="p1_db_repos" value="Operasi CRUD">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="p1_e1_8" value="Tulis ke Dexie" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#059669;strokeWidth=2;exitX=0.5;exitY=1.0;exitDx=0;exitDy=0;entryX=0.5;entryY=0.0;entryDx=0;entryDy=0;" edge="1" parent="p1_1" source="p1_db_repos" target="p1_db_tables">
+        <mxCell id="p1_e1_8" edge="1" parent="p1_1" source="p1_db_repos" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#059669;strokeWidth=2;exitX=0.5;exitY=1.0;exitDx=0;exitDy=0;entryX=0.5;entryY=0.0;entryDx=0;entryDy=0;" target="p1_db_tables" value="Tulis ke Dexie">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="p1_e1_9" value="Mutasi Saldo" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#DC2626;strokeWidth=2;exitX=0.5;exitY=1.0;exitDx=0;exitDy=0;entryX=0.5;entryY=0.0;entryDx=0;entryDy=0;" edge="1" parent="p1_1" source="p1_db_tables" target="p1_db_integrity">
+        <mxCell id="p1_e1_9" edge="1" parent="p1_1" source="p1_db_tables" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#DC2626;strokeWidth=2;exitX=0.5;exitY=1.0;exitDx=0;exitDy=0;entryX=0.5;entryY=0.0;entryDx=0;entryDy=0;" target="p1_db_integrity" value="Mutasi Saldo">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="p1_e1_10" value="Invalidate Cache" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#2563EB;strokeWidth=2;exitX=0.5;exitY=1.0;exitDx=0;exitDy=0;entryX=0.5;entryY=0.0;entryDx=0;entryDy=0;" edge="1" parent="p1_1" source="p1_ui_hooks" target="p1_ui_caches">
+        <mxCell id="p1_e1_10" edge="1" parent="p1_1" source="p1_ui_hooks" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#2563EB;strokeWidth=2;exitX=0.5;exitY=1.0;exitDx=0;exitDy=0;entryX=0.5;entryY=0.0;entryDx=0;entryDy=0;" target="p1_ui_caches" value="Invalidate Cache">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="p1_e1_11" value="Bust Cache" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#10B981;strokeWidth=2;exitX=0.5;exitY=1.0;exitDx=0;exitDy=0;entryX=0.5;entryY=0.0;entryDx=0;entryDy=0;" edge="1" parent="p1_1" source="p1_ui_caches" target="p1_ui_reactive">
+        <mxCell id="p1_e1_11" edge="1" parent="p1_1" source="p1_ui_caches" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#10B981;strokeWidth=2;exitX=0.5;exitY=1.0;exitDx=0;exitDy=0;entryX=0.5;entryY=0.0;entryDx=0;entryDy=0;" target="p1_ui_reactive" value="Bust Cache">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="p1_e1_12" value="Update Tampilan" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#10B981;strokeWidth=2;exitX=0.0;exitY=0.5;exitDx=0;exitDy=0;entryX=1.0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="p1_1" source="p1_ui_reactive" target="p1_u_analytics">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="p1_e1_13" value="Trigger Sync" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#818CF8;strokeWidth=1.5;dashed=1;exitX=0.0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="p1_1" source="p1_ui_hooks" target="p1_ui_bg_sync">
+        <mxCell id="p1_e1_12" edge="1" parent="p1_1" source="p1_ui_reactive" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#10B981;strokeWidth=2;exitX=0.0;exitY=0.5;exitDx=0;exitDy=0;entryX=1.0;entryY=0.5;entryDx=0;entryDy=0;" target="p1_u_analytics" value="Update Tampilan">
           <mxGeometry relative="1" as="geometry">
             <Array as="points">
-              <mxPoint x="485" y="425" />
-              <mxPoint x="485" y="727" />
+              <mxPoint x="450" y="600" />
+              <mxPoint x="450" y="527" />
             </Array>
           </mxGeometry>
         </mxCell>
-        <mxCell id="p1_e1_14" value="Sinkronkan Data" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#059669;strokeWidth=2;exitX=1.0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="p1_1" source="p1_ui_bg_sync" target="p1_db_twoway">
+        <mxCell id="p1_e1_13" edge="1" parent="p1_1" source="p1_ui_hooks" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#818CF8;strokeWidth=1.5;dashed=1;exitX=0.0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.0;entryY=0.5;entryDx=0;entryDy=0;" target="p1_ui_bg_sync" value="Trigger Sync">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="460" y="435" />
+              <mxPoint x="460" y="727" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="p1_e1_14" edge="1" parent="p1_1" source="p1_ui_bg_sync" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#059669;strokeWidth=2;exitX=1.0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.0;entryY=0.5;entryDx=0;entryDy=0;" target="p1_db_twoway" value="Sinkronkan Data">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="p1_e1_15" value="Kirim ke Cloud" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#4338CA;strokeWidth=2;exitX=1.0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="p1_1" source="p1_db_twoway" target="p1_cloud_drive">
+        <mxCell id="p1_e1_15" edge="1" parent="p1_1" source="p1_db_twoway" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#4338CA;strokeWidth=2;exitX=1.0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.0;entryY=0.5;entryDx=0;entryDy=0;" target="p1_cloud_drive" value="Kirim ke Cloud">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="p1_e1_16" value="Tulis Lembar" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#4338CA;strokeWidth=2;exitX=0.5;exitY=1.0;exitDx=0;exitDy=0;entryX=0.5;entryY=0.0;entryDx=0;entryDy=0;" edge="1" parent="p1_1" source="p1_cloud_drive" target="p1_cloud_sheets">
+        <mxCell id="p1_e1_16" edge="1" parent="p1_1" source="p1_cloud_drive" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#4338CA;strokeWidth=2;exitX=0.5;exitY=1.0;exitDx=0;exitDy=0;entryX=0.5;entryY=0.0;entryDx=0;entryDy=0;" target="p1_cloud_sheets" value="Tulis Lembar">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="p1_e1_17" value="Simpan ke File" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#8B5CF6;strokeWidth=2;exitX=0.5;exitY=1.0;exitDx=0;exitDy=0;entryX=0.5;entryY=0.0;entryDx=0;entryDy=0;" edge="1" parent="p1_1" source="p1_cloud_sheets" target="p1_cloud_file">
+        <mxCell id="p1_e1_17" edge="1" parent="p1_1" source="p1_cloud_sheets" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#8B5CF6;strokeWidth=2;exitX=0.5;exitY=1.0;exitDx=0;exitDy=0;entryX=0.5;entryY=0.0;entryDx=0;entryDy=0;" target="p1_cloud_file" value="Simpan ke File">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
       </root>
@@ -164,7 +170,7 @@
         <mxCell id="p2_title" value="&lt;b style=&quot;font-size:18px;&quot;&gt;WLLT.Z — ALUR TRANSAKSI &amp;amp; INTEGRITAS MUTASI SALDO&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:12px;color:#475569;&quot;&gt;Alur detil mutasi multi-tipe (Income, Expense, Transfer, Debt), alokasi budget bertingkat, dan mekanisme reversal saldo&lt;/span&gt;" style="html=1;rounded=1;whiteSpace=wrap;fillColor=#F8FAFC;strokeColor=#CBD5E1;align=left;spacingLeft=25;fontColor=#0F172A;" vertex="1" parent="p2_1">
           <mxGeometry x="40" y="20" width="1620" height="60" as="geometry" />
         </mxCell>
-        <mxCell id="p2_lane_create" value="ALUR PENCATATAN TRANSAKSI BARU (CREATE TRANSACTION)" style="swimlane;html=1;startSize=40;fillColor=#F8FAFC;strokeColor=#93C5FD;swimlaneHeadColor=#DBEAFE;fontColor=#1E3A8A;fontStyle=1;rounded=1;arcSize=4;" vertex="1" parent="p2_1">
+        <mxCell id="p2_lane_create" value="ALUR PENCATATAN TRANSAKSI BARU (CREATE TRANSACTION)" style="swimlane;html=1;startSize=40;fillColor=#1D4ED8;strokeColor=#1E40AF;swimlaneFillColor=#F8FAFC;fontColor=#FFFFFF;fontStyle=1;fontSize=13;rounded=1;arcSize=4;align=center;" vertex="1" parent="p2_1">
           <mxGeometry x="40" y="100" width="1020" height="1000" as="geometry" />
         </mxCell>
         <mxCell id="p2_tx_start" value="&lt;b&gt;Pengguna Mengisi Form Transaksi&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:10px;&quot;&gt;Modal: AddTransactionModal.tsx (Nominal, Kategori, Dompet, Jenis)&lt;/span&gt;" style="html=1;rounded=1;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#3B82F6;fontColor=#0F172A;" vertex="1" parent="p2_1">
@@ -189,21 +195,21 @@
           <mxGeometry x="815" y="390" width="215" height="65" as="geometry" />
         </mxCell>
         <mxCell id="p2_tx_step2_budget" value="&lt;b&gt;Step 2: Update Akumulasi Anggaran (Khusus Pengeluaran / Expense)&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:10px;color:#334155;&quot;&gt;1. Resolusi Induk: budgetCatId = txnCategory.parent_id ?? category_id&lt;br&gt;2. Cari Budget: budgetRepo.findBudgetForCategory(budgetCatId)&lt;br&gt;3. Perbarui Terpakai: budgetRepo.updateSpent(budget.id, budget.spent + amount)&lt;/span&gt;" style="html=1;rounded=1;whiteSpace=wrap;fillColor=#F1F5F9;strokeColor=#64748B;fontColor=#0F172A;align=left;spacing=10;" vertex="1" parent="p2_1">
-          <mxGeometry x="70" y="485" width="960" height="75" as="geometry" />
+          <mxGeometry x="315" y="485" width="475" height="75" as="geometry" />
         </mxCell>
         <mxCell id="p2_tx_step3_cache" value="&lt;b&gt;Step 3: Invalidasi Cache TanStack Query (Reaktivitas Antarmuka)&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:10px;color:#1E3A8A;&quot;&gt;await Promise.all([ invalidateQueries([wallets]), invalidateQueries([transactions]), invalidateQueries([budgets]) ])&lt;/span&gt;" style="html=1;rounded=1;whiteSpace=wrap;fillColor=#DBEAFE;strokeColor=#3B82F6;fontColor=#1E3A8A;" vertex="1" parent="p2_1">
-          <mxGeometry x="70" y="585" width="960" height="60" as="geometry" />
+          <mxGeometry x="70" y="590" width="960" height="60" as="geometry" />
         </mxCell>
         <mxCell id="p2_tx_step4_sync" value="&lt;b&gt;Step 4: Asynchronous Background Cloud Sync (Non-Blocking)&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:10px;color:#475569;&quot;&gt;GoogleSheetsRepository.sync() dieksekusi di latar belakang tanpa menghambat UI lokal&lt;/span&gt;" style="html=1;rounded=1;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#94A3B8;fontColor=#0F172A;dashed=1;" vertex="1" parent="p2_1">
-          <mxGeometry x="70" y="670" width="960" height="50" as="geometry" />
+          <mxGeometry x="70" y="675" width="960" height="50" as="geometry" />
         </mxCell>
         <mxCell id="p2_tx_done" value="&lt;b&gt;Selesai: Transaksi Berhasil Disimpan&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:10px;color:#065F46;&quot;&gt;Saldo ter-update instan &amp;lt;16ms, toast sukses muncul di layar&lt;/span&gt;" style="html=1;rounded=1;whiteSpace=wrap;fillColor=#D1FAE5;strokeColor=#10B981;fontColor=#065F46;" vertex="1" parent="p2_1">
-          <mxGeometry x="70" y="745" width="960" height="45" as="geometry" />
+          <mxGeometry x="70" y="750" width="960" height="45" as="geometry" />
         </mxCell>
-        <mxCell id="p2_ec_1" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#3B82F6;strokeWidth=2;" edge="1" parent="p2_1" source="p2_tx_start" target="p2_tx_hook">
+        <mxCell id="p2_ec_1" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#3B82F6;strokeWidth=2;exitX=0.5;exitY=1.0;exitDx=0;exitDy=0;entryX=0.5;entryY=0.0;entryDx=0;entryDy=0;" edge="1" parent="p2_1" source="p2_tx_start" target="p2_tx_hook">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="p2_ec_2" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#3B82F6;strokeWidth=2;" edge="1" parent="p2_1" source="p2_tx_hook" target="p2_tx_step1">
+        <mxCell id="p2_ec_2" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#3B82F6;strokeWidth=2;exitX=0.5;exitY=1.0;exitDx=0;exitDy=0;entryX=0.5;entryY=0.0;entryDx=0;entryDy=0;" edge="1" parent="p2_1" source="p2_tx_hook" target="p2_tx_step1">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="p2_ec_inc" value="income" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#059669;strokeWidth=1.5;exitX=0.12;exitY=1.0;exitDx=0;exitDy=0;entryX=0.5;entryY=0.0;entryDx=0;entryDy=0;" edge="1" parent="p2_1" source="p2_tx_step1" target="p2_t_inc">
@@ -218,18 +224,14 @@
         <mxCell id="p2_ec_debt" value="debt" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#CA8A04;strokeWidth=1.5;exitX=0.88;exitY=1.0;exitDx=0;exitDy=0;entryX=0.5;entryY=0.0;entryDx=0;entryDy=0;" edge="1" parent="p2_1" source="p2_tx_step1" target="p2_t_debt">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="p2_ec_exp_b" value="Cek Anggaran" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#DC2626;strokeWidth=2;exitX=0.5;exitY=1.0;exitDx=0;exitDy=0;entryX=0.38;entryY=0.0;entryDx=0;entryDy=0;" edge="1" parent="p2_1" source="p2_t_exp" target="p2_tx_step2_budget">
+        <mxCell id="p2_ec_exp_b" value="Cek Anggaran" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#DC2626;strokeWidth=2;exitX=0.5;exitY=1.0;exitDx=0;exitDy=0;entryX=0.3;entryY=0.0;entryDx=0;entryDy=0;" edge="1" parent="p2_1" source="p2_t_exp" target="p2_tx_step2_budget">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="p2_ec_b_c" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#3B82F6;strokeWidth=2;exitX=0.5;exitY=1.0;exitDx=0;exitDy=0;entryX=0.5;entryY=0.0;entryDx=0;entryDy=0;" edge="1" parent="p2_1" source="p2_tx_step2_budget" target="p2_tx_step3_cache">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="p2_ec_inc_c" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#059669;strokeWidth=1.5;exitX=0.5;exitY=1.0;exitDx=0;exitDy=0;entryX=0.12;entryY=0.0;entryDx=0;entryDy=0;" edge="1" parent="p2_1" source="p2_t_inc" target="p2_tx_step3_cache">
-          <mxGeometry relative="1" as="geometry">
-            <Array as="points">
-              <mxPoint x="180" y="570" />
-            </Array>
-          </mxGeometry>
+          <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="p2_ec_trans_c" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#6366F1;strokeWidth=1.5;exitX=0.5;exitY=1.0;exitDx=0;exitDy=0;entryX=0.63;entryY=0.0;entryDx=0;entryDy=0;" edge="1" parent="p2_1" source="p2_t_trans" target="p2_tx_step3_cache">
           <mxGeometry relative="1" as="geometry">
@@ -239,11 +241,7 @@
           </mxGeometry>
         </mxCell>
         <mxCell id="p2_ec_debt_c" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#CA8A04;strokeWidth=1.5;exitX=0.5;exitY=1.0;exitDx=0;exitDy=0;entryX=0.88;entryY=0.0;entryDx=0;entryDy=0;" edge="1" parent="p2_1" source="p2_t_debt" target="p2_tx_step3_cache">
-          <mxGeometry relative="1" as="geometry">
-            <Array as="points">
-              <mxPoint x="922" y="570" />
-            </Array>
-          </mxGeometry>
+          <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="p2_ec_c_s" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#3B82F6;strokeWidth=2;exitX=0.5;exitY=1.0;exitDx=0;exitDy=0;entryX=0.5;entryY=0.0;entryDx=0;entryDy=0;" edge="1" parent="p2_1" source="p2_tx_step3_cache" target="p2_tx_step4_sync">
           <mxGeometry relative="1" as="geometry" />
@@ -251,7 +249,7 @@
         <mxCell id="p2_ec_s_d" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#10B981;strokeWidth=2;exitX=0.5;exitY=1.0;exitDx=0;exitDy=0;entryX=0.5;entryY=0.0;entryDx=0;entryDy=0;" edge="1" parent="p2_1" source="p2_tx_step4_sync" target="p2_tx_done">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="p2_lane_del" value="ALUR PENGHAPUSAN &amp;amp; REVERSAL (DELETE TRANSACTION)" style="swimlane;html=1;startSize=40;fillColor=#FFF1F2;strokeColor=#FECDD3;swimlaneHeadColor=#FFE4E6;fontColor=#991B1B;fontStyle=1;rounded=1;arcSize=4;" vertex="1" parent="p2_1">
+        <mxCell id="p2_lane_del" value="ALUR PENGHAPUSAN &amp;amp; REVERSAL (DELETE TRANSACTION)" style="swimlane;html=1;startSize=40;fillColor=#BE123C;strokeColor=#9F1239;swimlaneFillColor=#FFF1F2;fontColor=#FFFFFF;fontStyle=1;fontSize=13;rounded=1;arcSize=4;align=center;" vertex="1" parent="p2_1">
           <mxGeometry x="1100" y="100" width="560" height="1000" as="geometry" />
         </mxCell>
         <mxCell id="p2_del_start" value="&lt;b&gt;Pengguna Menekan Tombol Hapus&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:10px;&quot;&gt;Trigger via TransactionItem / Modal Konfirmasi&lt;/span&gt;" style="html=1;rounded=1;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#F43F5E;fontColor=#0F172A;" vertex="1" parent="p2_1">
@@ -316,7 +314,7 @@
         <mxCell id="p3_s_mode_check" value="&lt;b&gt;Evaluasi Mode Sinkronisasi (syncTwoWay)&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:10px;&quot;&gt;localTxCount = await db.transactions.count()&lt;/span&gt;" style="rhombus;html=1;whiteSpace=wrap;fillColor=#EFF6FF;strokeColor=#3B82F6;fontColor=#1E40AF;fontStyle=1;" vertex="1" parent="p3_1">
           <mxGeometry x="480" y="205" width="280" height="55" as="geometry" />
         </mxCell>
-        <mxCell id="p3_box_pull" value="JALUR PULL DATA (DEVICE BARU / KOSONG: localTxCount == 0)" style="swimlane;html=1;startSize=35;fillColor=#ECFDF5;strokeColor=#A7F3D0;swimlaneHeadColor=#D1FAE5;fontColor=#065F46;fontStyle=1;rounded=1;arcSize=4;" vertex="1" parent="p3_1">
+        <mxCell id="p3_box_pull" value="JALUR PULL DATA (DEVICE BARU / KOSONG: localTxCount == 0)" style="swimlane;html=1;startSize=35;fillColor=#047857;strokeColor=#065F46;swimlaneFillColor=#ECFDF5;fontColor=#FFFFFF;fontStyle=1;fontSize=13;rounded=1;arcSize=4;align=center;" vertex="1" parent="p3_1">
           <mxGeometry x="60" y="300" width="600" height="780" as="geometry" />
         </mxCell>
         <mxCell id="p3_pl_1" value="&lt;b&gt;1. Cari Spreadsheet di Google Drive&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:10px;&quot;&gt;Endpoint: drive/v3/files?spaces=drive (Query: &amp;quot;Catatan Keuangan Saya - Wllt.z&amp;quot;)&lt;/span&gt;" style="html=1;rounded=1;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#10B981;fontColor=#0F172A;" vertex="1" parent="p3_1">
@@ -334,7 +332,7 @@
         <mxCell id="p3_pl_5" value="&lt;b&gt;Selesai: Database Lokal Terpulihkan 100%&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:10px;color:#065F46;&quot;&gt;Pengguna dapat langsung melanjutkan pencatatan pada perangkat baru&lt;/span&gt;" style="html=1;rounded=1;whiteSpace=wrap;fillColor=#A7F3D0;strokeColor=#059669;fontColor=#065F46;" vertex="1" parent="p3_1">
           <mxGeometry x="90" y="700" width="540" height="45" as="geometry" />
         </mxCell>
-        <mxCell id="p3_box_push" value="JALUR PUSH DATA (ADA DATA LOKAL: pushToDrive / syncFullFinancialReport)" style="swimlane;html=1;startSize=35;fillColor=#EFF6FF;strokeColor=#BFDBFE;swimlaneHeadColor=#DBEAFE;fontColor=#1E3A8A;fontStyle=1;rounded=1;arcSize=4;" vertex="1" parent="p3_1">
+        <mxCell id="p3_box_push" value="JALUR PUSH DATA (ADA DATA LOKAL: pushToDrive / syncFullFinancialReport)" style="swimlane;html=1;startSize=35;fillColor=#1D4ED8;strokeColor=#1E40AF;swimlaneFillColor=#EFF6FF;fontColor=#FFFFFF;fontStyle=1;fontSize=13;rounded=1;arcSize=4;align=center;" vertex="1" parent="p3_1">
           <mxGeometry x="700" y="300" width="960" height="780" as="geometry" />
         </mxCell>
         <mxCell id="p3_ps_1" value="&lt;b&gt;1. Ambil Seluruh Data Lokal (Snapshot)&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:10px;&quot;&gt;Promise.all([transactionRepo.findAll(), categoryRepo.findAll(), walletRepo.findAll(), budgetRepo.findAll()])&lt;/span&gt;" style="html=1;rounded=1;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#3B82F6;fontColor=#0F172A;" vertex="1" parent="p3_1">
@@ -422,7 +420,7 @@
         <mxCell id="p4_title" value="&lt;b style=&quot;font-size:18px;&quot;&gt;WLLT.Z — INISIALISASI PWA, AUTENTIKASI &amp;amp; ISOLASI MULTI-USER&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:12px;color:#475569;&quot;&gt;Alur siklus booting aplikasi, eliminasi race condition TanStack Query, dan isolasi basis data IndexedDB per pengguna&lt;/span&gt;" style="html=1;rounded=1;whiteSpace=wrap;fillColor=#F8FAFC;strokeColor=#CBD5E1;align=left;spacingLeft=25;fontColor=#0F172A;" vertex="1" parent="p4_1">
           <mxGeometry x="40" y="20" width="1620" height="60" as="geometry" />
         </mxCell>
-        <mxCell id="p4_lane_boot" value="1. SIKLUS BOOTING &amp;amp; INITIALIZATION GATE (AppInitializer)" style="swimlane;html=1;startSize=40;fillColor=#F8FAFC;strokeColor=#93C5FD;swimlaneHeadColor=#DBEAFE;fontColor=#1E3A8A;fontStyle=1;rounded=1;arcSize=4;" vertex="1" parent="p4_1">
+        <mxCell id="p4_lane_boot" value="1. SIKLUS BOOTING &amp;amp; INITIALIZATION GATE (AppInitializer)" style="swimlane;html=1;startSize=40;fillColor=#1D4ED8;strokeColor=#1E40AF;swimlaneFillColor=#F8FAFC;fontColor=#FFFFFF;fontStyle=1;fontSize=13;rounded=1;arcSize=4;align=center;" vertex="1" parent="p4_1">
           <mxGeometry x="40" y="100" width="760" height="980" as="geometry" />
         </mxCell>
         <mxCell id="p4_bt_1" value="&lt;b&gt;Aplikasi Dibuka (PWA / Browser)&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:10px;&quot;&gt;main.tsx memuat QueryClientProvider &amp;amp; me-mount &amp;lt;AppInitializer&amp;gt;&lt;/span&gt;" style="html=1;rounded=1;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#3B82F6;fontColor=#0F172A;" vertex="1" parent="p4_1">
@@ -452,7 +450,7 @@
         <mxCell id="p4_eb_4" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#3B82F6;strokeWidth=2;exitX=0.5;exitY=1.0;exitDx=0;exitDy=0;entryX=0.5;entryY=0.0;entryDx=0;entryDy=0;" edge="1" parent="p4_1" source="p4_bt_4" target="p4_bt_5">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="p4_lane_auth" value="2. ALUR AUTENTIKASI &amp;amp; ISOLASI BASIS DATA (setDatabaseUser)" style="swimlane;html=1;startSize=40;fillColor=#F8FAFC;strokeColor=#A7F3D0;swimlaneHeadColor=#D1FAE5;fontColor=#065F46;fontStyle=1;rounded=1;arcSize=4;" vertex="1" parent="p4_1">
+        <mxCell id="p4_lane_auth" value="2. ALUR AUTENTIKASI &amp;amp; ISOLASI BASIS DATA (setDatabaseUser)" style="swimlane;html=1;startSize=40;fillColor=#047857;strokeColor=#065F46;swimlaneFillColor=#F8FAFC;fontColor=#FFFFFF;fontStyle=1;fontSize=13;rounded=1;arcSize=4;align=center;" vertex="1" parent="p4_1">
           <mxGeometry x="830" y="100" width="830" height="980" as="geometry" />
         </mxCell>
         <mxCell id="p4_au_check" value="&lt;b&gt;Cek Status Sesi: currentUser di authStore&lt;/b&gt;" style="rhombus;html=1;whiteSpace=wrap;fillColor=#FEF3C7;strokeColor=#F59E0B;fontColor=#92400E;fontStyle=1;" vertex="1" parent="p4_1">
@@ -493,8 +491,8 @@
         <mxCell id="p4_ea_bypass" value="currentUser != null (Sesi Aktif)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#10B981;strokeWidth=2;exitX=1.0;exitY=0.5;exitDx=0;exitDy=0;entryX=1.0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="p4_1" source="p4_au_check" target="p4_au_main_app">
           <mxGeometry relative="1" as="geometry">
             <Array as="points">
-              <mxPoint x="1650" y="185" />
-              <mxPoint x="1650" y="555" />
+              <mxPoint x="1645" y="185" />
+              <mxPoint x="1645" y="555" />
             </Array>
           </mxGeometry>
         </mxCell>

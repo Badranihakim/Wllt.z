@@ -1,7 +1,7 @@
 import { transactionRepo, categoryRepo, walletRepo, budgetRepo } from '@/repositories'
 import { db } from '@/db'
 import { useAuthStore } from '@/stores'
-import type { Category, Wallet } from '@/types'
+import type { Category, Wallet, Transaction, Budget } from '@/types'
 import { formatSyncError, isNetworkError } from '@/lib/errorUtils'
 
 export class GoogleSheetsRepository {
@@ -833,33 +833,185 @@ export class GoogleSheetsRepository {
   }
 
   /**
-   * Smart bidirectional sync:
-   * - If local database has no transactions, checks Drive to pull snapshot.
-   * - Otherwise, pushes local state to Drive.
+   * Bi-directional Smart Merge:
+   * 1. Fetches cloud snapshot from '_wlltz_sync_data'!A1.
+   * 2. Merges with local Dexie database using UUID & updated_at timestamp.
+   * 3. Prevents data overwrite when syncing from multiple offline devices.
+   * 4. Updates both local Dexie and Google Sheets with merged records.
    */
-  async syncTwoWay(targetSpreadsheetId?: string): Promise<{ action: 'pulled' | 'pushed'; message: string; spreadsheetId: string }> {
+  async syncTwoWay(targetSpreadsheetId?: string): Promise<{
+    action: 'pulled' | 'pushed' | 'merged'
+    message: string
+    spreadsheetId: string
+    stats?: { uploaded: number; downloaded: number }
+  }> {
     if (typeof navigator !== 'undefined' && !navigator.onLine) {
-      throw new Error('Perangkat sedang offline. Sambungkan ke koneksi internet untuk melakukan sinkronisasi dengan Google Drive.')
+      throw new Error(
+        'Perangkat sedang offline. Sambungkan ke koneksi internet untuk melakukan sinkronisasi dengan Google Drive.'
+      )
     }
 
     try {
       const spreadsheetId = targetSpreadsheetId || (await this.getOrCreateSpreadsheet())
-      const localTxCount = await db.transactions.count()
+      await this.ensureSheetTabs(spreadsheetId)
 
-      if (localTxCount === 0) {
-        // Local is empty (e.g. freshly opened device) -> attempt pull
-        const pullResult = await this.pullFromDrive(spreadsheetId)
-        if (pullResult.success && pullResult.recordCount && pullResult.recordCount > 0) {
-          return { action: 'pulled', message: pullResult.message, spreadsheetId }
+      // 1. Fetch current cloud snapshot from '_wlltz_sync_data'!A1
+      let cloudSnapshot: any = null
+      try {
+        const readRes = await fetch(
+          `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/'${GoogleSheetsRepository.SYNC_SHEET_TITLE}'!A1`,
+          {
+            headers: { Authorization: `Bearer ${this.accessToken}` },
+          }
+        )
+        const readData = await readRes.json()
+        const rawJson = readData.values?.[0]?.[0]
+        if (rawJson) {
+          cloudSnapshot = JSON.parse(rawJson)
         }
-        if (!pullResult.success && isNetworkError(pullResult.message)) {
-          throw new Error(pullResult.message)
+      } catch (readErr) {
+        console.warn('[GoogleSheetsRepository.syncTwoWay] Warning reading cloud snapshot:', readErr)
+      }
+
+      // 2. Fetch all local entities from Dexie
+      const [localTxs, localCats, localWallets, localBudgets] = await Promise.all([
+        db.transactions.toArray(),
+        db.categories.toArray(),
+        db.wallets.toArray(),
+        db.budgets.toArray(),
+      ])
+
+      // If no cloud snapshot exists at all, push local data as initial master snapshot
+      if (!cloudSnapshot) {
+        await this.pushToDrive(spreadsheetId)
+        return {
+          action: 'pushed',
+          message: 'Data lokal berhasil dicadangkan ke Google Drive!',
+          spreadsheetId,
+          stats: { uploaded: localTxs.length, downloaded: 0 },
         }
       }
 
-      // Otherwise push local database state to Drive
+      const cloudTxs: Transaction[] = cloudSnapshot.transactions || []
+      const cloudCats: Category[] = cloudSnapshot.categories || []
+      const cloudWallets: Wallet[] = cloudSnapshot.wallets || []
+      const cloudBudgets: Budget[] = cloudSnapshot.budgets || []
+
+      // 3. Bi-directional Smart Merge for Transactions (UUID & updated_at)
+      const txMap = new Map<string, Transaction>()
+      cloudTxs.forEach(t => txMap.set(t.id, { ...t, sync_status: 'synced' }))
+
+      let uploaded = 0
+      let downloaded = 0
+      const localTxMap = new Map(localTxs.map(t => [t.id, t]))
+
+      // Identify transactions existing on cloud that local does not have
+      cloudTxs.forEach(cloudTx => {
+        if (!localTxMap.has(cloudTx.id)) {
+          downloaded++
+        }
+      })
+
+      // Merge local transactions
+      localTxs.forEach(localTx => {
+        const cloudTx = txMap.get(localTx.id)
+        if (!cloudTx) {
+          // Transaction recorded locally (e.g. while offline)
+          txMap.set(localTx.id, { ...localTx, sync_status: 'synced' })
+          uploaded++
+        } else {
+          // Exists on both: resolve conflict using updated_at & sync_status
+          const localTime = new Date(localTx.updated_at || 0).getTime()
+          const cloudTime = new Date(cloudTx.updated_at || 0).getTime()
+
+          if (localTx.sync_status === 'local_only' || localTime > cloudTime) {
+            txMap.set(localTx.id, { ...localTx, sync_status: 'synced' })
+            if (localTx.sync_status === 'local_only') uploaded++
+          } else {
+            txMap.set(localTx.id, { ...cloudTx, sync_status: 'synced' })
+          }
+        }
+      })
+
+      // 4. Bi-directional Smart Merge for Wallets
+      const walletMap = new Map<string, Wallet>()
+      cloudWallets.forEach(w => walletMap.set(w.id, { ...w, sync_status: 'synced' }))
+      localWallets.forEach(localW => {
+        const cloudW = walletMap.get(localW.id)
+        if (!cloudW) {
+          walletMap.set(localW.id, { ...localW, sync_status: 'synced' })
+        } else {
+          const localTime = new Date(localW.updated_at || 0).getTime()
+          const cloudTime = new Date(cloudW.updated_at || 0).getTime()
+          if (localW.sync_status === 'local_only' || localTime > cloudTime) {
+            walletMap.set(localW.id, { ...localW, sync_status: 'synced' })
+          }
+        }
+      })
+
+      // 5. Bi-directional Smart Merge for Categories
+      const catMap = new Map<string, Category>()
+      cloudCats.forEach(c => catMap.set(c.id, { ...c, sync_status: 'synced' }))
+      localCats.forEach(localC => {
+        const cloudC = catMap.get(localC.id)
+        if (!cloudC) {
+          catMap.set(localC.id, { ...localC, sync_status: 'synced' })
+        } else {
+          const localTime = new Date(localC.updated_at || 0).getTime()
+          const cloudTime = new Date(cloudC.updated_at || 0).getTime()
+          if (localC.sync_status === 'local_only' || localTime > cloudTime) {
+            catMap.set(localC.id, { ...localC, sync_status: 'synced' })
+          }
+        }
+      })
+
+      // 6. Bi-directional Smart Merge for Budgets
+      const budgetMap = new Map<string, Budget>()
+      cloudBudgets.forEach(b => budgetMap.set(b.id, { ...b, sync_status: 'synced' }))
+      localBudgets.forEach(localB => {
+        const cloudB = budgetMap.get(localB.id)
+        if (!cloudB) {
+          budgetMap.set(localB.id, { ...localB, sync_status: 'synced' })
+        } else {
+          const localTime = new Date(localB.updated_at || 0).getTime()
+          const cloudTime = new Date(cloudB.updated_at || 0).getTime()
+          if (localB.sync_status === 'local_only' || localTime > cloudTime) {
+            budgetMap.set(localB.id, { ...localB, sync_status: 'synced' })
+          }
+        }
+      })
+
+      const mergedTxs = Array.from(txMap.values())
+      const mergedWallets = Array.from(walletMap.values())
+      const mergedCats = Array.from(catMap.values())
+      const mergedBudgets = Array.from(budgetMap.values())
+
+      // 7. Persist merged records to local Dexie IndexedDB
+      await db.transaction('rw', [db.transactions, db.categories, db.wallets, db.budgets], async () => {
+        await db.transactions.bulkPut(mergedTxs)
+        await db.categories.bulkPut(mergedCats)
+        await db.wallets.bulkPut(mergedWallets)
+        await db.budgets.bulkPut(mergedBudgets)
+      })
+
+      // 8. Re-render and push master merged report and snapshot to Google Sheets
       await this.pushToDrive(spreadsheetId)
-      return { action: 'pushed', message: 'Data lokal berhasil diunggah ke Google Drive!', spreadsheetId }
+
+      let message = 'Sinkronisasi dua arah berhasil! Data lokal dan cloud sudah mutakhir.'
+      if (uploaded > 0 && downloaded > 0) {
+        message = `Sinkronisasi berhasil! ${uploaded} transaksi lokal diunggah & ${downloaded} transaksi dari perangkat lain ditarik.`
+      } else if (uploaded > 0) {
+        message = `Sinkronisasi berhasil! ${uploaded} transaksi lokal berhasil dicadangkan.`
+      } else if (downloaded > 0) {
+        message = `Sinkronisasi berhasil! ${downloaded} transaksi baru ditarik dari Google Drive.`
+      }
+
+      return {
+        action: 'merged',
+        message,
+        spreadsheetId,
+        stats: { uploaded, downloaded },
+      }
     } catch (err: any) {
       if (err?.message === 'Session Expired') throw err
       throw new Error(formatSyncError(err, 'sync'))
@@ -875,8 +1027,8 @@ export class GoogleSheetsRepository {
 
     try {
       const cloudRepo = new GoogleSheetsRepository(accessToken)
-      const spreadsheetId = await cloudRepo.syncFullFinancialReport()
-      setSpreadsheetId(spreadsheetId)
+      const res = await cloudRepo.syncTwoWay()
+      setSpreadsheetId(res.spreadsheetId)
     } catch (err) {
       console.error('[GoogleSheetsRepository.sync] Background sync failed:', err)
     }

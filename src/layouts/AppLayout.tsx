@@ -1,4 +1,4 @@
-import { useState, type ReactNode } from 'react'
+import type { ReactNode } from 'react'
 import {
   Home,
   BarChart2,
@@ -9,14 +9,12 @@ import {
   Target,
   LogOut,
   RefreshCw,
-  Download,
   Loader2,
   CheckCircle2,
+  CloudOff,
 } from 'lucide-react'
-import { useQueryClient } from '@tanstack/react-query'
 import { useUIStore, type ActiveTab, useAuthStore } from '@/stores'
-import { GoogleSheetsRepository } from '@/repositories/google-sheets/GoogleSheetsRepository'
-import { isNetworkError } from '@/lib/errorUtils'
+import { useSyncStatus } from '@/hooks/useSyncStatus'
 import { AddTransactionModal } from '@/features/transactions/components/AddTransactionModal'
 import { AddWalletModal }     from '@/features/wallet/components/AddWalletModal'
 
@@ -63,76 +61,28 @@ interface AppLayoutProps {
  * - Mobile (<md): Familiar mobile-native shell with bottom navigation and center FAB.
  */
 export function AppLayout({ children }: AppLayoutProps) {
-  const queryClient       = useQueryClient()
   const activeTab         = useUIStore(s => s.activeTab)
   const navigateTo        = useUIStore(s => s.navigateTo)
   const openAddTransaction = useUIStore(s => s.openAddTransaction)
   const currentUser       = useAuthStore(s => s.currentUser)
   const accessToken       = useAuthStore(s => s.accessToken)
-  const setSpreadsheetId  = useAuthStore(s => s.setSpreadsheetId)
   const logout            = useAuthStore(s => s.logout)
 
-  const [isSyncing, setIsSyncing] = useState(false)
-  const [syncFeedback, setSyncFeedback] = useState<string | null>(null)
+  const {
+    isOnline,
+    pendingCount,
+    visualState,
+    isSyncing,
+    syncFeedback,
+    triggerSync,
+  } = useSyncStatus()
 
-  const handleQuickSync = async () => {
+  const handleSmartSync = async () => {
     if (!accessToken) {
       navigateTo('settings')
       return
     }
-    if (typeof navigator !== 'undefined' && !navigator.onLine) {
-      setSyncFeedback('Offline')
-      setTimeout(() => setSyncFeedback(null), 3000)
-      return
-    }
-    setIsSyncing(true)
-    setSyncFeedback(null)
-    try {
-      const repo = new GoogleSheetsRepository(accessToken)
-      const res = await repo.syncTwoWay()
-      setSpreadsheetId(res.spreadsheetId)
-      await queryClient.invalidateQueries()
-      setSyncFeedback('Tersinkron')
-      setTimeout(() => setSyncFeedback(null), 3000)
-    } catch (err: any) {
-      console.error('[QuickSync] Error:', err)
-      setSyncFeedback(isNetworkError(err) ? 'Offline' : 'Gagal')
-      setTimeout(() => setSyncFeedback(null), 3000)
-    } finally {
-      setIsSyncing(false)
-    }
-  }
-
-  const handleQuickPull = async () => {
-    if (!accessToken) {
-      navigateTo('settings')
-      return
-    }
-    if (typeof navigator !== 'undefined' && !navigator.onLine) {
-      setSyncFeedback('Offline')
-      setTimeout(() => setSyncFeedback(null), 3000)
-      return
-    }
-    setIsSyncing(true)
-    setSyncFeedback(null)
-    try {
-      const repo = new GoogleSheetsRepository(accessToken)
-      const res = await repo.pullFromDrive()
-      if (res.success) {
-        await queryClient.invalidateQueries()
-        setSyncFeedback('Data Ditarik')
-        setTimeout(() => setSyncFeedback(null), 3000)
-      } else {
-        setSyncFeedback('Gagal')
-        setTimeout(() => setSyncFeedback(null), 3000)
-      }
-    } catch (err: any) {
-      console.error('[QuickPull] Error:', err)
-      setSyncFeedback(isNetworkError(err) ? 'Offline' : 'Gagal')
-      setTimeout(() => setSyncFeedback(null), 3000)
-    } finally {
-      setIsSyncing(false)
-    }
+    await triggerSync()
   }
 
   return (
@@ -182,52 +132,63 @@ export function AppLayout({ children }: AppLayoutProps) {
               <span>Catat Transaksi</span>
             </button>
 
-            {/* Quick Sync & Tarik Data Buttons */}
-            <div className="grid grid-cols-2 gap-1.5">
-              <button
-                type="button"
-                onClick={handleQuickSync}
-                disabled={isSyncing}
-                title={accessToken ? 'Sinkronkan data dengan Google Drive' : 'Hubungkan Google Drive di Pengaturan'}
-                className="flex items-center justify-center gap-1.5 py-2 px-2.5 rounded-xl text-[11px] font-semibold transition-all border shadow-xs active:scale-95 cursor-pointer disabled:opacity-50"
-                style={{
-                  background: 'var(--surface-2)',
-                  borderColor: 'var(--glass-border)',
-                  color: 'var(--text-primary)',
-                }}
-              >
+            {/* Unified Smart Bi-directional Sync Button */}
+            <button
+              type="button"
+              onClick={handleSmartSync}
+              disabled={isSyncing}
+              title={
+                accessToken
+                  ? pendingCount > 0
+                    ? `${pendingCount} transaksi lokal belum tersinkron. Klik untuk menyelaraskan dengan Google Drive.`
+                    : 'Sinkronisasi dua arah dengan Google Drive (Otomatis menggabungkan data)'
+                  : 'Hubungkan Google Drive di menu Profil & Pengaturan'
+              }
+              className="flex items-center justify-between w-full py-2.5 px-3 rounded-xl text-xs font-semibold transition-all border shadow-xs active:scale-[0.98] cursor-pointer disabled:opacity-50"
+              style={{
+                background: 'var(--surface-2)',
+                borderColor: 'var(--glass-border)',
+                color: 'var(--text-primary)',
+              }}
+            >
+              <div className="flex items-center gap-2 truncate">
                 {isSyncing ? (
-                  <Loader2 className="w-3.5 h-3.5 animate-spin text-blue-500" />
+                  <Loader2 className="w-3.5 h-3.5 animate-spin text-blue-500 shrink-0" />
                 ) : syncFeedback === 'Tersinkron' ? (
-                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />
+                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
+                ) : visualState === 'offline' ? (
+                  <CloudOff className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                ) : visualState === 'pending' ? (
+                  <RefreshCw className="w-3.5 h-3.5 text-amber-500 shrink-0" />
                 ) : (
-                  <RefreshCw className="w-3.5 h-3.5 text-blue-500" />
+                  <RefreshCw className="w-3.5 h-3.5 text-blue-500 shrink-0" />
                 )}
-                <span className="truncate">{syncFeedback || 'Sinkronkan'}</span>
-              </button>
+                <span className="truncate">
+                  {syncFeedback || (isSyncing ? 'Menyinkronkan...' : !isOnline ? 'Offline' : 'Sinkronisasi')}
+                </span>
+              </div>
 
-              <button
-                type="button"
-                onClick={handleQuickPull}
-                disabled={isSyncing}
-                title={accessToken ? 'Tarik data terbaru dari Google Drive' : 'Hubungkan Google Drive di Pengaturan'}
-                className="flex items-center justify-center gap-1.5 py-2 px-2.5 rounded-xl text-[11px] font-semibold transition-all border shadow-xs active:scale-95 cursor-pointer disabled:opacity-50"
-                style={{
-                  background: 'var(--surface-2)',
-                  borderColor: 'var(--glass-border)',
-                  color: 'var(--text-primary)',
-                }}
-              >
-                {isSyncing ? (
-                  <Loader2 className="w-3.5 h-3.5 animate-spin text-blue-500" />
-                ) : syncFeedback === 'Data Ditarik' ? (
-                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />
-                ) : (
-                  <Download className="w-3.5 h-3.5 text-emerald-500" />
+              {/* Status Badge */}
+              <div className="flex items-center gap-1.5 shrink-0 ml-1">
+                {!isSyncing && isOnline && pendingCount > 0 && (
+                  <span className="flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/30">
+                    <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />
+                    <span>{pendingCount} Pending</span>
+                  </span>
                 )}
-                <span className="truncate">Tarik Data</span>
-              </button>
-            </div>
+                {!isSyncing && isOnline && pendingCount === 0 && (
+                  <span className="flex items-center gap-1 text-[10px] font-medium text-emerald-600 dark:text-emerald-400">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                    <span>Cloud</span>
+                  </span>
+                )}
+                {!isSyncing && !isOnline && (
+                  <span className="text-[10px] font-medium text-slate-400">
+                    Lokal
+                  </span>
+                )}
+              </div>
+            </button>
           </div>
 
           {/* Navigation Links */}
@@ -311,6 +272,35 @@ export function AppLayout({ children }: AppLayoutProps) {
             </span>
           </div>
           <div className="flex items-center gap-2">
+            {/* Mobile Sync Button */}
+            <button
+              type="button"
+              onClick={handleSmartSync}
+              disabled={isSyncing}
+              title={accessToken ? 'Sinkronisasi dua arah' : 'Hubungkan Google Drive di Pengaturan'}
+              className="flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold transition-all border cursor-pointer active:scale-95 disabled:opacity-50"
+              style={{
+                background: 'var(--surface-2)',
+                borderColor: 'var(--glass-border)',
+                color: 'var(--text-primary)',
+              }}
+            >
+              {isSyncing ? (
+                <Loader2 className="w-3 h-3 animate-spin text-blue-500" />
+              ) : syncFeedback === 'Tersinkron' ? (
+                <CheckCircle2 className="w-3 h-3 text-emerald-500" />
+              ) : visualState === 'offline' ? (
+                <CloudOff className="w-3 h-3 text-slate-400" />
+              ) : pendingCount > 0 ? (
+                <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />
+              ) : (
+                <span className="w-2 h-2 rounded-full bg-emerald-500" />
+              )}
+              <span className="text-[11px] font-medium">
+                {syncFeedback || (isSyncing ? 'Sync...' : pendingCount > 0 ? `${pendingCount} Pending` : !isOnline ? 'Offline' : 'Sync')}
+              </span>
+            </button>
+
             <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">
               {currentUser?.name || 'Tamu'}
             </span>

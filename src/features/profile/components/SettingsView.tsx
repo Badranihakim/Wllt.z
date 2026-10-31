@@ -6,11 +6,13 @@ import { GoogleSheetsRepository } from '@/repositories/google-sheets/GoogleSheet
 import { seedDummyData, clearAllData, exportAllData } from '@/lib/seedDummyData'
 import { useDebugMode } from '@/lib/debug'
 import { formatSyncError } from '@/lib/errorUtils'
+import { useSyncStatus } from '@/hooks/useSyncStatus'
 
 export function SettingsView() {
   const queryClient = useQueryClient()
   const isDebug = useDebugMode()
   const { accessToken, setAccessToken, spreadsheetId, setSpreadsheetId, currentUser, logout } = useAuthStore()
+  const { pendingCount, isOnline } = useSyncStatus()
   const [isSyncing, setIsSyncing] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [syncStatus, setSyncStatus] = useState<'idle' | 'syncing' | 'synced' | 'error' | 'session_expired'>('idle')
@@ -82,6 +84,9 @@ export function SettingsView() {
 
   const handlePullFromDrive = async () => {
     if (!accessToken) return
+    if (!window.confirm('Tarik Data Total (Restore) akan mengunduh ulang snapshot data dari Google Drive ke perangkat ini. Lanjutkan?')) {
+      return
+    }
     if (typeof navigator !== 'undefined' && !navigator.onLine) {
       setError('Perangkat sedang offline. Sambungkan ke koneksi internet untuk menarik data dari Google Drive.')
       setSyncStatus('error')
@@ -411,23 +416,31 @@ export function SettingsView() {
                   </div>
                 )}
 
+                {/* Pending Offline Items Notice */}
+                {pendingCount > 0 && isOnline && (
+                  <div className="flex items-center gap-2 p-3 rounded-xl text-xs font-medium text-amber-700 bg-amber-500/10 border border-amber-500/20">
+                    <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse shrink-0" />
+                    <p>Terdapat <strong>{pendingCount} transaksi lokal</strong> yang belum dicadangkan. Klik Sinkronkan Sekarang untuk menyelaraskan ke Google Drive.</p>
+                  </div>
+                )}
+
                 {/* Sync Action Buttons */}
                 <div className="space-y-2 pt-1">
                   <button
                     onClick={() => handleTwoWaySync()}
                     disabled={isSyncing}
-                    className="w-full py-3 px-3 rounded-xl font-bold text-xs flex items-center justify-center gap-2 transition-transform active:scale-[0.98] disabled:opacity-50 text-white cursor-pointer shadow-sm"
+                    className="w-full py-3.5 px-3 rounded-xl font-bold text-xs flex items-center justify-center gap-2 transition-transform active:scale-[0.98] disabled:opacity-50 text-white cursor-pointer shadow-sm"
                     style={{ background: 'var(--accent)' }}
                   >
                     {isSyncing ? (
                       <>
                         <Loader2 className="w-4 h-4 animate-spin" />
-                        <span>Sedang Memproses Sinkronisasi...</span>
+                        <span>Sedang Memproses Sinkronisasi Dua Arah...</span>
                       </>
                     ) : (
                       <>
                         <RefreshCw className="w-4 h-4" />
-                        <span>Sinkronkan Sekarang</span>
+                        <span>Sinkronkan Sekarang (Dua Arah)</span>
                       </>
                     )}
                   </button>
@@ -436,6 +449,7 @@ export function SettingsView() {
                     <button
                       onClick={() => handlePullFromDrive()}
                       disabled={isSyncing}
+                      title="Unduh seluruh cadangan snapshot Google Drive ke perangkat ini"
                       className="py-2.5 px-3 rounded-xl font-semibold text-xs flex items-center justify-center gap-1.5 transition-colors border cursor-pointer disabled:opacity-50"
                       style={{
                         background: 'var(--surface-3)',
@@ -444,7 +458,7 @@ export function SettingsView() {
                       }}
                     >
                       <Download className="w-3.5 h-3.5 text-blue-500" />
-                      <span>Tarik Data Drive</span>
+                      <span>Tarik Total (Restore)</span>
                     </button>
 
                     <button

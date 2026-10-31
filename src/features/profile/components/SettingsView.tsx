@@ -30,12 +30,22 @@ export function SettingsView() {
     }
 
     try {
+      const emailHint = currentUser?.email?.trim() || undefined
+      let triedSilent = true
+
       const client = (window as any).google.accounts.oauth2.initTokenClient({
         client_id,
         scope: 'https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/spreadsheets',
+        hint: emailHint,
         callback: (response: any) => {
           if (response.error !== undefined) {
-            setError(response.error)
+            // Jika percobaan tanpa dialog (prompt: '') memerlukan persetujuan izin scopes pengguna
+            if (triedSilent && (response.error === 'immediate_failed' || response.error === 'interaction_required')) {
+              triedSilent = false
+              client.requestAccessToken({ hint: emailHint })
+              return
+            }
+            setError(response.error_description || response.error)
             return
           }
           setAccessToken(response.access_token)
@@ -43,9 +53,17 @@ export function SettingsView() {
           handleTwoWaySync(response.access_token)
         },
       })
-      client.requestAccessToken()
+
+      if (emailHint) {
+        client.requestAccessToken({
+          hint: emailHint,
+          prompt: '',
+        })
+      } else {
+        client.requestAccessToken()
+      }
     } catch (err: any) {
-      setError(err.message || 'Gagal memuat Google Identity Services')
+      setError(err?.message || 'Gagal memuat Google Identity Services')
     }
   }
 

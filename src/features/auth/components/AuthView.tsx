@@ -63,8 +63,8 @@ export function AuthView({ onSuccess }: AuthViewProps) {
               const spreadsheetId = await cloudRepo.getOrCreateSpreadsheet()
               setSpreadsheetId(spreadsheetId)
 
-              // Attempt to pull existing data from Drive
-              await cloudRepo.pullFromDrive(spreadsheetId)
+              // Smart bi-directional merge with cloud on login
+              await cloudRepo.syncTwoWay(spreadsheetId)
             } catch (driveErr) {
               console.warn('[AuthView] Sync check on Google login:', driveErr)
             }

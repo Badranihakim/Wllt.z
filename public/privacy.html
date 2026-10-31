@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kebijakan Privasi (Privacy Policy) — wllt.z</title>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <style>
+    :root {
+      --bg: #0F172A;
+      --card: #1E293B;
+      --border: #334155;
+      --text: #F8FAFC;
+      --muted: #94A3B8;
+      --accent: #3B82F6;
+    }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      line-height: 1.7;
+      padding: 2rem 1rem;
+    }
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 2.5rem;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    }
+    .header {
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 1.5rem;
+      margin-bottom: 2rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    .header img {
+      width: 48px;
+      height: 48px;
+    }
+    h1 {
+      font-size: 1.8rem;
+      color: #fff;
+    }
+    h2 {
+      font-size: 1.3rem;
+      margin-top: 2rem;
+      margin-bottom: 0.75rem;
+      color: #93C5FD;
+    }
+    p, ul {
+      color: var(--muted);
+      margin-bottom: 1rem;
+      font-size: 0.95rem;
+    }
+    ul {
+      padding-left: 1.5rem;
+    }
+    li {
+      margin-bottom: 0.5rem;
+    }
+    strong {
+      color: var(--text);
+    }
+    a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+    .highlight-box {
+      background: rgba(59, 130, 246, 0.1);
+      border: 1px solid rgba(59, 130, 246, 0.3);
+      border-radius: 12px;
+      padding: 1.25rem;
+      margin: 1.5rem 0;
+    }
+    .footer {
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border);
+      font-size: 0.85rem;
+      color: var(--muted);
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <img src="/favicon.svg" alt="wllt.z Logo">
+      <div>
+        <h1>Kebijakan Privasi (Privacy Policy)</h1>
+        <p style="margin: 0; font-size: 0.85rem;">Terakhir Diperbarui: 31 Oktober 2026</p>
+      </div>
+    </div>
+
+    <p>
+      Selamat datang di <strong>wllt.z</strong> (Personal Finance & Accounting PWA). Kami sangat menghargai privasi dan keamanan data finansial Anda. Dokumen ini menjelaskan bagaimana aplikasi wllt.z mengelola dan melindungi data pribadi Anda.
+    </p>
+
+    <h2>1. Arsitektur Local-First (Privasi Utama)</h2>
+    <p>
+      wllt.z dibangun dengan prinsip <strong>Local-First</strong>. Semua data transaksi, dompet, mutasi, dan target anggaran Anda disimpan secara lokal di perangkat Anda menggunakan penyimpanan peramban (IndexedDB). Kami tidak memiliki peladen (server) backend pihak ketiga yang menampung atau memantau transaksi keuangan pribadi Anda.
+    </p>
+
+    <h2>2. Penggunaan Google OAuth & Layanan Google API</h2>
+    <p>
+      Jika Anda memilih untuk menghubungkan akun Google Anda untuk pencadangan (backup) dan sinkronisasi awan, aplikasi akan meminta izin untuk lingkup (scopes) berikut:
+    </p>
+    <ul>
+      <li><strong>Google UserInfo (Profil & Email):</strong> Digunakan hanya untuk mengidentifikasi akun Anda dan menampilkan nama serta foto profil pada antarmuka aplikasi.</li>
+      <li><strong>Google Drive (drive.file):</strong> Digunakan hanya untuk membuat dan mengelola berkas spreadsheet cadangan yang dibuat secara khusus oleh aplikasi wllt.z di Google Drive Anda. wllt.z tidak memiliki akses ke berkas atau dokumen pribadi lain di Google Drive Anda.</li>
+      <li><strong>Google Sheets (spreadsheets):</strong> Digunakan untuk menulis dan menyinkronkan data pencatatan transaksi ke dalam lembar kerja Google Sheets milik Anda sendiri.</li>
+    </ul>
+
+    <div class="highlight-box">
+      <strong>Kepatuhan Google API Services User Data Policy:</strong>
+      <p style="margin-top: 0.5rem; margin-bottom: 0;">
+        Penggunaan dan transfer informasi yang diterima dari Google API oleh wllt.z ke aplikasi lain akan mematuhi <a href="https://developers.google.com/terms/api-services-user-data-policy" target="_blank" rel="noopener noreferrer">Google API Services User Data Policy</a>, termasuk persyaratan <em>Limited Use</em> (Penggunaan Terbatas). Data Google Anda tidak pernah dijual atau diserahkan kepada pihak manapun.
+      </p>
+    </div>
+
+    <h2>3. Penyimpanan dan Keamanan Data</h2>
+    <p>
+      Seluruh komunikasi data antara peramban Anda dengan layanan Google dilakukan secara terenkripsi (HTTPS / SSL/TLS) langsung dari perangkat Anda ke server Google resmi. Kami tidak pernah melihat, menyimpan salinan, atau meneruskan token akses OAuth Anda ke server perantara pihak ketiga.
+    </p>
+
+    <h2>4. Hak Pengguna & Penghapusan Data</h2>
+    <p>
+      Anda memiliki kendali penuh atas data Anda setiap saat:
+    </p>
+    <ul>
+      <li><strong>Hapus Data Lokal:</strong> Anda dapat membersihkan seluruh database lokal kapan saja melalui menu Pengaturan aplikasi.</li>
+      <li><strong>Cabut Akses Google:</strong> Anda dapat mencabut otorisasi akses wllt.z ke akun Google Anda sewaktu-waktu melalui <a href="https://myaccount.google.com/permissions" target="_blank" rel="noopener noreferrer">Google Account Permissions</a>.</li>
+      <li><strong>Hapus Lembar Cadangan:</strong> Anda dapat menghapus berkas spreadsheet wllt.z secara langsung dari Google Drive Anda kapan saja.</li>
+    </ul>
+
+    <h2>5. Hubungi Pengembang</h2>
+    <p>
+      Jika Anda memiliki pertanyaan mengenai kebijakan privasi atau aplikasi ini, Anda dapat menghubungi kami di:
+    </p>
+    <p>
+      <strong>Email Pengembang:</strong> <a href="mailto:rayansarijatmiko@gmail.com">rayansarijatmiko@gmail.com</a><br>
+      <strong>Aplikasi:</strong> <a href="https://wllt-z.vercel.app">https://wllt-z.vercel.app</a>
+    </p>
+
+    <div class="footer">
+      <p>&copy; 2026 wllt.z — Personal Finance & Accounting. Hak Cipta Dilindungi.</p>
+    </div>
+  </div>
+</body>
+</html>

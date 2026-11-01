@@ -1,0 +1,208 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 950 820" width="100%" height="100%" style="background-color:#ffffff; font-family:'Segoe UI', Helvetica, Arial, sans-serif;">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#475569" />
+    </marker>
+    <filter id="drop-shadow" x="-5%" y="-5%" width="115%" height="115%">
+      <feDropShadow dx="1" dy="2" stdDeviation="2" flood-opacity="0.1" />
+    </filter>
+  </defs>
+
+  <!-- Title / Caption -->
+  <text x="475" y="800" text-anchor="middle" font-size="18" font-weight="bold" fill="#0f172a">Gambar 1. Use case diagram wllt.z (Revisi)</text>
+
+  <!-- System Boundary Box -->
+  <rect x="200" y="20" width="550" height="740" rx="8" ry="8" fill="#ffffff" stroke="#475569" stroke-width="1.8" />
+  <text x="475" y="46" text-anchor="middle" font-size="16" font-weight="bold" fill="#0f172a">Sistem wllt.z</text>
+
+  <!-- ================= ACTOR: PENGGUNA (LEFT) ================= -->
+  <g transform="translate(85, 390)">
+    <!-- Head -->
+    <circle cx="0" cy="-35" r="16" fill="#ffffff" stroke="#1e293b" stroke-width="2.2" />
+    <!-- Body -->
+    <line x1="0" y1="-19" x2="0" y2="22" stroke="#1e293b" stroke-width="2.2" />
+    <!-- Arms -->
+    <line x1="-24" y1="-6" x2="24" y2="-6" stroke="#1e293b" stroke-width="2.2" />
+    <!-- Legs -->
+    <line x1="0" y1="22" x2="-20" y2="58" stroke="#1e293b" stroke-width="2.2" />
+    <line x1="0" y1="22" x2="20" y2="58" stroke="#1e293b" stroke-width="2.2" />
+    <!-- Label -->
+    <text x="0" y="80" text-anchor="middle" font-size="15" font-weight="bold" fill="#0f172a">Pengguna</text>
+  </g>
+
+  <!-- ================= ACTOR: GOOGLE (RIGHT) ================= -->
+  <g transform="translate(865, 620)">
+    <!-- Head -->
+    <circle cx="0" cy="-35" r="16" fill="#ffffff" stroke="#1e293b" stroke-width="2.2" />
+    <!-- Body -->
+    <line x1="0" y1="-19" x2="0" y2="22" stroke="#1e293b" stroke-width="2.2" />
+    <!-- Arms -->
+    <line x1="-24" y1="-6" x2="24" y2="-6" stroke="#1e293b" stroke-width="2.2" />
+    <!-- Legs -->
+    <line x1="0" y1="22" x2="-20" y2="58" stroke="#1e293b" stroke-width="2.2" />
+    <line x1="0" y1="22" x2="20" y2="58" stroke="#1e293b" stroke-width="2.2" />
+    <!-- Label -->
+    <text x="0" y="80" text-anchor="middle" font-size="15" font-weight="bold" fill="#0f172a">Google</text>
+  </g>
+
+  <!-- Style for Use Cases -->
+  <!-- Primary UC ovals on Left Column inside system (cx=330) -->
+  <!-- Secondary include ovals on Right Column inside system (cx=620) -->
+
+  <!-- ================= RELATION LINES (PENGGUNA -> LEFT USE CASES) ================= -->
+  <!-- User center at (85, 390) -->
+  <g stroke="#64748b" stroke-width="1.4">
+    <line x1="85" y1="390" x2="245" y2="75" />   <!-- Keluar / ganti akun -->
+    <line x1="85" y1="390" x2="245" y2="120" />  <!-- Tambah & kelola dompet -->
+    <line x1="85" y1="390" x2="245" y2="165" />  <!-- Catat transaksi -->
+    <line x1="85" y1="390" x2="245" y2="210" />  <!-- Ubah transaksi -->
+    <line x1="85" y1="390" x2="245" y2="255" />  <!-- Hapus transaksi -->
+    <line x1="85" y1="390" x2="245" y2="300" />  <!-- Transfer antardompet -->
+    <line x1="85" y1="390" x2="245" y2="345" />  <!-- Lihat riwayat dan cari -->
+    <line x1="85" y1="390" x2="245" y2="390" />  <!-- Atur anggaran bulanan -->
+    <line x1="85" y1="390" x2="245" y2="435" />  <!-- Lihat dasbor -->
+    <line x1="85" y1="390" x2="245" y2="480" />  <!-- Lihat statistik -->
+
+    <!-- Cloud connected to Pengguna -->
+    <line x1="85" y1="390" x2="245" y2="535" />  <!-- Masuk dengan Google -->
+    <line x1="85" y1="390" x2="245" y2="585" />  <!-- Hubungkan Google Drive -->
+    <line x1="85" y1="390" x2="245" y2="635" />  <!-- Sinkronisasi data 2 arah -->
+    <line x1="85" y1="390" x2="245" y2="685" />  <!-- Buka catatan di Sheets -->
+  </g>
+
+  <!-- ================= RELATION LINES (GOOGLE -> CLOUD USE CASES) ================= -->
+  <!-- Google center at (865, 620) -->
+  <g stroke="#64748b" stroke-width="1.4">
+    <line x1="865" y1="620" x2="440" y2="535" />  <!-- Masuk dengan Google -->
+    <line x1="865" y1="620" x2="440" y2="585" />  <!-- Hubungkan Google Drive -->
+    <line x1="865" y1="620" x2="440" y2="635" />  <!-- Sinkronisasi data 2 arah -->
+    <line x1="865" y1="620" x2="440" y2="685" />  <!-- Buka catatan di Sheets -->
+  </g>
+
+  <!-- ================= INCLUDE RELATION LINES ================= -->
+  <!-- Catat Transaksi (340, 165) -> Validasi (620, 175) -->
+  <g stroke="#475569" stroke-width="1.3" stroke-dasharray="5 3" marker-end="url(#arrow)">
+    <line x1="435" y1="165" x2="525" y2="175" />
+    <!-- Catat Transaksi (340, 165) -> Perbarui Saldo (620, 245) -->
+    <line x1="430" y1="175" x2="525" y2="235" />
+    <!-- Ubah Transaksi (340, 210) -> Validasi (620, 175) -->
+    <line x1="435" y1="205" x2="525" y2="185" />
+    <!-- Ubah Transaksi (340, 210) -> Perbarui Saldo (620, 245) -->
+    <line x1="435" y1="215" x2="525" y2="240" />
+    <!-- Hapus Transaksi (340, 255) -> Perbarui Saldo (620, 245) -->
+    <line x1="435" y1="255" x2="525" y2="250" />
+    <!-- Transfer (340, 300) -> Perbarui Saldo (620, 245) -->
+    <line x1="435" y1="295" x2="525" y2="260" />
+  </g>
+
+  <!-- Include Text Labels -->
+  <rect x="455" y="150" width="62" height="16" fill="#ffffff" rx="3" />
+  <text x="486" y="162" text-anchor="middle" font-size="11" fill="#334155">&laquo;include&raquo;</text>
+
+  <rect x="460" y="225" width="62" height="16" fill="#ffffff" rx="3" />
+  <text x="491" y="237" text-anchor="middle" font-size="11" fill="#334155">&laquo;include&raquo;</text>
+
+  <!-- ================= USE CASE OVALS ================= -->
+  <!-- Common oval attributes: rx="95", ry="18", fill="#e0e7ff" stroke="#4f46e5" -->
+
+  <!-- 1. Keluar / ganti akun -->
+  <g transform="translate(340, 75)">
+    <ellipse cx="0" cy="0" rx="95" ry="18" fill="#f1f5f9" stroke="#475569" stroke-width="1.4" />
+    <text x="0" y="5" text-anchor="middle" font-size="12.5" fill="#0f172a">Keluar / ganti akun</text>
+  </g>
+
+  <!-- 2. Tambah dan kelola dompet -->
+  <g transform="translate(340, 120)">
+    <ellipse cx="0" cy="0" rx="95" ry="18" fill="#f1f5f9" stroke="#475569" stroke-width="1.4" />
+    <text x="0" y="5" text-anchor="middle" font-size="12" fill="#0f172a">Tambah &amp; kelola dompet</text>
+  </g>
+
+  <!-- 3. Catat transaksi -->
+  <g transform="translate(340, 165)">
+    <ellipse cx="0" cy="0" rx="95" ry="18" fill="#f1f5f9" stroke="#475569" stroke-width="1.4" />
+    <text x="0" y="5" text-anchor="middle" font-size="12.5" fill="#0f172a">Catat transaksi</text>
+  </g>
+
+  <!-- 4. Ubah transaksi -->
+  <g transform="translate(340, 210)">
+    <ellipse cx="0" cy="0" rx="95" ry="18" fill="#f1f5f9" stroke="#475569" stroke-width="1.4" />
+    <text x="0" y="5" text-anchor="middle" font-size="12.5" fill="#0f172a">Ubah transaksi</text>
+  </g>
+
+  <!-- 5. Hapus transaksi -->
+  <g transform="translate(340, 255)">
+    <ellipse cx="0" cy="0" rx="95" ry="18" fill="#f1f5f9" stroke="#475569" stroke-width="1.4" />
+    <text x="0" y="5" text-anchor="middle" font-size="12.5" fill="#0f172a">Hapus transaksi</text>
+  </g>
+
+  <!-- 6. Transfer antardompet -->
+  <g transform="translate(340, 300)">
+    <ellipse cx="0" cy="0" rx="95" ry="18" fill="#f1f5f9" stroke="#475569" stroke-width="1.4" />
+    <text x="0" y="5" text-anchor="middle" font-size="12" fill="#0f172a">Transfer antardompet</text>
+  </g>
+
+  <!-- 7. Lihat riwayat dan cari -->
+  <g transform="translate(340, 345)">
+    <ellipse cx="0" cy="0" rx="95" ry="18" fill="#f1f5f9" stroke="#475569" stroke-width="1.4" />
+    <text x="0" y="5" text-anchor="middle" font-size="12" fill="#0f172a">Lihat riwayat dan cari</text>
+  </g>
+
+  <!-- 8. Atur anggaran bulanan -->
+  <g transform="translate(340, 390)">
+    <ellipse cx="0" cy="0" rx="95" ry="18" fill="#f1f5f9" stroke="#475569" stroke-width="1.4" />
+    <text x="0" y="5" text-anchor="middle" font-size="12" fill="#0f172a">Atur anggaran bulanan</text>
+  </g>
+
+  <!-- 9. Lihat dasbor -->
+  <g transform="translate(340, 435)">
+    <ellipse cx="0" cy="0" rx="95" ry="18" fill="#f1f5f9" stroke="#475569" stroke-width="1.4" />
+    <text x="0" y="5" text-anchor="middle" font-size="12.5" fill="#0f172a">Lihat dasbor</text>
+  </g>
+
+  <!-- 10. Lihat statistik -->
+  <g transform="translate(340, 480)">
+    <ellipse cx="0" cy="0" rx="95" ry="18" fill="#f1f5f9" stroke="#475569" stroke-width="1.4" />
+    <text x="0" y="5" text-anchor="middle" font-size="12.5" fill="#0f172a">Lihat statistik</text>
+  </g>
+
+  <!-- ================= INCLUDED USE CASES (RIGHT COLUMN) ================= -->
+  <!-- Validasi transaksi -->
+  <g transform="translate(630, 175)">
+    <ellipse cx="0" cy="0" rx="95" ry="18" fill="#f8fafc" stroke="#475569" stroke-width="1.4" />
+    <text x="0" y="5" text-anchor="middle" font-size="12" fill="#0f172a">Validasi transaksi</text>
+  </g>
+
+  <!-- Perbarui saldo dan realisasi anggaran -->
+  <g transform="translate(630, 245)">
+    <ellipse cx="0" cy="0" rx="98" ry="24" fill="#f8fafc" stroke="#475569" stroke-width="1.4" />
+    <text x="0" y="-3" text-anchor="middle" font-size="11.5" fill="#0f172a">Perbarui saldo dan</text>
+    <text x="0" y="13" text-anchor="middle" font-size="11.5" fill="#0f172a">realisasi anggaran</text>
+  </g>
+
+  <!-- ================= GOOGLE / CLOUD INTEGRATION USE CASES ================= -->
+  <!-- 11. Masuk dengan Google -->
+  <g transform="translate(340, 535)">
+    <ellipse cx="0" cy="0" rx="95" ry="18" fill="#f1f5f9" stroke="#475569" stroke-width="1.4" />
+    <text x="0" y="5" text-anchor="middle" font-size="12" fill="#0f172a">Masuk dengan Google</text>
+  </g>
+
+  <!-- 12. Hubungkan Google Drive -->
+  <g transform="translate(340, 585)">
+    <ellipse cx="0" cy="0" rx="95" ry="18" fill="#f1f5f9" stroke="#475569" stroke-width="1.4" />
+    <text x="0" y="5" text-anchor="middle" font-size="12" fill="#0f172a">Hubungkan Google Drive</text>
+  </g>
+
+  <!-- 13. Sinkronisasi data 2 arah (Menggantikan Sinkronkan ke Sheets & Tarik data dari Drive) -->
+  <g transform="translate(340, 635)">
+    <ellipse cx="0" cy="0" rx="95" ry="20" fill="#e0f2fe" stroke="#0284c7" stroke-width="1.6" />
+    <text x="0" y="-1" text-anchor="middle" font-size="11.5" font-weight="bold" fill="#0369a1">Sinkronisasi data 2 arah</text>
+    <text x="0" y="13" text-anchor="middle" font-size="10" fill="#0284c7">(Smart Merge)</text>
+  </g>
+
+  <!-- 14. Buka catatan di Sheets (Fitur baru Buka Catatan Saya) -->
+  <g transform="translate(340, 688)">
+    <ellipse cx="0" cy="0" rx="95" ry="18" fill="#e0f2fe" stroke="#0284c7" stroke-width="1.6" />
+    <text x="0" y="5" text-anchor="middle" font-size="11.5" font-weight="bold" fill="#0369a1">Buka catatan di Sheets</text>
+  </g>
+
+</svg>

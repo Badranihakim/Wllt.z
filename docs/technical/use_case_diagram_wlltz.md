@@ -35,108 +35,115 @@ Dokumen ini merevisi diagram *Use Case* sistem secara menyeluruh guna merefleksi
 
 ---
 
-## 3. Diagram Use Case Lengkap (UML Mermaid) `[FACT]`
+## 3. Diagram Use Case Lengkap (UML Mermaid & PlantUML) `[FACT]`
+
+### A. Diagram Mermaid (Clean & Streamlined)
 
 ```mermaid
 flowchart LR
     %% Definisi Gaya Node
-    classDef actorStyle fill:#0F172A,stroke:#1E293B,color:#FFFFFF,stroke-width:2px;
-    classDef ucStyle fill:#F8FAFC,stroke:#3B82F6,color:#0F172A,stroke-width:1.5px;
-    classDef subUcStyle fill:#EFF6FF,stroke:#60A5FA,color:#1E3A8A,stroke-width:1px,stroke-dasharray: 4 2;
-    classDef extStyle fill:#F1F5F9,stroke:#64748B,color:#334155,stroke-width:1.5px;
+    classDef actorStyle fill:#FFFFFF,stroke:#1E293B,stroke-width:2px,color:#0F172A;
+    classDef ucStyle fill:#F8FAFC,stroke:#475569,stroke-width:1.5px,color:#0F172A;
+    classDef newUcStyle fill:#E0F2FE,stroke:#0284C7,stroke-width:1.8px,color:#0369A1;
 
     %% Aktor Utama & Eksternal
-    User(["👤 Pengguna<br/>(User)"]):::actorStyle
-    GIS(["🔐 Google Identity Services<br/>(OAuth 2.0)"]):::extStyle
-    GDrive(["☁️ Google Drive & Sheets API<br/>(Cloud Storage)"]):::extStyle
+    User(["👤 Pengguna"]):::actorStyle
+    Google(["👤 Google"]):::actorStyle
 
     %% Batasan Sistem Wllt.z
-    subgraph SystemBoundary [" Batasan Sistem: Wllt.z Personal Finance & Accounting PWA "]
-        
-        %% Paket 1: Autentikasi & Akun
-        subgraph P1 [" 1. Autentikasi & Profil Pengguna "]
-            UC_Auth(["Masuk via Google Account"]):::ucStyle
-            UC_AutoHint(["Bypass Chooser via Login Hint"]):::subUcStyle
-            UC_BootstrapDB(["Inisialisasi DB Pengguna"]):::subUcStyle
-            UC_Logout(["Keluar dari Akun (Logout)"]):::ucStyle
-        end
+    subgraph SystemBoundary [" Sistem wllt.z "]
+        UC_Logout(["Keluar / ganti akun"]):::ucStyle
+        UC_Wallet(["Tambah dan kelola dompet"]):::ucStyle
+        UC_CreateTx(["Catat transaksi"]):::ucStyle
+        UC_EditTx(["Ubah transaksi"]):::newUcStyle
+        UC_DeleteTx(["Hapus transaksi"]):::ucStyle
+        UC_Transfer(["Transfer antardompet"]):::ucStyle
+        UC_History(["Lihat riwayat dan cari"]):::ucStyle
+        UC_Budget(["Atur anggaran bulanan"]):::ucStyle
+        UC_Dashboard(["Lihat dasbor"]):::ucStyle
+        UC_Stats(["Lihat statistik"]):::ucStyle
 
-        %% Paket 2: Pengelolaan Dompet & Saldo
-        subgraph P2 [" 2. Dompet & Kekayaan Bersih "]
-            UC_ManageWallets(["Kelola Dompet (Kas/Bank/E-Wallet)"]):::ucStyle
-            UC_CalcNetWorth(["Hitung Total Kekayaan Bersih"]):::subUcStyle
-        end
-
-        %% Paket 3: Pencatatan & Transaksi
-        subgraph P3 [" 3. Pencatatan Transaksi Finansial "]
-            UC_CreateTx(["Catat Transaksi Baru"]):::ucStyle
-            UC_EditDeleteTx(["Ubah / Hapus Transaksi"]):::ucStyle
-            UC_BalanceReversal(["Kalkulasi Pembalikan Saldo"]):::subUcStyle
-            UC_UpdateBalance(["Mutasi Saldo Dompet Otomatis"]):::subUcStyle
-            UC_FilterTx(["Filter & Riwayat Transaksi"]):::ucStyle
-        end
-
-        %% Paket 4: Anggaran Belanja
-        subgraph P4 [" 4. Perencanaan & Anggaran "]
-            UC_SetBudget(["Tetapkan Anggaran per Kategori"]):::ucStyle
-            UC_MonitorBudget(["Pantau Batas & Realisasi Anggaran"]):::subUcStyle
-        end
-
-        %% Paket 5: Analitik & Laporan
-        subgraph P5 [" 5. Analitik & Pelaporan Finansial "]
-            UC_ViewCashflow(["Tinjau Dasbor Arus Kas"]):::ucStyle
-            UC_ExpenseAnalytics(["Analisis Komposisi Pengeluaran"]):::ucStyle
-        end
-
-        %% Paket 6: Sinkronisasi Cloud & Audit
-        subgraph P6 [" 6. Sinkronisasi Cloud & Kedaulatan Data "]
-            UC_ConnectDrive(["Hubungkan Google Drive"]):::ucStyle
-            UC_SmartSync(["Picu Smart Two-Way Sync"]):::ucStyle
-            UC_ConflictResolve(["Resolusi Konflik (Last-Write-Wins)"]):::subUcStyle
-            UC_AuditSheet(["Buka & Audit Catatan di Sheets"]):::ucStyle
-            UC_MonitorSyncBadge(["Pantau Status Sinkronisasi Real-Time"]):::ucStyle
-            UC_OfflineQueue(["Antrean Mutasi Offline (Local-First)"]):::subUcStyle
-        end
-
+        UC_LoginGoogle(["Masuk dengan Google"]):::ucStyle
+        UC_ConnectDrive(["Hubungkan Google Drive"]):::ucStyle
+        UC_TwoWaySync(["Sinkronisasi data 2 arah<br/>(Smart Merge)"]):::newUcStyle
+        UC_OpenSheets(["Buka catatan di Sheets"]):::newUcStyle
     end
 
-    %% Relasi Aktor Pengguna ke Use Case Primer
-    User --- UC_Auth
+    %% Relasi Pengguna ke Seluruh Use Case
     User --- UC_Logout
-    User --- UC_ManageWallets
+    User --- UC_Wallet
     User --- UC_CreateTx
-    User --- UC_EditDeleteTx
-    User --- UC_FilterTx
-    User --- UC_SetBudget
-    User --- UC_ViewCashflow
-    User --- UC_ExpenseAnalytics
+    User --- UC_EditTx
+    User --- UC_DeleteTx
+    User --- UC_Transfer
+    User --- UC_History
+    User --- UC_Budget
+    User --- UC_Dashboard
+    User --- UC_Stats
+    User --- UC_LoginGoogle
     User --- UC_ConnectDrive
-    User --- UC_SmartSync
-    User --- UC_AuditSheet
-    User --- UC_MonitorSyncBadge
+    User --- UC_TwoWaySync
+    User --- UC_OpenSheets
 
-    %% Relasi Include & Extend (Paket 1: Auth)
-    UC_Auth -.->|"<<include>>"| UC_AutoHint
-    UC_Auth -.->|"<<include>>"| UC_BootstrapDB
-    UC_Auth --- GIS
+    %% Relasi Google ke Fitur Eksternal
+    UC_LoginGoogle --- Google
+    UC_ConnectDrive --- Google
+    UC_TwoWaySync --- Google
+    UC_OpenSheets --- Google
+```
 
-    %% Relasi Include & Extend (Paket 2 & 3: Transaksi & Dompet)
-    UC_ManageWallets -.->|"<<include>>"| UC_CalcNetWorth
-    UC_CreateTx -.->|"<<include>>"| UC_UpdateBalance
-    UC_EditDeleteTx -.->|"<<include>>"| UC_BalanceReversal
-    UC_BalanceReversal -.->|"<<include>>"| UC_UpdateBalance
-    UC_CreateTx -.->|"<<extend>>"| UC_OfflineQueue
+### B. Kode PlantUML (Siap Pakai untuk Export)
 
-    %% Relasi Include & Extend (Paket 4: Anggaran)
-    UC_SetBudget -.->|"<<include>>"| UC_MonitorBudget
+```plantuml
+@startuml
+left to right direction
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam defaultFontName Arial
+skinparam roundcorner 20
 
-    %% Relasi Include & Extend (Paket 6: Cloud Sync)
-    UC_ConnectDrive -.->|"<<include>>"| UC_AutoHint
-    UC_ConnectDrive --- GIS
-    UC_SmartSync -.->|"<<include>>"| UC_ConflictResolve
-    UC_SmartSync --- GDrive
-    UC_AuditSheet --- GDrive
-    UC_SmartSync -.->|"<<extend>>"| UC_OfflineQueue
+actor "Pengguna" as user
+actor "Google" as google
+
+rectangle "Sistem wllt.z" {
+  usecase "Keluar / ganti akun" as UC_Logout
+  usecase "Tambah dan kelola dompet" as UC_Wallet
+  usecase "Catat transaksi" as UC_CreateTx
+  usecase "Ubah transaksi" as UC_EditTx
+  usecase "Hapus transaksi" as UC_DeleteTx
+  usecase "Transfer antardompet" as UC_Transfer
+  usecase "Lihat riwayat dan cari" as UC_History
+  usecase "Atur anggaran bulanan" as UC_Budget
+  usecase "Lihat dasbor" as UC_Dashboard
+  usecase "Lihat statistik" as UC_Stats
+
+  usecase "Masuk dengan Google" as UC_LoginGoogle
+  usecase "Hubungkan Google Drive" as UC_ConnectDrive
+  usecase "Sinkronisasi data 2 arah\n(Smart Merge)" as UC_TwoWaySync
+  usecase "Buka catatan di Sheets" as UC_OpenSheets
+}
+
+user -- UC_Logout
+user -- UC_Wallet
+user -- UC_CreateTx
+user -- UC_EditTx
+user -- UC_DeleteTx
+user -- UC_Transfer
+user -- UC_History
+user -- UC_Budget
+user -- UC_Dashboard
+user -- UC_Stats
+
+user -- UC_LoginGoogle
+user -- UC_ConnectDrive
+user -- UC_TwoWaySync
+user -- UC_OpenSheets
+
+UC_LoginGoogle -- google
+UC_ConnectDrive -- google
+UC_TwoWaySync -- google
+UC_OpenSheets -- google
+@enduml
 ```
 
 ---

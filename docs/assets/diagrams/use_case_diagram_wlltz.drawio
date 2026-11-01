@@ -1,128 +1,108 @@
 <mxfile host="app.diagrams.net" agent="Wlltz-Architect" pages="1">
-  <diagram id="usecase_wlltz" name="Use Case Diagram wllt.z">
-    <mxGraphModel dx="1400" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="850" math="0" shadow="0">
+  <diagram id="usecase_clean" name="Use Case Diagram wllt.z">
+    <mxGraphModel dx="1200" dy="850" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1000" pageHeight="900" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
 
-        <!-- Title Caption -->
+        <!-- Caption -->
         <mxCell id="caption" value="&lt;b&gt;Gambar 1. Use case diagram wllt.z&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=15;fontColor=#000000;" vertex="1" parent="1">
-          <mxGeometry x="440" y="800" width="240" height="30" as="geometry" />
+          <mxGeometry x="380" y="830" width="240" height="30" as="geometry" />
         </mxCell>
 
         <!-- System Boundary Box -->
         <mxCell id="sys_box" value="Sistem wllt.z" style="shape=rect;html=1;verticalAlign=top;fontStyle=1;whiteSpace=wrap;fillColor=none;strokeColor=#475569;strokeWidth=1.5;fontSize=14;fontColor=#0F172A;" vertex="1" parent="1">
-          <mxGeometry x="220" y="40" width="620" height="740" as="geometry" />
+          <mxGeometry x="240" y="30" width="520" height="780" as="geometry" />
         </mxCell>
 
-        <!-- Actor Pengguna (Left) -->
+        <!-- Actor: Pengguna (Left) -->
         <mxCell id="actor_user" value="Pengguna" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fontStyle=1;fontSize=13;fontColor=#0F172A;" vertex="1" parent="1">
           <mxGeometry x="70" y="370" width="40" height="80" as="geometry" />
         </mxCell>
 
-        <!-- Actor Google (Right) -->
+        <!-- Actor: Google (Right) -->
         <mxCell id="actor_google" value="Google" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fontStyle=1;fontSize=13;fontColor=#0F172A;" vertex="1" parent="1">
-          <mxGeometry x="950" y="580" width="40" height="80" as="geometry" />
+          <mxGeometry x="890" y="640" width="40" height="80" as="geometry" />
         </mxCell>
 
-        <!-- USE CASES: Left Column -->
-        <mxCell id="uc_logout" value="Keluar / ganti akun" style="ellipse;whiteSpace=wrap;html=1;fillColor=#F8FAFC;strokeColor=#475569;fontSize=12;fontColor=#0F172A;" vertex="1" parent="1">
-          <mxGeometry x="270" y="70" width="180" height="40" as="geometry" />
+        <!-- Use Cases: Vertically Stacked at x=380, width=240, height=40 -->
+        <mxCell id="uc_1" value="Keluar / ganti akun" style="ellipse;whiteSpace=wrap;html=1;fillColor=#F8FAFC;strokeColor=#475569;fontSize=12;fontColor=#0F172A;" vertex="1" parent="1">
+          <mxGeometry x="380" y="65" width="240" height="40" as="geometry" />
         </mxCell>
 
-        <mxCell id="uc_wallet" value="Tambah dan kelola dompet" style="ellipse;whiteSpace=wrap;html=1;fillColor=#F8FAFC;strokeColor=#475569;fontSize=12;fontColor=#0F172A;" vertex="1" parent="1">
-          <mxGeometry x="270" y="120" width="180" height="40" as="geometry" />
+        <mxCell id="uc_2" value="Tambah dan kelola dompet" style="ellipse;whiteSpace=wrap;html=1;fillColor=#F8FAFC;strokeColor=#475569;fontSize=12;fontColor=#0F172A;" vertex="1" parent="1">
+          <mxGeometry x="380" y="115" width="240" height="40" as="geometry" />
         </mxCell>
 
-        <mxCell id="uc_create_tx" value="Catat transaksi" style="ellipse;whiteSpace=wrap;html=1;fillColor=#F8FAFC;strokeColor=#475569;fontSize=12;fontColor=#0F172A;" vertex="1" parent="1">
-          <mxGeometry x="270" y="170" width="180" height="40" as="geometry" />
+        <mxCell id="uc_3" value="Catat transaksi" style="ellipse;whiteSpace=wrap;html=1;fillColor=#F8FAFC;strokeColor=#475569;fontSize=12;fontColor=#0F172A;" vertex="1" parent="1">
+          <mxGeometry x="380" y="165" width="240" height="40" as="geometry" />
         </mxCell>
 
-        <mxCell id="uc_edit_tx" value="Ubah transaksi" style="ellipse;whiteSpace=wrap;html=1;fillColor=#F8FAFC;strokeColor=#475569;fontSize=12;fontColor=#0F172A;" vertex="1" parent="1">
-          <mxGeometry x="270" y="220" width="180" height="40" as="geometry" />
+        <mxCell id="uc_4" value="Ubah transaksi" style="ellipse;whiteSpace=wrap;html=1;fillColor=#F8FAFC;strokeColor=#475569;fontSize=12;fontColor=#0F172A;" vertex="1" parent="1">
+          <mxGeometry x="380" y="215" width="240" height="40" as="geometry" />
         </mxCell>
 
-        <mxCell id="uc_delete_tx" value="Hapus transaksi" style="ellipse;whiteSpace=wrap;html=1;fillColor=#F8FAFC;strokeColor=#475569;fontSize=12;fontColor=#0F172A;" vertex="1" parent="1">
-          <mxGeometry x="270" y="270" width="180" height="40" as="geometry" />
+        <mxCell id="uc_5" value="Hapus transaksi" style="ellipse;whiteSpace=wrap;html=1;fillColor=#F8FAFC;strokeColor=#475569;fontSize=12;fontColor=#0F172A;" vertex="1" parent="1">
+          <mxGeometry x="380" y="265" width="240" height="40" as="geometry" />
         </mxCell>
 
-        <mxCell id="uc_transfer" value="Transfer antardompet" style="ellipse;whiteSpace=wrap;html=1;fillColor=#F8FAFC;strokeColor=#475569;fontSize=12;fontColor=#0F172A;" vertex="1" parent="1">
-          <mxGeometry x="270" y="320" width="180" height="40" as="geometry" />
+        <mxCell id="uc_6" value="Transfer antardompet" style="ellipse;whiteSpace=wrap;html=1;fillColor=#F8FAFC;strokeColor=#475569;fontSize=12;fontColor=#0F172A;" vertex="1" parent="1">
+          <mxGeometry x="380" y="315" width="240" height="40" as="geometry" />
         </mxCell>
 
-        <mxCell id="uc_history" value="Lihat riwayat dan cari" style="ellipse;whiteSpace=wrap;html=1;fillColor=#F8FAFC;strokeColor=#475569;fontSize=12;fontColor=#0F172A;" vertex="1" parent="1">
-          <mxGeometry x="270" y="370" width="180" height="40" as="geometry" />
+        <mxCell id="uc_7" value="Lihat riwayat dan cari" style="ellipse;whiteSpace=wrap;html=1;fillColor=#F8FAFC;strokeColor=#475569;fontSize=12;fontColor=#0F172A;" vertex="1" parent="1">
+          <mxGeometry x="380" y="365" width="240" height="40" as="geometry" />
         </mxCell>
 
-        <mxCell id="uc_budget" value="Atur anggaran bulanan" style="ellipse;whiteSpace=wrap;html=1;fillColor=#F8FAFC;strokeColor=#475569;fontSize=12;fontColor=#0F172A;" vertex="1" parent="1">
-          <mxGeometry x="270" y="420" width="180" height="40" as="geometry" />
+        <mxCell id="uc_8" value="Atur anggaran bulanan" style="ellipse;whiteSpace=wrap;html=1;fillColor=#F8FAFC;strokeColor=#475569;fontSize=12;fontColor=#0F172A;" vertex="1" parent="1">
+          <mxGeometry x="380" y="415" width="240" height="40" as="geometry" />
         </mxCell>
 
-        <mxCell id="uc_dashboard" value="Lihat dasbor" style="ellipse;whiteSpace=wrap;html=1;fillColor=#F8FAFC;strokeColor=#475569;fontSize=12;fontColor=#0F172A;" vertex="1" parent="1">
-          <mxGeometry x="270" y="470" width="180" height="40" as="geometry" />
+        <mxCell id="uc_9" value="Lihat dasbor" style="ellipse;whiteSpace=wrap;html=1;fillColor=#F8FAFC;strokeColor=#475569;fontSize=12;fontColor=#0F172A;" vertex="1" parent="1">
+          <mxGeometry x="380" y="465" width="240" height="40" as="geometry" />
         </mxCell>
 
-        <mxCell id="uc_stats" value="Lihat statistik" style="ellipse;whiteSpace=wrap;html=1;fillColor=#F8FAFC;strokeColor=#475569;fontSize=12;fontColor=#0F172A;" vertex="1" parent="1">
-          <mxGeometry x="270" y="520" width="180" height="40" as="geometry" />
+        <mxCell id="uc_10" value="Lihat statistik" style="ellipse;whiteSpace=wrap;html=1;fillColor=#F8FAFC;strokeColor=#475569;fontSize=12;fontColor=#0F172A;" vertex="1" parent="1">
+          <mxGeometry x="380" y="515" width="240" height="40" as="geometry" />
         </mxCell>
 
-        <!-- Google Use Cases -->
-        <mxCell id="uc_login_google" value="Masuk dengan Google" style="ellipse;whiteSpace=wrap;html=1;fillColor=#F8FAFC;strokeColor=#475569;fontSize=12;fontColor=#0F172A;" vertex="1" parent="1">
-          <mxGeometry x="450" y="575" width="190" height="40" as="geometry" />
+        <mxCell id="uc_11" value="Masuk dengan Google" style="ellipse;whiteSpace=wrap;html=1;fillColor=#EFF6FF;strokeColor=#3B82F6;fontSize=12;fontColor=#1E3A8A;" vertex="1" parent="1">
+          <mxGeometry x="380" y="575" width="240" height="40" as="geometry" />
         </mxCell>
 
-        <mxCell id="uc_connect_drive" value="Hubungkan Google Drive" style="ellipse;whiteSpace=wrap;html=1;fillColor=#F8FAFC;strokeColor=#475569;fontSize=12;fontColor=#0F172A;" vertex="1" parent="1">
-          <mxGeometry x="450" y="625" width="190" height="40" as="geometry" />
+        <mxCell id="uc_12" value="Hubungkan Google Drive" style="ellipse;whiteSpace=wrap;html=1;fillColor=#EFF6FF;strokeColor=#3B82F6;fontSize=12;fontColor=#1E3A8A;" vertex="1" parent="1">
+          <mxGeometry x="380" y="625" width="240" height="40" as="geometry" />
         </mxCell>
 
-        <mxCell id="uc_two_way_sync" value="Sinkronisasi data 2 arah&lt;br&gt;&lt;span style=&quot;font-size:10px;color:#0284C7;&quot;&gt;(Smart Merge)&lt;/span&gt;" style="ellipse;whiteSpace=wrap;html=1;fillColor=#E0F2FE;strokeColor=#0284C7;strokeWidth=1.5;fontSize=12;fontStyle=1;fontColor=#0369A1;" vertex="1" parent="1">
-          <mxGeometry x="450" y="675" width="190" height="45" as="geometry" />
+        <mxCell id="uc_13" value="Sinkronisasi data 2 arah&lt;br&gt;&lt;span style=&quot;font-size:10px;color:#0284C7;&quot;&gt;(Smart Merge)&lt;/span&gt;" style="ellipse;whiteSpace=wrap;html=1;fillColor=#E0F2FE;strokeColor=#0284C7;strokeWidth=1.5;fontSize=12;fontStyle=1;fontColor=#0369A1;" vertex="1" parent="1">
+          <mxGeometry x="380" y="675" width="240" height="45" as="geometry" />
         </mxCell>
 
-        <mxCell id="uc_open_sheets" value="Buka catatan di Sheets" style="ellipse;whiteSpace=wrap;html=1;fillColor=#E0F2FE;strokeColor=#0284C7;strokeWidth=1.5;fontSize=12;fontStyle=1;fontColor=#0369A1;" vertex="1" parent="1">
-          <mxGeometry x="450" y="730" width="190" height="40" as="geometry" />
+        <mxCell id="uc_14" value="Buka catatan di Sheets" style="ellipse;whiteSpace=wrap;html=1;fillColor=#EFF6FF;strokeColor=#3B82F6;fontSize=12;fontColor=#1E3A8A;" vertex="1" parent="1">
+          <mxGeometry x="380" y="730" width="240" height="40" as="geometry" />
         </mxCell>
 
-        <!-- Right Side Included Use Cases -->
-        <mxCell id="uc_validate" value="Validasi transaksi" style="ellipse;whiteSpace=wrap;html=1;fillColor=#F8FAFC;strokeColor=#475569;fontSize=12;fontColor=#0F172A;" vertex="1" parent="1">
-          <mxGeometry x="600" y="170" width="180" height="40" as="geometry" />
-        </mxCell>
+        <!-- Edges: Pengguna to All Use Cases -->
+        <mxCell id="e_u1" style="endArrow=none;html=1;strokeColor=#64748B;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="actor_user" target="uc_1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e_u2" style="endArrow=none;html=1;strokeColor=#64748B;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="actor_user" target="uc_2"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e_u3" style="endArrow=none;html=1;strokeColor=#64748B;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="actor_user" target="uc_3"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e_u4" style="endArrow=none;html=1;strokeColor=#64748B;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="actor_user" target="uc_4"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e_u5" style="endArrow=none;html=1;strokeColor=#64748B;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="actor_user" target="uc_5"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e_u6" style="endArrow=none;html=1;strokeColor=#64748B;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="actor_user" target="uc_6"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e_u7" style="endArrow=none;html=1;strokeColor=#64748B;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="actor_user" target="uc_7"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e_u8" style="endArrow=none;html=1;strokeColor=#64748B;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="actor_user" target="uc_8"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e_u9" style="endArrow=none;html=1;strokeColor=#64748B;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="actor_user" target="uc_9"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e_u10" style="endArrow=none;html=1;strokeColor=#64748B;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="actor_user" target="uc_10"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e_u11" style="endArrow=none;html=1;strokeColor=#64748B;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="actor_user" target="uc_11"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e_u12" style="endArrow=none;html=1;strokeColor=#64748B;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="actor_user" target="uc_12"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e_u13" style="endArrow=none;html=1;strokeColor=#64748B;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="actor_user" target="uc_13"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e_u14" style="endArrow=none;html=1;strokeColor=#64748B;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="actor_user" target="uc_14"><mxGeometry relative="1" as="geometry" /></mxCell>
 
-        <mxCell id="uc_update_balance" value="Perbarui saldo dan&lt;br&gt;realisasi anggaran" style="ellipse;whiteSpace=wrap;html=1;fillColor=#F8FAFC;strokeColor=#475569;fontSize=12;fontColor=#0F172A;" vertex="1" parent="1">
-          <mxGeometry x="600" y="250" width="190" height="55" as="geometry" />
-        </mxCell>
-
-        <!-- EDGES: User to Left Use Cases -->
-        <mxCell id="e_user_logout" style="endArrow=none;html=1;strokeColor=#64748B;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="actor_user" target="uc_logout"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="e_user_wallet" style="endArrow=none;html=1;strokeColor=#64748B;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="actor_user" target="uc_wallet"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="e_user_create_tx" style="endArrow=none;html=1;strokeColor=#64748B;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="actor_user" target="uc_create_tx"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="e_user_edit_tx" style="endArrow=none;html=1;strokeColor=#64748B;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="actor_user" target="uc_edit_tx"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="e_user_delete_tx" style="endArrow=none;html=1;strokeColor=#64748B;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="actor_user" target="uc_delete_tx"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="e_user_transfer" style="endArrow=none;html=1;strokeColor=#64748B;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="actor_user" target="uc_transfer"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="e_user_history" style="endArrow=none;html=1;strokeColor=#64748B;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="actor_user" target="uc_history"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="e_user_budget" style="endArrow=none;html=1;strokeColor=#64748B;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="actor_user" target="uc_budget"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="e_user_dashboard" style="endArrow=none;html=1;strokeColor=#64748B;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="actor_user" target="uc_dashboard"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="e_user_stats" style="endArrow=none;html=1;strokeColor=#64748B;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="actor_user" target="uc_stats"><mxGeometry relative="1" as="geometry" /></mxCell>
-
-        <!-- EDGES: User to Google Use Cases -->
-        <mxCell id="e_user_login" style="endArrow=none;html=1;strokeColor=#64748B;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="actor_user" target="uc_login_google"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="e_user_connect" style="endArrow=none;html=1;strokeColor=#64748B;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="actor_user" target="uc_connect_drive"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="e_user_sync" style="endArrow=none;html=1;strokeColor=#64748B;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="actor_user" target="uc_two_way_sync"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="e_user_sheets" style="endArrow=none;html=1;strokeColor=#64748B;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="actor_user" target="uc_open_sheets"><mxGeometry relative="1" as="geometry" /></mxCell>
-
-        <!-- EDGES: Google to Use Cases -->
-        <mxCell id="e_google_login" style="endArrow=none;html=1;strokeColor=#64748B;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" edge="1" parent="1" source="uc_login_google" target="actor_google"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="e_google_connect" style="endArrow=none;html=1;strokeColor=#64748B;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" edge="1" parent="1" source="uc_connect_drive" target="actor_google"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="e_google_sync" style="endArrow=none;html=1;strokeColor=#64748B;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" edge="1" parent="1" source="uc_two_way_sync" target="actor_google"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="e_google_sheets" style="endArrow=none;html=1;strokeColor=#64748B;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" edge="1" parent="1" source="uc_open_sheets" target="actor_google"><mxGeometry relative="1" as="geometry" /></mxCell>
-
-        <!-- EDGES: <<include>> -->
-        <mxCell id="inc_create_val" value="&amp;laquo;include&amp;raquo;" style="html=1;verticalAlign=bottom;labelBackgroundColor=none;endArrow=open;endFill=0;dashed=1;strokeColor=#475569;fontSize=11;" edge="1" parent="1" source="uc_create_tx" target="uc_validate"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="inc_create_bal" value="&amp;laquo;include&amp;raquo;" style="html=1;verticalAlign=bottom;labelBackgroundColor=none;endArrow=open;endFill=0;dashed=1;strokeColor=#475569;fontSize=11;" edge="1" parent="1" source="uc_create_tx" target="uc_update_balance"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="inc_edit_val" value="&amp;laquo;include&amp;raquo;" style="html=1;verticalAlign=bottom;labelBackgroundColor=none;endArrow=open;endFill=0;dashed=1;strokeColor=#475569;fontSize=11;" edge="1" parent="1" source="uc_edit_tx" target="uc_validate"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="inc_edit_bal" value="&amp;laquo;include&amp;raquo;" style="html=1;verticalAlign=bottom;labelBackgroundColor=none;endArrow=open;endFill=0;dashed=1;strokeColor=#475569;fontSize=11;" edge="1" parent="1" source="uc_edit_tx" target="uc_update_balance"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="inc_del_bal" value="&amp;laquo;include&amp;raquo;" style="html=1;verticalAlign=bottom;labelBackgroundColor=none;endArrow=open;endFill=0;dashed=1;strokeColor=#475569;fontSize=11;" edge="1" parent="1" source="uc_delete_tx" target="uc_update_balance"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="inc_trans_bal" value="&amp;laquo;include&amp;raquo;" style="html=1;verticalAlign=bottom;labelBackgroundColor=none;endArrow=open;endFill=0;dashed=1;strokeColor=#475569;fontSize=11;" edge="1" parent="1" source="uc_transfer" target="uc_update_balance"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <!-- Edges: Google to Cloud Use Cases -->
+        <mxCell id="e_g11" style="endArrow=none;html=1;strokeColor=#64748B;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" edge="1" parent="1" source="uc_11" target="actor_google"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e_g12" style="endArrow=none;html=1;strokeColor=#64748B;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" edge="1" parent="1" source="uc_12" target="actor_google"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e_g13" style="endArrow=none;html=1;strokeColor=#64748B;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" edge="1" parent="1" source="uc_13" target="actor_google"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e_g14" style="endArrow=none;html=1;strokeColor=#64748B;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" edge="1" parent="1" source="uc_14" target="actor_google"><mxGeometry relative="1" as="geometry" /></mxCell>
 
       </root>
     </mxGraphModel>

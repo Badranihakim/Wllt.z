@@ -18,6 +18,10 @@ Sistem **Wllt.z** telah mengalami sejumlah evolusi arsitektur dan penyesuaian fu
 
 Dokumen ini merevisi diagram *Use Case* sistem secara menyeluruh guna merefleksikan fungsionalitas terkini sesuai standar UML enterprise.
 
+> **Berkas Visual Siap Pakai:**  
+> - 📄 **Berkas Draw.io (Dapat diedit di app.diagrams.net):** [`docs/assets/diagrams/use_case_diagram_wlltz.drawio`](file:///home/rayanapi/IAN/Programing/Capstone%20Project%20UT/Wllt.z/docs/assets/diagrams/use_case_diagram_wlltz.drawio)  
+> - 🖼️ **Berkas Vektor SVG (Kualitas tinggi untuk Laporan/Word):** [`docs/assets/diagrams/use_case_diagram_wlltz.svg`](file:///home/rayanapi/IAN/Programing/Capstone%20Project%20UT/Wllt.z/docs/assets/diagrams/use_case_diagram_wlltz.svg)  
+
 ---
 
 ## 2. Aktor Sistem (System Actors) `[FACT]`

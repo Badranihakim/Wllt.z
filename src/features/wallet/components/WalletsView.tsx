@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Plus } from 'lucide-react'
 import { useWallets } from '@/features/wallet/hooks'
+import { useTransactions } from '@/features/transactions/hooks'
 import { formatRupiah } from '@/lib/formatters'
 import type { Wallet } from '@/types'
 import { WalletForm } from './WalletForm'
@@ -9,16 +10,25 @@ export function WalletsView() {
   const { data: wallets = [] } = useWallets()
   const [isFormOpen, setIsFormOpen] = useState(false)
 
+  const { data: transactions = [] } = useTransactions()
+
   // Net worth calculation (excluding hidden wallets)
   const totalBalance = wallets
     .filter(w => !w.exclude_from_total)
     .reduce((sum, w) => sum + w.balance, 0)
+
+  // Total debt from recorded debt transactions
+  const totalDebt = transactions
+    .filter(t => !t.is_deleted && t.type === 'debt')
+    .reduce((sum, t) => sum + t.amount, 0)
 
   // Grouping
   const cashWallets = wallets.filter(w => w.type === 'cash')
   const bankWallets = wallets.filter(w => w.type === 'bank')
   const eWalletWallets = wallets.filter(w => w.type === 'e-wallet')
   const creditCardWallets = wallets.filter(w => w.type === 'credit-card')
+  const cashTotal = cashWallets.reduce((s, w) => s + w.balance, 0)
+  const digitalTotal = bankWallets.concat(eWalletWallets).reduce((s, w) => s + w.balance, 0)
 
   if (isFormOpen) {
     return <WalletForm onClose={() => setIsFormOpen(false)} />
@@ -52,9 +62,9 @@ export function WalletsView() {
             <h2 className="text-3xl font-bold tracking-tight mb-4">
               {formatRupiah(totalBalance)}
             </h2>
-            <div className="inline-flex items-center gap-1 bg-white/20 px-3 py-1.5 rounded-full text-[11px] font-medium backdrop-blur-sm shadow-sm border border-white/10">
-              <span>↑ +126.5%</span>
-              <span className="opacity-80 ml-1">(+Rp479.937) 30 hari terakhir</span>
+            <div className="inline-flex items-center gap-1.5 bg-white/20 px-3 py-1.5 rounded-full text-[11px] font-medium backdrop-blur-sm shadow-sm border border-white/10">
+              <span>💳</span>
+              <span>{wallets.length} Akun Dompet Terdaftar</span>
             </div>
           </div>
           
@@ -64,16 +74,16 @@ export function WalletsView() {
               <p className="text-sm font-semibold">{formatRupiah(totalBalance)}</p>
             </div>
             <div className="bg-white/20 rounded-2xl p-3 backdrop-blur-md border border-white/10 shadow-sm">
-              <p className="text-[11px] text-white/80 mb-0.5">Hutang Aktif</p>
-              <p className="text-sm font-semibold">Rp 3.177.465</p>
+              <p className="text-[11px] text-white/80 mb-0.5">Total Kas / Tunai</p>
+              <p className="text-sm font-semibold">{formatRupiah(cashTotal)}</p>
             </div>
             <div className="bg-white/20 rounded-2xl p-3 backdrop-blur-md border border-white/10 shadow-sm">
-              <p className="text-[11px] text-white/80 mb-0.5">Tabungan Aktif</p>
-              <p className="text-sm font-semibold">Rp 0</p>
+              <p className="text-[11px] text-white/80 mb-0.5">Bank &amp; E-Wallet</p>
+              <p className="text-sm font-semibold">{formatRupiah(digitalTotal)}</p>
             </div>
             <div className="bg-white/20 rounded-2xl p-3 backdrop-blur-md border border-white/10 shadow-sm">
-              <p className="text-[11px] text-white/80 mb-0.5">Pembayaran Mendatang</p>
-              <p className="text-sm font-semibold">Rp 0</p>
+              <p className="text-[11px] text-white/80 mb-0.5">Hutang / Pinjaman</p>
+              <p className="text-sm font-semibold">{formatRupiah(totalDebt)}</p>
             </div>
           </div>
         </div>

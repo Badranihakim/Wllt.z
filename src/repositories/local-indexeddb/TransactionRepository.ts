@@ -51,6 +51,7 @@ export class TransactionRepository extends LocalIndexedDBRepository<Transaction>
       ...dto,
       id: crypto.randomUUID(),
       is_deleted: false,
+      created_at: now,
       updated_at: now,
       sync_status: 'local_only' as SyncStatus,
     }

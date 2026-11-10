@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Sparkles, Loader2, Check } from 'lucide-react'
 import { useQueryClient } from '@tanstack/react-query'
-import { useUIStore } from '@/stores'
+import { useUIStore, useAuthStore } from '@/stores'
 import { seedDummyData } from '@/lib/seedDummyData'
 import { useDebugMode } from '@/lib/debug'
 import { NetWorthCard }            from './NetWorthCard'
@@ -21,6 +21,7 @@ import { DashboardBudgetProgress } from './DashboardBudgetProgress'
 export function DashboardView() {
   const queryClient = useQueryClient()
   const navigateTo = useUIStore(s => s.navigateTo)
+  const currentUser = useAuthStore(s => s.currentUser)
   const isDebug = useDebugMode()
   const [isLoadingDemo, setIsLoadingDemo] = useState(false)
   const [demoSuccess, setDemoSuccess] = useState(false)
@@ -76,14 +77,24 @@ export function DashboardView() {
             </button>
           )}
 
-          {/* Avatar placeholder / profile link */}
+          {/* Avatar / Profile link */}
           <button
             onClick={() => navigateTo('settings')}
             aria-label="Profil & Pengaturan"
-            className="glass no-tap-highlight flex h-9 w-9 items-center justify-center rounded-full text-sm font-bold transition-all active:scale-90"
+            title={currentUser?.name || 'Profil & Pengaturan'}
+            className="glass no-tap-highlight flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-sm font-bold transition-all active:scale-90 overflow-hidden shadow-sm cursor-pointer"
             style={{ color: 'var(--accent)', border: '1.5px solid var(--accent-dim)' }}
           >
-            👤
+            {currentUser?.avatar?.startsWith('http') ? (
+              <img
+                src={currentUser.avatar}
+                alt={currentUser.name || 'Avatar'}
+                className="h-full w-full object-cover"
+                referrerPolicy="no-referrer"
+              />
+            ) : (
+              currentUser?.avatar || '👤'
+            )}
           </button>
         </div>
       </div>

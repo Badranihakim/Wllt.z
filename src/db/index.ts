@@ -117,6 +117,16 @@ export function setDatabaseUser(userId?: string | null): WlltDatabase {
   if (activeUserId === targetId && activeDbInstance.isOpen()) {
     return activeDbInstance
   }
+
+  // Safely close existing connection before instantiating new database
+  if (activeDbInstance?.isOpen()) {
+    try {
+      activeDbInstance.close()
+    } catch {
+      // Ignore error closing previous instance
+    }
+  }
+
   activeUserId = targetId
   activeDbInstance = new WlltDatabase(`wllt_db_${targetId}`)
   return activeDbInstance

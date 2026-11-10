@@ -50,15 +50,17 @@ export function useSyncStatus(): SyncStatusInfo {
     }
   }, [])
 
-  // Live query menghitung transaksi lokal yang berstatus selain 'synced'
+  // Live query menghitung seluruh entitas lokal yang berstatus selain 'synced'
   const pendingCount = useLiveQuery(
     async () => {
       try {
-        const count = await db.transactions
-          .where('sync_status')
-          .equals('local_only')
-          .count()
-        return count
+        const [txCount, walletCount, catCount, budgetCount] = await Promise.all([
+          db.transactions.where('sync_status').equals('local_only').count(),
+          db.wallets.where('sync_status').equals('local_only').count(),
+          db.categories.where('sync_status').equals('local_only').count(),
+          db.budgets.where('sync_status').equals('local_only').count(),
+        ])
+        return txCount + walletCount + catCount + budgetCount
       } catch {
         return 0
       }

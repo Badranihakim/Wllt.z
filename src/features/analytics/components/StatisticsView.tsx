@@ -24,7 +24,9 @@ export function StatisticsView() {
     const pad = (n: number) => String(n).padStart(2, '0')
 
     if (range === 'weekly') {
-      fromDate.setDate(now.getDate() - now.getDay() + 1 + (offset * 7)) // Start of week (Monday)
+      const dayOfWeek = now.getDay()
+      const diffToMonday = dayOfWeek === 0 ? -6 : 1 - dayOfWeek
+      fromDate.setDate(now.getDate() + diffToMonday + (offset * 7)) // Start of week (Monday)
       toDate = new Date(fromDate)
       toDate.setDate(fromDate.getDate() + 6)
       const months = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Ags', 'Sep', 'Okt', 'Nov', 'Des']

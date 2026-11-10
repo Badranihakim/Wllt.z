@@ -1,7 +1,9 @@
 import { ChevronLeft, ChevronRight, RefreshCw } from 'lucide-react'
+import { useQueryClient } from '@tanstack/react-query'
 import { useWallets } from '@/features/wallet/hooks'
 import { useTransactionSummary } from '@/features/transactions/hooks'
 import { useUIStore, getPreviousPeriod, getNextPeriod } from '@/stores'
+import { useSyncStatus } from '@/hooks/useSyncStatus'
 import { formatRupiah, formatPeriod } from '@/lib/formatters'
 
 /**
@@ -13,9 +15,12 @@ import { formatRupiah, formatPeriod } from '@/lib/formatters'
  *   - useUIStore → currentPeriod for period navigation
  */
 export function NetWorthCard() {
+  const queryClient     = useQueryClient()
+  const { triggerSync, isSyncing: isHookSyncing } = useSyncStatus()
   const currentPeriod   = useUIStore(s => s.currentPeriod)
   const setCurrentPeriod = useUIStore(s => s.setCurrentPeriod)
-  const isSyncing       = useUIStore(s => s.isSyncing)
+  const isSyncingStore  = useUIStore(s => s.isSyncing)
+  const isSyncing       = isSyncingStore || isHookSyncing
 
   const { data: wallets = [] }  = useWallets()
   const { data: summary }       = useTransactionSummary()
@@ -25,6 +30,11 @@ export function NetWorthCard() {
     .reduce((sum, w) => sum + w.balance, 0)
   const income  = summary?.income  ?? 0
   const expense = summary?.expense ?? 0
+
+  const handleRefresh = async () => {
+    await queryClient.invalidateQueries()
+    await triggerSync()
+  }
 
   return (
     <div
@@ -37,8 +47,11 @@ export function NetWorthCard() {
           Total Saldo
         </span>
         <button
-          aria-label="Refresh"
-          className="rounded-lg p-1.5 transition-colors active:scale-90"
+          type="button"
+          onClick={handleRefresh}
+          aria-label="Refresh & Sync Data"
+          title="Segarkan data dan sinkronkan"
+          className="rounded-lg p-1.5 transition-colors active:scale-90 cursor-pointer"
           style={{ color: 'var(--text-faint)' }}
         >
           <RefreshCw

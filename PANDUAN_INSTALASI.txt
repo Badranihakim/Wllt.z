@@ -1,0 +1,96 @@
+================================================================================
+                    PANDUAN INSTALASI & MENJALANKAN SISTEM
+             WLLT.Z — PERSONAL FINANCE & LIGHT ACCOUNTING PWA
+================================================================================
+
+Aplikasi Wllt.z adalah platform pencatatan keuangan pribadi dan akuntansi ringan
+berbasis Progressive Web App (PWA) dengan arsitektur Local-First (IndexedDB)
+serta integrasi sinkronisasi cloud pribadi pengguna (Google Drive & Google Sheets).
+
+--------------------------------------------------------------------------------
+1. PRASYARAT SISTEM (SYSTEM PREREQUISITES)
+--------------------------------------------------------------------------------
+Pastikan perangkat Anda telah terpasang:
+- Node.js versi 18.x atau yang lebih baru (disarankan Node.js LTS v20.x atau v22.x).
+  Unduh di: https://nodejs.org
+- NPM (Node Package Manager) — terpasang otomatis bersama Node.js.
+- Web Browser modern (Google Chrome, Mozilla Firefox, Microsoft Edge, Brave).
+
+Untuk memastikan instalasi Node.js dan NPM berhasil, jalankan di terminal:
+  node -v
+  npm -v
+
+--------------------------------------------------------------------------------
+2. LANGKAH-LANGKAH INSTALASI
+--------------------------------------------------------------------------------
+Langkah 1: Ekstrak Source Code
+  Ekstrak berkas zip ini ke direktori kerja pilihan Anda di komputer.
+
+Langkah 2: Buka Terminal / Command Prompt
+  Buka terminal/CMD, lalu masuk ke direktori proyek Wllt.z yang telah diekstrak:
+    cd /path/ke/folder/Wllt.z
+
+Langkah 3: Konfigurasi Environment (Opsional untuk Google OAuth)
+  Salin berkas template .env.example menjadi .env:
+    cp .env.example .env     (Linux / macOS)
+    copy .env.example .env   (Windows Command Prompt)
+
+  *Catatan:
+   Jika ingin menggunakan fitur Login Google dan Google Drive, isi nilai:
+     VITE_GOOGLE_CLIENT_ID=isi_client_id_google_anda
+   Jika hanya ingin menjalankan dan menguji aplikasi secara lokal (offline-first),
+   langkah ini bersifat opsional.
+
+Langkah 4: Instal Dependensi Node.js
+  Jalankan perintah berikut untuk mengunduh semua pustaka yang dibutuhkan:
+    npm install
+
+--------------------------------------------------------------------------------
+3. MENJALANKAN APLIKASI
+--------------------------------------------------------------------------------
+A. Mode Pengembangan (Development Server):
+   Jalankan perintah:
+     npm run dev
+
+   Terminal akan menampilkan URL lokal, biasanya:
+     ➜  Local:   http://localhost:5173/
+
+   Buka URL tersebut pada browser Anda.
+
+B. Mode Build Produksi (Production Build):
+   Untuk menguji performa dan kompilasi produksi:
+     npm run build
+     npm run preview
+
+--------------------------------------------------------------------------------
+4. STRUKTUR DIREKTORI UTAMA
+--------------------------------------------------------------------------------
+- /src
+  ├── /db             : Inisialisasi basis data lokal Dexie (IndexedDB)
+  ├── /features       : Modul fungsional (auth, transactions, wallets, budgets, analytics)
+  ├── /hooks          : React custom hooks (useSyncStatus, dsb.)
+  ├── /layouts        : Tata letak responsif desktop & mobile (AppLayout)
+  ├── /repositories   : Abstraksi data (GoogleSheetsRepository, IndexedDB repos)
+  ├── /stores         : Manajemen state global (Zustand: authStore, uiStore)
+  └── /types          : Definisi tipe data TypeScript
+- /public             : Aset statis, manifest PWA, Service Worker, ikon aplikasi
+- /docs               : Dokumentasi teknis, proses bisnis, dan Use Case Diagram
+- PANDUAN_INSTALASI.txt : Berkas panduan ini
+
+--------------------------------------------------------------------------------
+5. CATATAN PENTING & TROUBLESHOOTING
+--------------------------------------------------------------------------------
+1. Local-First & Zero Backend Server:
+   Aplikasi ini tidak memerlukan instalasi backend server terpisah (seperti MySQL
+   atau MongoDB). Seluruh data keuangan disimpan aman secara lokal di peramban
+   pengguna menggunakan IndexedDB (Dexie.js).
+
+2. Akses Offline & PWA:
+   Aplikasi mendukung Progressive Web App (PWA). Anda dapat mengklik tombol
+   "Install" pada address bar peramban (Chrome/Edge) untuk memasangnya sebagai
+   aplikasi desktop/mobile mandiri.
+
+3. Jika Terjadi Kendala Port:
+   Jika port 5173 sedang dipakai oleh aplikasi lain, Vite otomatis akan beralih
+   ke port berikutnya (misal: 5174). Perhatikan URL yang tertera di terminal Anda.
+================================================================================

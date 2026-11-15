@@ -1,6 +1,6 @@
 import { useState } from 'react'
-import { Plus } from 'lucide-react'
-import { useWallets } from '@/features/wallet/hooks'
+import { Plus, Trash2, AlertTriangle, X } from 'lucide-react'
+import { useWallets, useDeleteWallet } from '@/features/wallet/hooks'
 import { useTransactions } from '@/features/transactions/hooks'
 import { formatRupiah } from '@/lib/formatters'
 import type { Wallet } from '@/types'
@@ -8,7 +8,10 @@ import { WalletForm } from './WalletForm'
 
 export function WalletsView() {
   const { data: wallets = [] } = useWallets()
+  const { mutate: deleteWallet, isPending: isDeleting } = useDeleteWallet()
   const [isFormOpen, setIsFormOpen] = useState(false)
+  const [walletToDelete, setWalletToDelete] = useState<Wallet | null>(null)
+  const [deleteError, setDeleteError] = useState<string | null>(null)
 
   const { data: transactions = [] } = useTransactions()
 
@@ -30,6 +33,29 @@ export function WalletsView() {
   const cashTotal = cashWallets.reduce((s, w) => s + w.balance, 0)
   const digitalTotal = bankWallets.concat(eWalletWallets).reduce((s, w) => s + w.balance, 0)
 
+  const handleDeleteClick = (wallet: Wallet) => {
+    if (wallets.length <= 1) {
+      setDeleteError('Minimal harus ada 1 dompet aktif. Anda tidak dapat menghapus dompet terakhir.')
+      setWalletToDelete(null)
+      return
+    }
+    setDeleteError(null)
+    setWalletToDelete(wallet)
+  }
+
+  const handleConfirmDelete = () => {
+    if (!walletToDelete) return
+    deleteWallet(walletToDelete.id, {
+      onSuccess: () => {
+        setWalletToDelete(null)
+        setDeleteError(null)
+      },
+      onError: (err: any) => {
+        setDeleteError(err?.message || 'Gagal menghapus dompet.')
+      },
+    })
+  }
+
   if (isFormOpen) {
     return <WalletForm onClose={() => setIsFormOpen(false)} />
   }
@@ -49,6 +75,23 @@ export function WalletsView() {
       </header>
 
       <main className="px-5 flex flex-col gap-8 mt-2">
+        {/* Delete Warning / Error Notice if single wallet */}
+        {deleteError && (
+          <div className="p-4 rounded-2xl bg-amber-50 border border-amber-200 text-amber-800 flex items-start gap-3 text-xs leading-relaxed animate-in fade-in slide-in-from-top-2">
+            <AlertTriangle className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
+            <div className="flex-1">
+              <p className="font-semibold mb-0.5">Pemberitahuan</p>
+              <p>{deleteError}</p>
+            </div>
+            <button 
+              onClick={() => setDeleteError(null)}
+              className="text-amber-500 hover:text-amber-700 p-0.5"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+        )}
+
         {/* Total Balance Card */}
         <div className="rounded-3xl p-6 text-white shadow-xl relative overflow-hidden" 
              style={{ 
@@ -91,44 +134,101 @@ export function WalletsView() {
         {/* Wallets List */}
         <div className="flex flex-col gap-8">
           {cashWallets.length > 0 && (
-            <WalletGroup title="Tunai" wallets={cashWallets} />
+            <WalletGroup title="Tunai" wallets={cashWallets} onDelete={handleDeleteClick} />
           )}
           {bankWallets.length > 0 && (
-            <WalletGroup title="Akun Bank" wallets={bankWallets} />
+            <WalletGroup title="Akun Bank" wallets={bankWallets} onDelete={handleDeleteClick} />
           )}
           {eWalletWallets.length > 0 && (
-            <WalletGroup title="E-Wallet" wallets={eWalletWallets} />
+            <WalletGroup title="E-Wallet" wallets={eWalletWallets} onDelete={handleDeleteClick} />
           )}
           {creditCardWallets.length > 0 && (
-            <WalletGroup title="Kartu Kredit" wallets={creditCardWallets} />
+            <WalletGroup title="Kartu Kredit" wallets={creditCardWallets} onDelete={handleDeleteClick} />
           )}
         </div>
       </main>
+
+      {/* Delete Confirmation Modal */}
+      {walletToDelete && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="bg-white rounded-3xl p-6 w-full max-w-sm shadow-2xl border border-slate-100 animate-in zoom-in-95 duration-200">
+            <div className="w-12 h-12 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center mb-4 mx-auto">
+              <Trash2 className="w-6 h-6" />
+            </div>
+
+            <h3 className="text-lg font-bold text-slate-900 text-center mb-1">
+              Hapus Dompet?
+            </h3>
+            <p className="text-xs text-slate-500 text-center mb-6 leading-relaxed">
+              Apakah Anda yakin ingin menghapus dompet <strong className="text-slate-800">{walletToDelete.name}</strong> dengan saldo <strong className="text-slate-800">{formatRupiah(walletToDelete.balance)}</strong>?
+            </p>
+
+            <div className="flex gap-3">
+              <button
+                type="button"
+                onClick={() => setWalletToDelete(null)}
+                disabled={isDeleting}
+                className="flex-1 py-3 px-4 rounded-xl text-sm font-semibold text-slate-600 bg-slate-100 hover:bg-slate-200 transition-colors disabled:opacity-50"
+              >
+                Batal
+              </button>
+              <button
+                type="button"
+                onClick={handleConfirmDelete}
+                disabled={isDeleting}
+                className="flex-1 py-3 px-4 rounded-xl text-sm font-semibold text-white bg-rose-600 hover:bg-rose-700 active:scale-[0.98] transition-all disabled:opacity-50 shadow-md shadow-rose-200"
+              >
+                {isDeleting ? 'Menghapus...' : 'Ya, Hapus'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
 
-function WalletGroup({ title, wallets }: { title: string, wallets: Wallet[] }) {
+function WalletGroup({ 
+  title, 
+  wallets, 
+  onDelete 
+}: { 
+  title: string
+  wallets: Wallet[]
+  onDelete: (wallet: Wallet) => void 
+}) {
   return (
     <section>
       <h3 className="text-base font-bold text-slate-900 mb-3 ml-1">{title}</h3>
       <div className="flex flex-col gap-3">
         {wallets.map(wallet => (
-          <div key={wallet.id} className="glass rounded-3xl p-4 flex items-center justify-between border border-white shadow-sm bg-white/70 backdrop-blur-xl">
-            <div className="flex items-center gap-4">
-              <div className="w-11 h-11 rounded-full flex items-center justify-center text-xl shadow-sm border border-slate-100 bg-white text-slate-700">
+          <div key={wallet.id} className="glass rounded-3xl p-4 flex items-center justify-between border border-white shadow-sm bg-white/70 backdrop-blur-xl group hover:shadow-md transition-all">
+            <div className="flex items-center gap-4 min-w-0">
+              <div className="w-11 h-11 rounded-full shrink-0 flex items-center justify-center text-xl shadow-sm border border-slate-100 bg-white text-slate-700">
                 {wallet.icon}
               </div>
-              <div>
-                <h4 className="font-bold text-slate-900 text-sm">{wallet.name}</h4>
+              <div className="truncate">
+                <h4 className="font-bold text-slate-900 text-sm truncate">{wallet.name}</h4>
                 <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest mt-0.5">
                   {wallet.type.replace('-', ' ')} • {wallet.currency}
                 </p>
               </div>
             </div>
-            <div className="text-right">
-              <p className="text-[10px] text-slate-400 font-medium mb-0.5">Saldo Saat Ini</p>
-              <p className="font-bold text-slate-900 text-sm">{formatRupiah(wallet.balance)}</p>
+
+            <div className="flex items-center gap-3 shrink-0">
+              <div className="text-right">
+                <p className="text-[10px] text-slate-400 font-medium mb-0.5">Saldo Saat Ini</p>
+                <p className="font-bold text-slate-900 text-sm">{formatRupiah(wallet.balance)}</p>
+              </div>
+              <button
+                type="button"
+                onClick={() => onDelete(wallet)}
+                className="p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-xl transition-colors active:scale-90"
+                title={`Hapus dompet ${wallet.name}`}
+                aria-label={`Hapus dompet ${wallet.name}`}
+              >
+                <Trash2 className="w-4 h-4" />
+              </button>
             </div>
           </div>
         ))}
@@ -136,3 +236,4 @@ function WalletGroup({ title, wallets }: { title: string, wallets: Wallet[] }) {
     </section>
   )
 }
+

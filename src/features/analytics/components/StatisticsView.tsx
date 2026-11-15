@@ -320,25 +320,25 @@ export function StatisticsView() {
 // ─────────────────────────────────────────────
 
 function TrendCharts({ range }: { range: TimeRange }) {
-  // Mock Data for Charts
+  // Mock Data for Charts (rounded to clean integers)
   const comparisonData = useMemo(() => Array.from({ length: 31 }, (_, i) => ({
     day: i + 1,
-    current: Math.random() * 500000 + 100000 * (i/10),
-    previous: Math.random() * 400000 + 50000 * (i/10)
+    current: Math.round(Math.random() * 500000 + 100000 * (i/10)),
+    previous: Math.round(Math.random() * 400000 + 50000 * (i/10))
   })), [])
 
   const netBalanceData = useMemo(() => {
     let balance = 5000000
     return Array.from({ length: 31 }, (_, i) => {
-      balance += (Math.random() * 400000) - 200000
+      balance += Math.round((Math.random() * 400000) - 200000)
       return { day: i + 1, balance, target: 4500000 }
     })
   }, [])
 
   const monthlySummaryData = useMemo(() => ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Ags', 'Sep', 'Okt', 'Nov', 'Des'].map((m, i) => ({
     month: m,
-    income: i < 5 ? Math.random() * 5000000 + 2000000 : 0,
-    expense: i < 5 ? Math.random() * 4000000 + 1000000 : 0
+    income: i < 5 ? Math.round(Math.random() * 5000000 + 2000000) : 0,
+    expense: i < 5 ? Math.round(Math.random() * 4000000 + 1000000) : 0
   })), [])
 
   return (
@@ -349,8 +349,8 @@ function TrendCharts({ range }: { range: TimeRange }) {
           <div className="flex justify-between items-start mb-6">
             <h2 className="text-[15px] font-bold text-slate-800">Ringkasan Bulanan</h2>
             <div className="text-right">
-              <p className="text-[10px] font-bold text-emerald-500">Rata2 In: Rp3.886.092</p>
-              <p className="text-[10px] font-bold text-red-400">Rata2 Out: Rp2.087.160</p>
+              <p className="text-[10px] font-bold text-emerald-500">Rata2 In: Rp 3.886.000</p>
+              <p className="text-[10px] font-bold text-red-400">Rata2 Out: Rp 2.087.000</p>
             </div>
           </div>
           <div className="h-[200px] w-full">
@@ -359,9 +359,29 @@ function TrendCharts({ range }: { range: TimeRange }) {
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
                 <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#94a3b8', fontWeight: 600 }} dy={10} />
                 <YAxis hide />
-                <Tooltip cursor={{ fill: '#f8fafc' }} />
-                <Bar dataKey="income" fill="#34d399" radius={[4, 4, 4, 4]} barSize={8} />
-                <Bar dataKey="expense" fill="#f87171" radius={[4, 4, 4, 4]} barSize={8} />
+                <Tooltip 
+                  cursor={{ fill: '#f8fafc' }}
+                  content={({ active, payload }) => {
+                    if (!active || !payload?.length) return null
+                    const inc = Number(payload[0]?.value) || 0
+                    const exp = Number(payload[1]?.value) || 0
+                    return (
+                      <div className="rounded-2xl p-3 shadow-xl border border-slate-100 bg-white/95 backdrop-blur-md text-xs">
+                        <p className="font-bold text-slate-800 mb-1.5">{payload[0]?.payload?.month}</p>
+                        <div className="flex items-center justify-between gap-4 text-emerald-600 font-semibold mb-1">
+                          <span>Pemasukan:</span>
+                          <span>+{formatRupiah(inc)}</span>
+                        </div>
+                        <div className="flex items-center justify-between gap-4 text-rose-500 font-semibold">
+                          <span>Pengeluaran:</span>
+                          <span>-{formatRupiah(exp)}</span>
+                        </div>
+                      </div>
+                    )
+                  }}
+                />
+                <Bar dataKey="income" name="Pemasukan" fill="#34d399" radius={[4, 4, 4, 4]} barSize={8} />
+                <Bar dataKey="expense" name="Pengeluaran" fill="#f87171" radius={[4, 4, 4, 4]} barSize={8} />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -395,9 +415,29 @@ function TrendCharts({ range }: { range: TimeRange }) {
                 </linearGradient>
               </defs>
               <XAxis dataKey="day" axisLine={false} tickLine={false} tick={{ fontSize: 9, fill: '#cbd5e1' }} tickCount={4} />
-              <Tooltip />
-              <Area type="monotone" dataKey="current" stroke="#ef4444" strokeWidth={2.5} fillOpacity={1} fill="url(#colorCurrent)" />
-              <Line type="monotone" dataKey="previous" stroke="#94a3b8" strokeWidth={1.5} dot={false} />
+              <Tooltip 
+                content={({ active, payload }) => {
+                  if (!active || !payload?.length) return null
+                  const cur = Number(payload[0]?.value) || 0
+                  const prev = Number(payload[1]?.value) || 0
+                  const day = payload[0]?.payload?.day
+                  return (
+                    <div className="rounded-2xl p-3 shadow-xl border border-slate-100 bg-white/95 backdrop-blur-md text-xs">
+                      <p className="font-bold text-slate-800 mb-1.5">Hari ke-{day}</p>
+                      <div className="flex items-center justify-between gap-4 text-rose-500 font-semibold mb-1">
+                        <span>Periode Ini:</span>
+                        <span>{formatRupiah(cur)}</span>
+                      </div>
+                      <div className="flex items-center justify-between gap-4 text-slate-500 font-semibold">
+                        <span>Periode Lalu:</span>
+                        <span>{formatRupiah(prev)}</span>
+                      </div>
+                    </div>
+                  )
+                }}
+              />
+              <Area type="monotone" dataKey="current" name="Periode Ini" stroke="#ef4444" strokeWidth={2.5} fillOpacity={1} fill="url(#colorCurrent)" />
+              <Line type="monotone" dataKey="previous" name="Periode Lalu" stroke="#94a3b8" strokeWidth={1.5} dot={false} />
             </AreaChart>
           </ResponsiveContainer>
         </div>
@@ -407,7 +447,7 @@ function TrendCharts({ range }: { range: TimeRange }) {
         <div className="flex justify-between items-start mb-6">
           <h2 className="text-[15px] font-bold text-slate-800">Tren Saldo Bersih</h2>
           <div className="bg-emerald-50 text-emerald-600 text-[10px] px-2 py-1 rounded-lg font-bold">
-             Rp100.517
+             Rp 100.500
           </div>
         </div>
         
@@ -432,9 +472,29 @@ function TrendCharts({ range }: { range: TimeRange }) {
                 </linearGradient>
               </defs>
               <XAxis dataKey="day" axisLine={false} tickLine={false} tick={{ fontSize: 9, fill: '#cbd5e1' }} tickCount={4} />
-              <Tooltip />
-              <Area type="monotone" dataKey="balance" stroke="#3b82f6" strokeWidth={2} fillOpacity={1} fill="url(#colorBalance)" />
-              <Line type="monotone" dataKey="target" stroke="#ef4444" strokeWidth={2} dot={false} />
+              <Tooltip 
+                content={({ active, payload }) => {
+                  if (!active || !payload?.length) return null
+                  const bal = Number(payload[0]?.value) || 0
+                  const tgt = Number(payload[1]?.value) || 0
+                  const day = payload[0]?.payload?.day
+                  return (
+                    <div className="rounded-2xl p-3 shadow-xl border border-slate-100 bg-white/95 backdrop-blur-md text-xs">
+                      <p className="font-bold text-slate-800 mb-1.5">Hari ke-{day}</p>
+                      <div className="flex items-center justify-between gap-4 text-blue-600 font-semibold mb-1">
+                        <span>Saldo:</span>
+                        <span>{formatRupiah(bal)}</span>
+                      </div>
+                      <div className="flex items-center justify-between gap-4 text-slate-400 font-medium">
+                        <span>Target:</span>
+                        <span>{formatRupiah(tgt)}</span>
+                      </div>
+                    </div>
+                  )
+                }}
+              />
+              <Area type="monotone" dataKey="balance" name="Saldo" stroke="#3b82f6" strokeWidth={2} fillOpacity={1} fill="url(#colorBalance)" />
+              <Line type="monotone" dataKey="target" name="Target" stroke="#ef4444" strokeWidth={2} dot={false} />
             </AreaChart>
           </ResponsiveContainer>
         </div>

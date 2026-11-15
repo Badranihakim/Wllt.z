@@ -1,5 +1,7 @@
 import { categoryRepo } from '@/repositories'
 import { walletRepo }   from '@/repositories'
+import type { Category } from '@/types'
+import { cleanupDuplicateCategories } from './cleanupCategories'
 
 // ─────────────────────────────────────────────
 // Category tree
@@ -84,25 +86,39 @@ const SEED_TREE: SeedParent[] = [
  */
 export async function seedDefaultCategories(): Promise<void> {
   const existing = await categoryRepo.findAllSorted()
-  if (existing.length > 0) return
+  const existingMap = new Map<string, Category>()
+  existing.forEach(c => {
+    const key = `${c.type}:${c.name.trim().toLowerCase()}:${c.parent_id || 'root'}`
+    existingMap.set(key, c)
+  })
 
   for (const parent of SEED_TREE) {
-    const parentRecord = await categoryRepo.create({
-      name: parent.name, icon: parent.icon, color: parent.color,
-      type: parent.type, parent_id: null,
-    })
-    await categoryRepo['table'].update(parentRecord.id, { is_default: true })
+    const parentKey = `${parent.type}:${parent.name.trim().toLowerCase()}:root`
+    let parentRecord = existingMap.get(parentKey)
+
+    if (!parentRecord) {
+      parentRecord = await categoryRepo.create({
+        name: parent.name, icon: parent.icon, color: parent.color,
+        type: parent.type, parent_id: null,
+      })
+      await categoryRepo['table'].update(parentRecord.id, { is_default: true })
+      existingMap.set(parentKey, parentRecord)
+    }
 
     for (const child of parent.children) {
-      const childRecord = await categoryRepo.create({
-        name: child.name, icon: child.icon, color: child.color,
-        type: parent.type, parent_id: parentRecord.id,
-      })
-      await categoryRepo['table'].update(childRecord.id, { is_default: true })
+      const childKey = `${parent.type}:${child.name.trim().toLowerCase()}:${parentRecord.id}`
+      if (!existingMap.has(childKey)) {
+        const childRecord = await categoryRepo.create({
+          name: child.name, icon: child.icon, color: child.color,
+          type: parent.type, parent_id: parentRecord.id,
+        })
+        await categoryRepo['table'].update(childRecord.id, { is_default: true })
+        existingMap.set(childKey, childRecord)
+      }
     }
   }
 
-  console.info(`[wllt.z] ✅ Seeded ${SEED_TREE.length} categories with sub-categories.`)
+  console.info(`[wllt.z] ✅ Verified default categories tree.`)
 }
 
 // ─────────────────────────────────────────────
@@ -149,10 +165,12 @@ export { seedDummyData }
  * All individual seeders are idempotent — safe to call on every boot.
  */
 export async function bootstrapLocalDB(forceSeedDemo = false): Promise<void> {
+  await cleanupDuplicateCategories()
   await seedDefaultCategories()
   await seedDefaultWallet()
   if (forceSeedDemo) {
     await seedDummyData()
   }
 }
+
 

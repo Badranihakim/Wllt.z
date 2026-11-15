@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { budgetRepo } from '@/repositories'
 import { queryKeys } from '@/lib/queryKeys'
 import type { BudgetPeriod } from '@/types'
@@ -59,3 +59,24 @@ export function useBudgetForCategory(categoryId: string | null) {
     enabled: categoryId !== null,
   })
 }
+
+// ─────────────────────────────────────────────
+// useDeleteBudget
+// ─────────────────────────────────────────────
+
+/**
+ * useDeleteBudget — Soft delete an existing budget by ID and refresh caches.
+ */
+export function useDeleteBudget() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: async (budgetId: string) => {
+      await budgetRepo.delete(budgetId)
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.budgets.all() })
+    },
+  })
+}
+

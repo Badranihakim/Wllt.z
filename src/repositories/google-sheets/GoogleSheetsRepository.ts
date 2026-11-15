@@ -991,7 +991,15 @@ export class GoogleSheetsRepository {
       localCats.forEach(localC => {
         const cloudC = catMap.get(localC.id)
         if (!cloudC) {
-          catMap.set(localC.id, { ...localC, sync_status: 'synced' })
+          // Check if there is already a category with identical name, type, and hierarchy status
+          const existingSameName = Array.from(catMap.values()).find(
+            c => c.name.trim().toLowerCase() === localC.name.trim().toLowerCase() &&
+                 c.type === localC.type &&
+                 Boolean(c.parent_id) === Boolean(localC.parent_id)
+          )
+          if (!existingSameName) {
+            catMap.set(localC.id, { ...localC, sync_status: 'synced' })
+          }
         } else {
           const localTime = new Date(localC.updated_at || 0).getTime()
           const cloudTime = new Date(cloudC.updated_at || 0).getTime()

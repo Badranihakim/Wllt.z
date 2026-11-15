@@ -1,6 +1,7 @@
 import { db } from '@/db'
 import { categoryRepo, walletRepo, budgetRepo, transactionRepo } from '@/repositories'
 import { seedDefaultCategories } from './seedDefaultData'
+import { cleanupDuplicateCategories } from './cleanupCategories'
 import type { Wallet, Budget, Transaction, Category } from '@/types'
 
 /**
@@ -24,7 +25,8 @@ function formatDate(year: number, month: number, day: number): string {
  * @returns true if data was seeded, false if skipped because data already exists.
  */
 export async function seedDummyData(force = false): Promise<boolean> {
-  // Ensure default categories exist first
+  // Ensure duplicate categories are cleaned up first and defaults exist
+  await cleanupDuplicateCategories()
   await seedDefaultCategories()
 
   const existingTxns = await db.transactions.toArray()

@@ -1,10 +1,11 @@
 import { useState, useMemo } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { PieChart, Pie, Cell, ResponsiveContainer, Line, AreaChart, Area, BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid } from 'recharts'
-import { ChevronLeft, ChevronRight, Search, ChevronDown, TrendingUp, ArrowRightLeft, Activity } from 'lucide-react'
+import { ChevronLeft, ChevronRight, Search, ChevronDown, TrendingUp } from 'lucide-react'
 import { transactionRepo, categoryRepo, walletRepo } from '@/repositories'
 import { queryKeys } from '@/lib/queryKeys'
 import { formatRupiah } from '@/lib/formatters'
+import { useUIStore } from '@/stores'
 import type { Category, Transaction, Wallet } from '@/types'
 
 type TimeRange = 'weekly' | 'monthly' | 'yearly' | 'all'
@@ -305,7 +306,7 @@ export function StatisticsView() {
         <TrendCharts range={range} />
 
         {/* Top Expenses */}
-        {chartData.length > 0 && <TopExpenses chartData={chartData} />}
+        {chartData.length > 0 && <TopExpenses chartData={chartData} transactions={transactions} categoryMap={categoryMap} txType={txType} />}
 
         {/* Transaction Log */}
         <TransactionLog transactions={transactions} categoryMap={categoryMap} />
@@ -395,15 +396,7 @@ function TrendCharts({ range }: { range: TimeRange }) {
              <TrendingUp className="w-3 h-3" /> 80.8%
           </div>
         </div>
-        <p className="text-[11px] text-slate-400 font-medium mb-6">Pengeluaran lebih tinggi dari biasanya.</p>
-        
-        <div className="flex items-center gap-3 mb-6">
-           <span className="text-[11px] font-bold text-slate-500 flex items-center gap-1"><ArrowRightLeft className="w-3 h-3" /> Bandingkan</span>
-           <div className="flex bg-slate-100 p-0.5 rounded-lg">
-              <button className="bg-white shadow-sm p-1.5 rounded-md"><Activity className="w-3 h-3 text-slate-700" /></button>
-              <button className="p-1.5 rounded-md"><div className="w-3 h-3 border-l-2 border-b-2 border-slate-400" /></button>
-           </div>
-        </div>
+        <p className="text-[11px] text-slate-400 font-medium mb-4">Pengeluaran lebih tinggi dari biasanya.</p>
 
         <div className="h-[140px] w-full">
           <ResponsiveContainer width="100%" height="100%">
@@ -444,22 +437,11 @@ function TrendCharts({ range }: { range: TimeRange }) {
       </section>
 
       <section className="bg-white/80 backdrop-blur-xl rounded-[32px] p-6 shadow-sm border border-white/50">
-        <div className="flex justify-between items-start mb-6">
+        <div className="flex justify-between items-start mb-4">
           <h2 className="text-[15px] font-bold text-slate-800">Tren Saldo Bersih</h2>
           <div className="bg-emerald-50 text-emerald-600 text-[10px] px-2 py-1 rounded-lg font-bold">
              Rp 100.500
           </div>
-        </div>
-        
-        <div className="flex items-center justify-between mb-6">
-           <span className="text-[11px] font-bold text-slate-400">Saldo Bersih</span>
-           <div className="flex items-center gap-3">
-             <span className="text-[11px] font-bold text-slate-500 flex items-center gap-1"><ArrowRightLeft className="w-3 h-3" /> Bandingkan</span>
-             <div className="flex bg-slate-100 p-0.5 rounded-lg">
-                <button className="bg-white shadow-sm p-1.5 rounded-md"><Activity className="w-3 h-3 text-slate-700" /></button>
-                <button className="p-1.5 rounded-md"><div className="w-3 h-3 border-l-2 border-b-2 border-slate-400" /></button>
-             </div>
-           </div>
         </div>
 
         <div className="h-[140px] w-full">
@@ -675,7 +657,15 @@ function ExpenseDetailModal({ block, categoryMap, txType, onClose }: { block: an
       <div className="flex-1 overflow-y-auto px-5 py-6">
         <div className="flex items-center justify-between mb-5">
            <h2 className="text-[15px] font-bold text-slate-800">Transaksi Terakhir</h2>
-           <span className="text-[11px] font-bold text-slate-400">Lihat Semua</span>
+           <button 
+             onClick={() => {
+               onClose()
+               useUIStore.getState().navigateTo('transactions')
+             }}
+             className="text-[11px] font-bold text-slate-500 hover:text-slate-800 flex items-center gap-1 active:scale-95 transition-transform"
+           >
+             Lihat Semua <ChevronRight className="w-3 h-3" />
+           </button>
         </div>
 
         {groupedTxs.map(([dateStr, txs]) => {
@@ -731,76 +721,180 @@ function ExpenseDetailModal({ block, categoryMap, txType, onClose }: { block: an
   )
 }
 
-function TopExpenses({ chartData }: { chartData: any[] }) {
+function TopExpenses({ 
+  chartData, 
+  transactions, 
+  categoryMap, 
+  txType 
+
+}: { 
+  chartData: any[]
+  transactions: Transaction[]
+  categoryMap: Record<string, Category>
+  txType: 'income' | 'expense'
+}) {
+  const [viewMode, setViewMode] = useState<'category' | 'transaction'>('category')
+  const [limit, setLimit] = useState<number>(5)
+
+  // Transaction items sorted by amount descending
+  const topTransactions = useMemo(() => {
+    return transactions
+      .filter(t => t.type === txType)
+      .sort((a, b) => b.amount - a.amount)
+      .slice(0, limit)
+  }, [transactions, txType, limit])
+
+  const displayedCategories = useMemo(() => {
+    return chartData.slice(0, limit)
+  }, [chartData, limit])
+
   return (
     <section className="bg-white rounded-[32px] p-6 shadow-sm border border-slate-50 mx-5 mt-6">
       <div className="flex items-center justify-between mb-5">
-        <h2 className="text-[15px] font-bold text-slate-800">Pengeluaran Terbesar</h2>
+        <h2 className="text-[15px] font-bold text-slate-800">
+          {txType === 'expense' ? 'Pengeluaran Terbesar' : 'Pemasukan Terbesar'}
+        </h2>
         <div className="flex gap-2">
-          <button className="bg-slate-50 text-slate-600 text-[10px] px-3 py-1.5 rounded-full font-bold flex items-center gap-1">
-             Kategori <ChevronDown className="w-3 h-3" />
-          </button>
-          <button className="bg-slate-50 text-slate-600 text-[10px] px-3 py-1.5 rounded-full font-bold flex items-center gap-1">
-             Top 5 <ChevronDown className="w-3 h-3" />
-          </button>
+          {/* View mode toggle: Kategori vs Transaksi */}
+          <div className="relative">
+            <select
+              value={viewMode}
+              onChange={(e) => setViewMode(e.target.value as any)}
+              className="appearance-none bg-slate-50 text-slate-600 text-[10px] pl-3 pr-6 py-1.5 rounded-full font-bold border-none outline-none cursor-pointer hover:bg-slate-100 transition-colors"
+            >
+              <option value="category">Kategori</option>
+              <option value="transaction">Transaksi</option>
+            </select>
+            <ChevronDown className="w-3 h-3 text-slate-400 absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none" />
+          </div>
+
+          {/* Limit toggle: Top 5, Top 10, Semua */}
+          <div className="relative">
+            <select
+              value={limit}
+              onChange={(e) => setLimit(Number(e.target.value))}
+              className="appearance-none bg-slate-50 text-slate-600 text-[10px] pl-3 pr-6 py-1.5 rounded-full font-bold border-none outline-none cursor-pointer hover:bg-slate-100 transition-colors"
+            >
+              <option value={5}>Top 5</option>
+              <option value={10}>Top 10</option>
+              <option value={20}>Top 20</option>
+            </select>
+            <ChevronDown className="w-3 h-3 text-slate-400 absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none" />
+          </div>
         </div>
       </div>
 
       <div className="flex flex-col gap-5">
-        {chartData.slice(0, 5).map((item, i) => (
-          <div key={i} className="flex items-center gap-4">
-            <div className="w-8 h-8 rounded-full bg-slate-50 border border-slate-100 flex items-center justify-center text-[11px] font-bold text-slate-400 shrink-0">
-              {i + 1}
+        {viewMode === 'category' ? (
+          displayedCategories.map((item, i) => (
+            <div key={i} className="flex items-center gap-4">
+              <div className="w-8 h-8 rounded-full bg-slate-50 border border-slate-100 flex items-center justify-center text-[11px] font-bold text-slate-400 shrink-0">
+                {i + 1}
+              </div>
+              <div className="flex-1 flex flex-col">
+                <span className="text-[13px] font-bold text-slate-700">{item.name}</span>
+                <span className="text-[11px] text-slate-400 font-medium">{item.count} transaksi</span>
+              </div>
+              <span className="text-[13px] font-bold text-slate-800">{formatRupiah(item.value, true)}</span>
             </div>
-            <div className="flex-1 flex flex-col">
-              <span className="text-[13px] font-bold text-slate-700">{item.name}</span>
-              <span className="text-[11px] text-slate-400 font-medium">{item.count} transaksi</span>
-            </div>
-            <span className="text-[13px] font-bold text-slate-800">{formatRupiah(item.value, true)}</span>
-          </div>
-        ))}
+          ))
+        ) : (
+          topTransactions.map((t, i) => {
+            const cat = categoryMap[t.category_id]
+            return (
+              <div key={t.id || i} className="flex items-center gap-4">
+                <div className="w-8 h-8 rounded-full bg-slate-50 border border-slate-100 flex items-center justify-center text-[11px] font-bold text-slate-400 shrink-0">
+                  {i + 1}
+                </div>
+                <div 
+                  className="w-8 h-8 rounded-xl flex items-center justify-center text-sm shrink-0 border border-slate-50"
+                  style={{ backgroundColor: `${cat?.color || '#94a3b8'}15` }}
+                >
+                  {cat?.icon || '📦'}
+                </div>
+                <div className="flex-1 flex flex-col min-w-0 pr-2">
+                  <span className="text-[13px] font-bold text-slate-700 truncate">{t.notes || cat?.name || t.title}</span>
+                  <span className="text-[11px] text-slate-400 font-medium">{t.date}</span>
+                </div>
+                <span className="text-[13px] font-bold text-slate-800 shrink-0">{formatRupiah(t.amount, true)}</span>
+              </div>
+            )
+          })
+        )}
       </div>
     </section>
   )
 }
 
 function TransactionLog({ transactions, categoryMap }: { transactions: Transaction[], categoryMap: Record<string, Category> }) {
-  // Sort transactions by date descending
-  const sortedTx = useMemo(() => {
-    return [...transactions].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
-  }, [transactions])
+  const navigateTo = useUIStore(s => s.navigateTo)
+  const [searchTerm, setSearchTerm] = useState('')
+  const [typeFilter, setTypeFilter] = useState<'all' | 'income' | 'expense'>('all')
+
+  // Sort and filter transactions
+  const filteredTxs = useMemo(() => {
+    return [...transactions]
+      .filter(t => {
+        if (typeFilter !== 'all' && t.type !== typeFilter) return false
+        if (searchTerm.trim()) {
+          const term = searchTerm.toLowerCase()
+          const cat = categoryMap[t.category_id]
+          const matchesTitle = t.title?.toLowerCase().includes(term)
+          const matchesNotes = t.notes?.toLowerCase().includes(term)
+          const matchesCat = cat?.name?.toLowerCase().includes(term)
+          if (!matchesTitle && !matchesNotes && !matchesCat) return false
+        }
+        return true
+      })
+      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+  }, [transactions, typeFilter, searchTerm, categoryMap])
 
   return (
     <section className="bg-white rounded-[32px] p-6 shadow-sm border border-slate-50 mx-5 mt-6">
       <div className="flex items-center justify-between mb-5">
         <h2 className="text-[15px] font-bold text-slate-800">Log Transaksi</h2>
-        <button className="text-[11px] font-bold text-slate-400 flex items-center gap-1">
+        <button 
+          onClick={() => navigateTo('transactions')}
+          className="text-[11px] font-bold text-slate-500 hover:text-slate-800 flex items-center gap-1 active:scale-95 transition-transform"
+        >
           Lihat Semua <ChevronRight className="w-3 h-3" />
         </button>
       </div>
 
       <div className="bg-slate-50 rounded-[18px] px-4 py-3.5 mb-5 flex items-center gap-3 border border-slate-100">
         <Search className="w-4 h-4 text-slate-400" />
-        <input type="text" placeholder="Cari transaksi..." className="bg-transparent text-[12px] font-medium outline-none w-full placeholder-slate-400" />
+        <input 
+          type="text" 
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          placeholder="Cari transaksi..." 
+          className="bg-transparent text-[12px] font-medium outline-none w-full placeholder-slate-400" 
+        />
       </div>
 
       <div className="flex gap-2 mb-6">
-        <button className="bg-white border border-slate-100 text-slate-600 text-[10px] px-3 py-1.5 rounded-full font-bold flex items-center gap-1 shadow-[0_2px_8px_rgba(0,0,0,0.04)]">
-           Semua <ChevronDown className="w-3 h-3" />
-        </button>
-        <button className="bg-white border border-slate-100 text-slate-600 text-[10px] px-3 py-1.5 rounded-full font-bold flex items-center gap-1 shadow-[0_2px_8px_rgba(0,0,0,0.04)]">
-           Semua Dompet <ChevronDown className="w-3 h-3" />
-        </button>
+        <div className="relative">
+          <select
+            value={typeFilter}
+            onChange={(e) => setTypeFilter(e.target.value as any)}
+            className="appearance-none bg-white border border-slate-100 text-slate-600 text-[10px] pl-3 pr-6 py-1.5 rounded-full font-bold shadow-[0_2px_8px_rgba(0,0,0,0.04)] outline-none cursor-pointer"
+          >
+            <option value="all">Semua Jenis</option>
+            <option value="income">Pemasukan</option>
+            <option value="expense">Pengeluaran</option>
+          </select>
+          <ChevronDown className="w-3 h-3 text-slate-400 absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none" />
+        </div>
       </div>
 
       <div className="flex flex-col gap-4">
-        {sortedTx.slice(0, 8).map((t, i) => {
+        {filteredTxs.slice(0, 8).map((t, i) => {
           const dateObj = new Date(t.date)
           const dateStr = `${String(dateObj.getDate()).padStart(2, '0')}/${String(dateObj.getMonth() + 1).padStart(2, '0')}`
           const cat = categoryMap[t.category_id]
           const isIncome = t.type === 'income'
           return (
-            <div key={i} className="flex items-center gap-3">
+            <div key={t.id || i} className="flex items-center gap-3">
               <span className="text-[10px] font-semibold text-slate-400 w-[34px] shrink-0 text-center">{dateStr}</span>
               <div 
                 className="w-[34px] h-[34px] rounded-xl flex items-center justify-center text-sm shrink-0 border border-slate-50"
@@ -808,23 +902,17 @@ function TransactionLog({ transactions, categoryMap }: { transactions: Transacti
               >
                 {cat?.icon || '🍔'}
               </div>
-              <span className="text-[12px] font-semibold text-slate-700 flex-1 truncate pr-2">{t.notes || cat?.name || 'Transaksi'}</span>
+              <span className="text-[12px] font-semibold text-slate-700 flex-1 truncate pr-2">{t.notes || cat?.name || t.title || 'Transaksi'}</span>
               <span className={`text-[12px] font-bold shrink-0 ${isIncome ? 'text-emerald-500' : 'text-slate-800'}`}>
                 {isIncome ? '+' : '-'}{formatRupiah(t.amount, true)}
               </span>
             </div>
           )
         })}
-        {sortedTx.length === 0 && (
+        {filteredTxs.length === 0 && (
           <div className="text-center py-4 text-[12px] text-slate-400 font-medium">Tidak ada transaksi.</div>
         )}
       </div>
-
-      {sortedTx.length > 0 && (
-        <button className="w-full mt-6 py-3.5 border border-slate-100 bg-slate-50/50 rounded-2xl text-[12px] font-bold text-slate-600 active:scale-95 transition-transform">
-          Lihat Semua Transaksi
-        </button>
-      )}
     </section>
   )
 }

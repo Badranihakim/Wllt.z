@@ -266,7 +266,29 @@ export class GoogleSheetsRepository {
         : [['Belum ada anggaran yang dibuat', 0, 0, 0, '-']]),
     ]
 
-    // 5. Clear old content to avoid remnants
+    // Structured snapshot payload for multi-device sync
+    const syncSnapshot = {
+      version: 1,
+      lastUpdated: new Date().toISOString(),
+      transactions,
+      categories,
+      wallets,
+      budgets,
+    }
+    const syncJsonString = JSON.stringify(syncSnapshot)
+
+    // Google Sheets limits any single cell to 50,000 characters.
+    // We chunk the JSON string into 40,000 character slices across rows (A1, A2, A3...)
+    const CHUNK_SIZE = 40000
+    const syncRows: string[][] = []
+    for (let i = 0; i < syncJsonString.length; i += CHUNK_SIZE) {
+      syncRows.push([syncJsonString.slice(i, i + CHUNK_SIZE)])
+    }
+    if (syncRows.length === 0) {
+      syncRows.push([''])
+    }
+
+    // 5. Clear old content to avoid remnants (including sync sheet)
     await Promise.all([
       fetch(
         `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/'Catatan Keuangan'!A1:Z5000:clear`,
@@ -282,18 +304,14 @@ export class GoogleSheetsRepository {
           headers: { Authorization: `Bearer ${this.accessToken}` },
         }
       ),
+      fetch(
+        `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/'${GoogleSheetsRepository.SYNC_SHEET_TITLE}'!A1:A500:clear`,
+        {
+          method: 'POST',
+          headers: { Authorization: `Bearer ${this.accessToken}` },
+        }
+      ),
     ])
-
-    // Structured snapshot payload for multi-device sync
-    const syncSnapshot = {
-      version: 1,
-      lastUpdated: new Date().toISOString(),
-      transactions,
-      categories,
-      wallets,
-      budgets,
-    }
-    const syncJsonString = JSON.stringify(syncSnapshot)
 
     // 6. Write formatted values + structured snapshot
     const writeRes = await fetch(
@@ -316,8 +334,8 @@ export class GoogleSheetsRepository {
               values: sheet2Values,
             },
             {
-              range: `'${GoogleSheetsRepository.SYNC_SHEET_TITLE}'!A1`,
-              values: [[syncJsonString]],
+              range: `'${GoogleSheetsRepository.SYNC_SHEET_TITLE}'!A1:A${syncRows.length}`,
+              values: syncRows,
             },
           ],
         }),
@@ -778,7 +796,7 @@ export class GoogleSheetsRepository {
       const spreadsheetId = targetSpreadsheetId || (await this.getOrCreateSpreadsheet())
 
       const readRes = await fetch(
-        `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/'${GoogleSheetsRepository.SYNC_SHEET_TITLE}'!A1`,
+        `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/'${GoogleSheetsRepository.SYNC_SHEET_TITLE}'!A1:A500`,
         {
           headers: { Authorization: `Bearer ${this.accessToken}` },
         }
@@ -789,7 +807,8 @@ export class GoogleSheetsRepository {
         return { success: false, message: 'Lembar sinkronisasi belum tersedia di spreadsheet ini.' }
       }
 
-      const rawJson = readData.values?.[0]?.[0]
+      // Reconstruct chunked JSON from rows
+      const rawJson = (readData.values || []).map((row: string[]) => row[0] || '').join('')
       if (!rawJson) {
         return { success: false, message: 'Tidak ada data snapshot di Google Drive.' }
       }
@@ -834,7 +853,7 @@ export class GoogleSheetsRepository {
 
   /**
    * Bi-directional Smart Merge:
-   * 1. Fetches cloud snapshot from '_wlltz_sync_data'!A1.
+   * 1. Fetches cloud snapshot from '_wlltz_sync_data'!A1:A500.
    * 2. Merges with local Dexie database using UUID & updated_at timestamp.
    * 3. Prevents data overwrite when syncing from multiple offline devices.
    * 4. Updates both local Dexie and Google Sheets with merged records.
@@ -855,17 +874,17 @@ export class GoogleSheetsRepository {
       const spreadsheetId = targetSpreadsheetId || (await this.getOrCreateSpreadsheet())
       await this.ensureSheetTabs(spreadsheetId)
 
-      // 1. Fetch current cloud snapshot from '_wlltz_sync_data'!A1
+      // 1. Fetch current cloud snapshot from '_wlltz_sync_data'!A1:A500
       let cloudSnapshot: any = null
       try {
         const readRes = await fetch(
-          `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/'${GoogleSheetsRepository.SYNC_SHEET_TITLE}'!A1`,
+          `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/'${GoogleSheetsRepository.SYNC_SHEET_TITLE}'!A1:A500`,
           {
             headers: { Authorization: `Bearer ${this.accessToken}` },
           }
         )
         const readData = await readRes.json()
-        const rawJson = readData.values?.[0]?.[0]
+        const rawJson = (readData.values || []).map((row: string[]) => row[0] || '').join('')
         if (rawJson) {
           cloudSnapshot = JSON.parse(rawJson)
         }

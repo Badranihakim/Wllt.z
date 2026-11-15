@@ -438,7 +438,7 @@ export function SettingsView() {
                 {pendingCount > 0 && isOnline && (
                   <div className="flex items-center gap-2 p-3 rounded-xl text-xs font-medium text-amber-700 bg-amber-500/10 border border-amber-500/20">
                     <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse shrink-0" />
-                    <p>Terdapat <strong>{pendingCount} transaksi lokal</strong> yang belum dicadangkan. Klik Sinkronkan Sekarang untuk menyelaraskan ke Google Drive.</p>
+                    <p>Terdapat <strong>{pendingCount} perubahan data lokal</strong> yang belum dicadangkan. Klik Sinkronkan Sekarang untuk menyelaraskan ke Google Drive.</p>
                   </div>
                 )}
 

@@ -54,3 +54,39 @@ export function useCreateWallet() {
     },
   })
 }
+
+// ─────────────────────────────────────────────
+// useDeleteWallet
+// ─────────────────────────────────────────────
+
+/**
+ * Mutation to soft-delete a Wallet.
+ * On success, invalidates wallet and transaction queries and triggers cloud sync.
+ *
+ * @example
+ * const { mutate: deleteWallet, isPending } = useDeleteWallet()
+ * deleteWallet(walletId)
+ */
+export function useDeleteWallet() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: async (walletId: string) => {
+      await walletRepo.delete(walletId)
+      // Trigger background sync if online and configured
+      import('@/repositories/google-sheets/GoogleSheetsRepository')
+        .then(({ GoogleSheetsRepository }) => {
+          GoogleSheetsRepository.sync()
+        })
+        .catch(() => {})
+    },
+
+    onSuccess: async () => {
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: queryKeys.wallets.all() }),
+        queryClient.invalidateQueries({ queryKey: queryKeys.transactions.all() }),
+      ])
+    },
+  })
+}
+

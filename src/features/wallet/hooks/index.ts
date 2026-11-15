@@ -1,5 +1,5 @@
 /**
  * Wallet feature hooks — barrel export.
- * import { useWallets, useCreateWallet } from '@/features/wallet/hooks'
+ * import { useWallets, useCreateWallet, useDeleteWallet } from '@/features/wallet/hooks'
  */
-export { useWallets, useCreateWallet } from './useWallets'
+export { useWallets, useCreateWallet, useDeleteWallet } from './useWallets'

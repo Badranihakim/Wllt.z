@@ -347,10 +347,13 @@ export class GoogleSheetsRepository {
     // 7. Format styling (Frozen rows, bold headers, column widths, Rupiah format)
     await this.applySheetStyling(spreadsheetId, totalTxCount, wallets.length, budgets.length)
 
-    // 8. Mark local transactions as synced
-    if (transactions.length > 0) {
-      await transactionRepo.markAsSynced(transactions.map(t => t.id))
-    }
+    // 8. Mark all local records as synced
+    await db.transaction('rw', [db.transactions, db.categories, db.wallets, db.budgets], async () => {
+      await db.transactions.where('sync_status').equals('local_only').modify({ sync_status: 'synced' })
+      await db.wallets.where('sync_status').equals('local_only').modify({ sync_status: 'synced' })
+      await db.categories.where('sync_status').equals('local_only').modify({ sync_status: 'synced' })
+      await db.budgets.where('sync_status').equals('local_only').modify({ sync_status: 'synced' })
+    })
 
     return spreadsheetId
   }
@@ -836,16 +839,16 @@ export class GoogleSheetsRepository {
       // Insert/merge into local Dexie IndexedDB
       await db.transaction('rw', [db.transactions, db.categories, db.wallets, db.budgets], async () => {
         if (categories.length > 0) {
-          await db.categories.bulkPut(categories)
+          await db.categories.bulkPut(categories.map((c: any) => ({ ...c, sync_status: 'synced' })))
         }
         if (wallets.length > 0) {
-          await db.wallets.bulkPut(wallets)
+          await db.wallets.bulkPut(wallets.map((w: any) => ({ ...w, sync_status: 'synced' })))
         }
         if (budgets.length > 0) {
-          await db.budgets.bulkPut(budgets)
+          await db.budgets.bulkPut(budgets.map((b: any) => ({ ...b, sync_status: 'synced' })))
         }
         if (transactions.length > 0) {
-          await db.transactions.bulkPut(transactions)
+          await db.transactions.bulkPut(transactions.map((t: any) => ({ ...t, sync_status: 'synced' })))
         }
       })
 

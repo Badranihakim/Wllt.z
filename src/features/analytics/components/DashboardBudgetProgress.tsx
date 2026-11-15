@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { Target, ChevronRight, CheckCircle2, Plus, X, Check, Loader2 } from 'lucide-react'
 import { useQueryClient } from '@tanstack/react-query'
 import { useBudgets } from '@/features/budgets/hooks'
@@ -8,6 +8,7 @@ import { useUIStore } from '@/stores'
 import { formatRupiah } from '@/lib/formatters'
 import { budgetRepo } from '@/repositories'
 import { queryKeys } from '@/lib/queryKeys'
+import { cleanupDuplicateCategories } from '@/lib/cleanupCategories'
 import type { Budget } from '@/types'
 
 export function DashboardBudgetProgress() {
@@ -25,13 +26,38 @@ export function DashboardBudgetProgress() {
   const [isSaving, setIsSaving] = useState(false)
   const [saveError, setSaveError] = useState<string | null>(null)
 
+  // Ensure database categories are cleaned up if duplicates exist
+  useEffect(() => {
+    cleanupDuplicateCategories().then(count => {
+      if (count > 0) {
+        queryClient.invalidateQueries({ queryKey: queryKeys.categories.all() })
+      }
+    })
+  }, [queryClient])
+
   const categoryMap = useMemo(() => {
     return new Map(categories.map(c => [c.id, c]))
   }, [categories])
 
+  // Deduplicate categories by normalized name to guarantee unique buttons
   const expenseCategories = useMemo(() => {
-    return categories.filter(c => c.type === 'expense' && c.parent_id === null)
-  }, [categories])
+    const rawList = categories.filter(c => c.type === 'expense' && c.parent_id === null)
+    const map = new Map<string, typeof rawList[0]>()
+    for (const c of rawList) {
+      const key = c.name.trim().toLowerCase()
+      if (!map.has(key)) {
+        map.set(key, c)
+      } else {
+        const curr = map.get(key)!
+        const currHasBudget = rawBudgets.some(b => b.category_id === curr.id && (b.period === currentPeriod || b.period === 'monthly'))
+        const newHasBudget = rawBudgets.some(b => b.category_id === c.id && (b.period === currentPeriod || b.period === 'monthly'))
+        if (!currHasBudget && newHasBudget) {
+          map.set(key, c)
+        }
+      }
+    }
+    return Array.from(map.values())
+  }, [categories, rawBudgets, currentPeriod])
 
   // Map subcategory ID to parent category ID for accurate transaction spending rollup
   const parentMap = useMemo(() => {
@@ -100,8 +126,15 @@ export function DashboardBudgetProgress() {
     setSaveError(null)
 
     try {
+      const selectedCat = categories.find(c => c.id === selectedCatId)
+      const siblingIds = selectedCat
+        ? categories
+            .filter(c => c.name.trim().toLowerCase() === selectedCat.name.trim().toLowerCase() && c.type === 'expense')
+            .map(c => c.id)
+        : [selectedCatId]
+
       const existing = rawBudgets.find(
-        b => b.category_id === selectedCatId && (b.period === currentPeriod || b.period === 'monthly')
+        b => (b.category_id === selectedCatId || siblingIds.includes(b.category_id)) && (b.period === currentPeriod || b.period === 'monthly')
       )
 
       const budgetToSave: Budget = existing
@@ -130,6 +163,7 @@ export function DashboardBudgetProgress() {
       setIsSaving(false)
     }
   }
+
 
   return (
     <>

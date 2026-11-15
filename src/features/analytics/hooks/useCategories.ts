@@ -24,12 +24,23 @@ export function useCategories(type?: 'income' | 'expense') {
       ? queryKeys.categories.byType(type)
       : queryKeys.categories.all(),
 
-    queryFn: () =>
-      type
-        ? categoryRepo.findTopLevelByType(type)
-        : categoryRepo.findAllSorted().then(all => all.filter(c => c.parent_id == null)),
+    queryFn: async () => {
+      const raw = type
+        ? await categoryRepo.findTopLevelByType(type)
+        : await categoryRepo.findAllSorted().then(all => all.filter(c => c.parent_id == null))
 
-    staleTime: Infinity,
+      // Deduplicate by normalized name and type
+      const map = new Map<string, typeof raw[0]>()
+      for (const item of raw) {
+        const key = `${item.type}:${item.name.trim().toLowerCase()}`
+        if (!map.has(key)) {
+          map.set(key, item)
+        }
+      }
+      return Array.from(map.values())
+    },
+
+    staleTime: 1000 * 30, // 30s
   })
 }
 

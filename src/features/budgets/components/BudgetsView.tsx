@@ -8,9 +8,10 @@ import {
   Check,
   X,
   TrendingUp,
+  Trash2,
 } from 'lucide-react'
 import { useQueryClient } from '@tanstack/react-query'
-import { useBudgets } from '@/features/budgets/hooks'
+import { useBudgets, useDeleteBudget } from '@/features/budgets/hooks'
 import { useCategories } from '@/features/analytics/hooks'
 import { useUIStore, getPreviousPeriod, getNextPeriod } from '@/stores'
 import { formatRupiah, formatPeriod } from '@/lib/formatters'
@@ -83,6 +84,7 @@ const STATUS_COLORS: Record<BudgetStatus, { bar: string; text: string; glow: str
  *   2. Aggregated summary bar (total spent / total limit)
  *   3. Per-category glass cards with color-coded progress bars
  *   4. Edit dialog for updating a budget limit
+ *   5. Delete dialog for removing an active budget
  */
 export function BudgetsView() {
   const currentPeriod    = useUIStore(s => s.currentPeriod)
@@ -91,19 +93,52 @@ export function BudgetsView() {
   const { data: budgets  = [], isLoading: budgetsLoading  } = useBudgets(currentPeriod)
   const { data: categories = [], isLoading: catsLoading  } = useCategories()
 
+  const deleteBudgetMutation = useDeleteBudget()
   const [editingBudgetId, setEditingBudgetId] = useState<string | null>(null)
+  const [budgetToDelete, setBudgetToDelete]   = useState<{ budget: Budget; category?: Category } | null>(null)
 
   const isLoading = budgetsLoading || catsLoading
 
-  // Left-Join Pattern: Map all main expense categories to budgets
+  // Left-Join Pattern with Name-based Deduplication
   let budgetsWithCategory: BudgetWithCategory[] = []
   
   if (!isLoading) {
     const mainExpenseCategories = categories.filter(c => c.type === 'expense' && c.parent_id === null)
     
-    budgetsWithCategory = mainExpenseCategories.map(category => {
-      // Find real budget for the current period
-      const existingBudget = budgets.find(b => b.category_id === category.id && (b.period === currentPeriod || b.period === 'monthly'))
+    // Group categories by normalized name to prevent duplicate cards
+    const categoryByName = new Map<string, Category>()
+    const catIdsByName   = new Map<string, string[]>()
+
+    for (const cat of mainExpenseCategories) {
+      const key = cat.name.trim().toLowerCase()
+      if (!catIdsByName.has(key)) {
+        catIdsByName.set(key, [])
+      }
+      catIdsByName.get(key)!.push(cat.id)
+
+      if (!categoryByName.has(key)) {
+        categoryByName.set(key, cat)
+      } else {
+        // Prefer category that matches an existing budget for the current period
+        const currentSelected = categoryByName.get(key)!
+        const hasCurrentBudget = budgets.some(b => b.category_id === currentSelected.id && (b.period === currentPeriod || b.period === 'monthly'))
+        const hasNewBudget     = budgets.some(b => b.category_id === cat.id && (b.period === currentPeriod || b.period === 'monthly'))
+        if (!hasCurrentBudget && hasNewBudget) {
+          categoryByName.set(key, cat)
+        }
+      }
+    }
+
+    const uniqueExpenseCategories = Array.from(categoryByName.values())
+
+    budgetsWithCategory = uniqueExpenseCategories.map(category => {
+      const key = category.name.trim().toLowerCase()
+      const siblingIds = catIdsByName.get(key) || [category.id]
+
+      // Find real budget for the current period matching category or any duplicate sibling
+      const existingBudget = budgets.find(
+        b => siblingIds.includes(b.category_id) && (b.period === currentPeriod || b.period === 'monthly')
+      )
       
       if (existingBudget) {
         return { budget: existingBudget, category }
@@ -134,6 +169,19 @@ export function BudgetsView() {
   const totalSpent = budgetsWithCategory.reduce((s, b) => s + b.budget.spent,  0)
   const totalUtil  = totalLimit > 0 ? (totalSpent / totalLimit) * 100 : 0
   const totalStatus = getBudgetStatus(totalUtil)
+
+  const handleConfirmDelete = async () => {
+    if (!budgetToDelete) return
+    try {
+      if (!budgetToDelete.budget.id.startsWith('virtual-')) {
+        await deleteBudgetMutation.mutateAsync(budgetToDelete.budget.id)
+      }
+      setBudgetToDelete(null)
+      setEditingBudgetId(null)
+    } catch (err) {
+      console.error('[BudgetsView] Error deleting budget:', err)
+    }
+  }
 
   return (
     <div className="min-h-full pb-4">
@@ -188,6 +236,7 @@ export function BudgetsView() {
               budget={budget}
               category={category}
               onEdit={() => setEditingBudgetId(budget.id)}
+              onDelete={() => setBudgetToDelete({ budget, category })}
             />
           ))
         )}
@@ -200,11 +249,60 @@ export function BudgetsView() {
           budget={budgetsWithCategory.find(b => b.budget.id === editingBudgetId)!.budget}
           category={budgetsWithCategory.find(b => b.budget.id === editingBudgetId)!.category}
           onClose={() => setEditingBudgetId(null)}
+          onDelete={() => {
+            const item = budgetsWithCategory.find(b => b.budget.id === editingBudgetId)
+            if (item) {
+              setBudgetToDelete(item)
+            }
+          }}
         />
+      )}
+
+      {/* ── Modal Konfirmasi Hapus Anggaran ── */}
+      {budgetToDelete && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="bg-white rounded-3xl p-6 max-w-sm w-full shadow-2xl border border-slate-100 flex flex-col gap-4 animate-in zoom-in-95 duration-200">
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center text-xl shrink-0">
+                <Trash2 className="w-6 h-6" />
+              </div>
+              <div>
+                <h3 className="font-bold text-slate-900 text-base">Hapus Target Anggaran?</h3>
+                <p className="text-xs text-slate-500">
+                  {budgetToDelete.category?.name || 'Kategori ini'}
+                </p>
+              </div>
+            </div>
+
+            <p className="text-xs text-slate-600 leading-relaxed">
+              Limit anggaran sebesar <strong className="font-semibold text-slate-800">{formatRupiah(budgetToDelete.budget.amount)}</strong> untuk periode ini akan dihapus. Riwayat transaksi pengeluaran Anda tetap aman.
+            </p>
+
+            <div className="flex gap-2.5 pt-2">
+              <button
+                type="button"
+                onClick={() => setBudgetToDelete(null)}
+                disabled={deleteBudgetMutation.isPending}
+                className="flex-1 py-3 px-4 rounded-xl text-sm font-semibold text-slate-600 bg-slate-100 hover:bg-slate-200 transition-colors disabled:opacity-50"
+              >
+                Batal
+              </button>
+              <button
+                type="button"
+                onClick={handleConfirmDelete}
+                disabled={deleteBudgetMutation.isPending}
+                className="flex-1 py-3 px-4 rounded-xl text-sm font-semibold text-white bg-rose-600 hover:bg-rose-700 active:scale-[0.98] transition-all disabled:opacity-50 shadow-md shadow-rose-200 flex items-center justify-center gap-1.5"
+              >
+                {deleteBudgetMutation.isPending ? 'Menghapus...' : 'Ya, Hapus'}
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   )
 }
+
 
 // ─────────────────────────────────────────────
 // PeriodNavigator
@@ -321,9 +419,10 @@ interface BudgetCardProps {
   budget: Budget
   category: Category | undefined
   onEdit: () => void
+  onDelete?: () => void
 }
 
-function BudgetCard({ budget, category, onEdit }: BudgetCardProps) {
+function BudgetCard({ budget, category, onEdit, onDelete }: BudgetCardProps) {
   const utilization = getUtilization(budget)
   const status      = getBudgetStatus(utilization)
   const colors      = STATUS_COLORS[status]
@@ -377,19 +476,37 @@ function BudgetCard({ budget, category, onEdit }: BudgetCardProps) {
           </div>
         </div>
 
-        {/* Edit button */}
-        <button
-          id={`edit-budget-${budget.id}`}
-          aria-label={`Edit anggaran ${category?.name ?? ''}`}
-          onClick={onEdit}
-          className="ml-2 shrink-0 flex h-8 w-8 items-center justify-center rounded-xl transition-all duration-150 active:scale-90"
-          style={{
-            background: 'var(--surface-3)',
-            color: 'var(--text-muted)',
-          }}
-        >
-          <Pencil className="h-3.5 w-3.5" />
-        </button>
+        {/* Action buttons */}
+        <div className="flex items-center gap-1.5 ml-2 shrink-0">
+          {!budget.id.startsWith('virtual-') && budget.amount > 0 && onDelete && (
+            <button
+              id={`delete-budget-${budget.id}`}
+              aria-label={`Hapus anggaran ${category?.name ?? ''}`}
+              onClick={onDelete}
+              className="flex h-8 w-8 items-center justify-center rounded-xl transition-all duration-150 active:scale-90 hover:opacity-80"
+              style={{
+                background: 'oklch(0.58 0.22 22 / 12%)',
+                color: 'var(--expense)',
+              }}
+              title="Hapus anggaran"
+            >
+              <Trash2 className="h-3.5 w-3.5" />
+            </button>
+          )}
+          <button
+            id={`edit-budget-${budget.id}`}
+            aria-label={`Edit anggaran ${category?.name ?? ''}`}
+            onClick={onEdit}
+            className="flex h-8 w-8 items-center justify-center rounded-xl transition-all duration-150 active:scale-90"
+            style={{
+              background: 'var(--surface-3)',
+              color: 'var(--text-muted)',
+            }}
+            title="Edit limit anggaran"
+          >
+            <Pencil className="h-3.5 w-3.5" />
+          </button>
+        </div>
       </div>
 
       {/* ── Progress bar ── */}
@@ -437,9 +554,10 @@ interface EditBudgetDialogProps {
   budget: Budget
   category: Category | undefined
   onClose: () => void
+  onDelete?: () => void
 }
 
-function EditBudgetDialog({ budget, category, onClose }: EditBudgetDialogProps) {
+function EditBudgetDialog({ budget, category, onClose, onDelete }: EditBudgetDialogProps) {
   const queryClient = useQueryClient()
   const inputRef    = useRef<HTMLInputElement>(null)
   const currentPeriod = useUIStore(s => s.currentPeriod)
@@ -478,7 +596,7 @@ function EditBudgetDialog({ budget, category, onClose }: EditBudgetDialogProps) 
     } finally {
       setIsSaving(false)
     }
-  }, [inputValue, budget, queryClient, onClose])
+  }, [inputValue, budget, queryClient, onClose, currentPeriod])
 
   // Format display while typing (dots as thousands separator)
   const handleInput = (raw: string) => {
@@ -622,7 +740,24 @@ function EditBudgetDialog({ budget, category, onClose }: EditBudgetDialogProps) 
             Simpan
           </button>
         </div>
+
+        {/* Tombol Hapus Anggaran jika budget aktif */}
+        {!budget.id.startsWith('virtual-') && budget.amount > 0 && onDelete && (
+          <button
+            type="button"
+            onClick={onDelete}
+            className="w-full flex items-center justify-center gap-2 rounded-2xl py-3 text-xs font-semibold transition-all active:scale-98 mt-3"
+            style={{
+              background: 'oklch(0.58 0.22 22 / 8%)',
+              color: 'var(--expense)',
+            }}
+          >
+            <Trash2 className="h-4 w-4" />
+            Hapus Target Anggaran Ini
+          </button>
+        )}
       </div>
+
 
       <style>{`
         @keyframes sheet-slide-up {

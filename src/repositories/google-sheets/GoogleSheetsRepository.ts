@@ -430,6 +430,23 @@ export class GoogleSheetsRepository {
       })
     }
 
+    // Automatically remove legacy / redundant sheets from previous schema (Categories, Budgets, Settings, etc.)
+    const LEGACY_SHEET_NAMES = ['categories', 'budgets', 'settings', 'wallets', 'transactions']
+    for (const sheet of existingSheets) {
+      const lower = sheet.title.trim().toLowerCase()
+      if (LEGACY_SHEET_NAMES.includes(lower)) {
+        // Prevent deleting if it's the only remaining sheet in spreadsheet
+        const remainingCount = existingSheets.length - requests.filter(r => r.deleteSheet).length
+        if (remainingCount > 1 || requests.some(r => r.addSheet)) {
+          requests.push({
+            deleteSheet: {
+              sheetId: sheet.sheetId,
+            },
+          })
+        }
+      }
+    }
+
     if (requests.length > 0) {
       await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}:batchUpdate`, {
         method: 'POST',
